@@ -42,12 +42,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientConnectionProvider.cs" />
+    <Compile Include="DatabaseObjects\Author.cs" />
     <Compile Include="DatabaseObjects\Book.cs" />
+    <Compile Include="DatabaseObjects\Condition.cs" />
+    <Compile Include="DatabaseObjects\Copy.cs" />
+    <Compile Include="DatabaseObjects\CopyStatuses.cs" />
     <Compile Include="DatabaseObjects\DatabaseObject.cs" />
+    <Compile Include="DatabaseObjects\Section.cs" />
+    <Compile Include="DatabaseObjects\TypeOfBook.cs" />
+    <Compile Include="DatabaseObjects\User.cs" />
     <Compile Include="Logic\ClientLogic.cs" />
     <Compile Include="Logic\IClientLogic.cs" />
-    <Compile Include="Logic\ISubsystemLogic.cs" />
+    <Compile Include="Logic\IWebLogic.cs" />
+    <Compile Include="Logic\SubsystemLogic\DataPullSubLogic.cs" />
+    <Compile Include="Logic\SubsystemLogic\ISubsystemLogic.cs" />
+    <Compile Include="Logic\Logics.cs" />
     <Compile Include="Logic\SubsystemLogic\BookIOSubLogic.cs" />
+    <Compile Include="Logic\WebLogic.cs" />
+    <Compile Include="NHibernateProvider.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -56,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DatabaseObjects\Book.hbm.xml" />
+    <Content Include="DatabaseObjects\Copy.hbm.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -6,14 +6,10 @@ using System.Threading.Tasks;
 
 namespace WPProjectServer.DatabaseObjects
 {
-    public class Book : DatabaseObject
+    public class TypeOfBook : DatabaseObject
     {
         public string Code { get; set; }
 
-        public string Title { get; set; }
-
-        public Author Author { get; set; }
-
-        public TypeOfBook BookType { get; set; }
+        public string Name { get; set; }
     }
 }

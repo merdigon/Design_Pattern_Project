@@ -10,16 +10,14 @@ namespace WPProjectServer.Logic
 {
     public class ClientLogic : IClientLogic
     {
-        Logics logics;
-
-        public ClientLogic()
+        public CopyStatus RentCopy(string copyCode, string userCode)
         {
-            logics = new Logics();
+            return LogicFactory.GetLogic<BookIOSubLogic>().RentCopy(copyCode, userCode);
         }
 
-        public Book Return(Book bookToReturn)
+        public CopyStatus ReturnCopy(string copyCode)
         {
-            return logics.GetLogic<BookIOSubLogic>().Return(bookToReturn);
+            return LogicFactory.GetLogic<BookIOSubLogic>().Return(copyCode);
         }
     }
 }

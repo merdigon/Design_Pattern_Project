@@ -7,9 +7,9 @@ using WPProjectServer.Logic.SubsystemLogic;
 
 namespace WPProjectServer.Logic
 {
-    public class Logics
+    public class LogicFactory
     {
-        public T GetLogic<T>() where T : ISubsystemLogic, new()
+        public static T GetLogic<T>() where T : ISubsystemLogic, new()
         {
                 return new T();
         }

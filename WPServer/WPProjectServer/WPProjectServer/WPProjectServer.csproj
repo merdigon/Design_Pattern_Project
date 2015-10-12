@@ -46,7 +46,7 @@
     <Compile Include="DatabaseObjects\Book.cs" />
     <Compile Include="DatabaseObjects\Condition.cs" />
     <Compile Include="DatabaseObjects\Copy.cs" />
-    <Compile Include="DatabaseObjects\CopyStatuses.cs" />
+    <Compile Include="DatabaseObjects\CopyStatus.cs" />
     <Compile Include="DatabaseObjects\DatabaseObject.cs" />
     <Compile Include="DatabaseObjects\Section.cs" />
     <Compile Include="DatabaseObjects\TypeOfBook.cs" />
@@ -56,8 +56,9 @@
     <Compile Include="Logic\IWebLogic.cs" />
     <Compile Include="Logic\SubsystemLogic\DataPullSubLogic.cs" />
     <Compile Include="Logic\SubsystemLogic\ISubsystemLogic.cs" />
-    <Compile Include="Logic\Logics.cs" />
+    <Compile Include="Logic\LogicFactory.cs" />
     <Compile Include="Logic\SubsystemLogic\BookIOSubLogic.cs" />
+    <Compile Include="Logic\SubsystemLogic\UserSubLogic.cs" />
     <Compile Include="Logic\WebLogic.cs" />
     <Compile Include="NHibernateProvider.cs" />
     <Compile Include="Program.cs" />

@@ -8,11 +8,20 @@ namespace WPProjectServer.DatabaseObjects
 {
     public class Condition : DatabaseObject
     {
-        Conditions Condition { get; set; }
+        Conditions condition { get; set; }
 
         public override string ToString()
         {
-            return Condition.ToString();
+            return condition.ToString();
+        }
+
+        public override bool Equals(object obj)
+        {
+            if(obj is Condition)
+                return condition.Equals(((Condition)obj).condition);
+            else if(obj is Conditions)
+                return condition.Equals((Conditions)obj);
+            return false;
         }
     }
 

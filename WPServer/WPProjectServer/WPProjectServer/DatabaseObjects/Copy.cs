@@ -17,5 +17,7 @@ namespace WPProjectServer.DatabaseObjects
         public int Year { get; set; }
 
         public Section Section { get; set; }
+
+        public CopyStatus CopyStatus { get; set; }
     }
 }

@@ -8,11 +8,11 @@ namespace WPProjectServer.Logic
 {
     public class WebLogic : IWebLogic
     {
-        Logics logics;
+        LogicFactory logics;
 
         public WebLogic()
         {
-            logics = new Logics();
+            logics = new LogicFactory();
         }
     }
 }

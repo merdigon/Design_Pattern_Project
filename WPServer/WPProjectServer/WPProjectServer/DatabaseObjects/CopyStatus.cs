@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WPProjectServer.DatabaseObjects
 {
-    public class CopyStatuses : DatabaseObject
+    public class CopyStatus : DatabaseObject
     {
         public Copy Copy { get; set; }
 
@@ -14,6 +14,8 @@ namespace WPProjectServer.DatabaseObjects
 
         public DateTime RentTime { get; set; }
 
-        public DateTime ReturnTime { get; set; }               
+        public DateTime ReturnTime { get; set; }
+
+        public double DaysDelay { get; set; }
     }
 }

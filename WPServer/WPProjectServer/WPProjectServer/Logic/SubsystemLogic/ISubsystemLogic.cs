@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace WPProjectServer.Logic
 {
-    class ISubsystemLogic
+    public abstract class ISubsystemLogic
     {
+        LogicFactory logics;
+
+        public ISubsystemLogic()
+        {
+            logics = new LogicFactory();
+        }
     }
 }

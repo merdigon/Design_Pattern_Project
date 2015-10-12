@@ -9,6 +9,6 @@ namespace WPProjectServer.Logic
 {
     public interface IClientLogic
     {
-        public abstract Book Return(Book bookToReturn);
+        abstract Book Return(Book bookToReturn);
     }
 }

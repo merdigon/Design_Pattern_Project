@@ -19,5 +19,12 @@ namespace WPProjectServer.Logic
         {
             return LogicFactory.GetLogic<BookIOSubLogic>().Return(copyCode);
         }
+
+        public bool RegisterUser(User user)
+        {
+            return LogicFactory.GetLogic<UserSubLogic>().RegisterUser(user);
+        }
+
+
     }
 }

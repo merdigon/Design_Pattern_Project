@@ -1,4 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<nhibarnate>
-  
-</nhibarnate>
+<hibarnate-mapping>
+  <property name="Code" column="Kod" type="String"/>
+</hibarnate-mapping>

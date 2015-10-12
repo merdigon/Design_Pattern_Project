@@ -12,5 +12,7 @@ namespace WPProjectServer.Logic
         CopyStatus ReturnCopy(string copyCode);
 
         CopyStatus RentCopy(string copyCode, string userCode);
+
+        bool RegisterUser(User user);
     }
 }

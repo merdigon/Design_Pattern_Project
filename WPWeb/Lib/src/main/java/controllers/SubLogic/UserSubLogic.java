@@ -1,4 +1,4 @@
-package src.main.java.controllers.SubLogic;
+package src.main.java.controllers.subLogic;
 
 /**
  * Created by Szymon on 2015-10-13.

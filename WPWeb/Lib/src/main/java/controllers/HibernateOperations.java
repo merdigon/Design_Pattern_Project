@@ -1,6 +1,6 @@
 package src.main.java.controllers;
 
-import src.main.java.models.Book;
+import src.main.java.models.*;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -21,7 +21,7 @@ public class HibernateOperations {
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
         Session session = sessionFactory.openSession();
         session.beginTransaction();
-        Book book = (Book)session.get(models.Book.class, key);
+        Book book = (Book)session.get(Book.class, key);
         session.getTransaction().commit();
         return book;
     }

@@ -1,4 +1,4 @@
-package src.main.java.controllers.SubLogic;
+package src.main.java.controllers.subLogic;
 
 import src.main.java.controllers.*;
 

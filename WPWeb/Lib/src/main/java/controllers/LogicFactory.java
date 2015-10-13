@@ -1,9 +1,8 @@
 package src.main.java.controllers;
 
-import src.main.java.controllers.SubLogic.BookIOSubLogic;
-import src.main.java.controllers.SubLogic.DataPullSubLogic;
-import src.main.java.controllers.SubLogic.UserSubLogic;
-import src.main.java.models.Book;
+import src.main.java.controllers.subLogic.BookIOSubLogic;
+import src.main.java.controllers.subLogic.DataPullSubLogic;
+import src.main.java.controllers.subLogic.UserSubLogic;
 
 /**
  * Created by Szymon on 2015-10-13.

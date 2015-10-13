@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://www.jsviews.com/download/jsrender.min.js"></script>
+    <script src="addBook.js"></script>
+    <script src="getAllBooks.js"></script>
+    <script id="BookTmpl" type="text/x-jsrender">
+        <tr>
+            <td>{{:id}}</td>
+            <td>{{:author}}</td>
+            <td>{{:title}}</td>
+            <td>{{:year}}</td>
+        <tr>
+    </script>
+    <title>Library</title>
+
+</head>
+<body>
+<div>
+    Welcome to library
+</div>
+
+<div>
+    <button onclick="insertForm()">addBook</button>
+    <button onclick="displayTable()">show all books</button>
+</div>
+
+<div id="insertForm"></div>
+<div id="displayTable"></div>
+</body>
+</html>

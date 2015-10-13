@@ -15,5 +15,5 @@ public class User extends DatabaseObject
 
         public String surname;
 
-        public Long debt;
+        public double debt;
 }

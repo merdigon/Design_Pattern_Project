@@ -1,6 +1,6 @@
-package controllers;
+package src.main.java.controllers;
 
-import models.Book;
+import src.main.java.models.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

@@ -1,5 +1,8 @@
 package src.main.java.controllers;
 
+import src.main.java.controllers.SubLogic.BookIOSubLogic;
+import src.main.java.controllers.SubLogic.DataPullSubLogic;
+import src.main.java.controllers.SubLogic.UserSubLogic;
 import src.main.java.models.Book;
 
 /**
@@ -7,8 +10,29 @@ import src.main.java.models.Book;
  */
 public class LogicFactory
 {
-    public static Book GetLogic()
+    private BookIOSubLogic bookIOLogic;
+    private DataPullSubLogic dataPullSubLogic;
+    private UserSubLogic userLogic;
+
+    public LogicFactory()
     {
-        return new Book();//new T();
+        bookIOLogic = new BookIOSubLogic(this);
+        dataPullSubLogic = new DataPullSubLogic(this);
+        userLogic = new UserSubLogic(this);
+    }
+
+    public BookIOSubLogic GetBookIOLogic()
+    {
+        return bookIOLogic;
+    }
+
+    public DataPullSubLogic GetDataPull()
+    {
+        return dataPullSubLogic;
+    }
+
+    public UserSubLogic GetUsersLogic()
+    {
+        return userLogic;
     }
 }

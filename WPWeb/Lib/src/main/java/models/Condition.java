@@ -5,17 +5,17 @@ package src.main.java.models;
  */
 public class Condition extends DatabaseObject
 {
-        Conditions condition;
+    Conditions condition;
 
-public String ToString()
-        {
+    public String ToString()
+    {
         return String.valueOf(condition);
-        }
+    }
 
-        public boolean equals(Condition cond)
-        {
+    public boolean equals(Condition cond)
+    {
         return condition.equals(cond.condition);
-        }
+    }
 
 
     public boolean equals(Conditions conds)

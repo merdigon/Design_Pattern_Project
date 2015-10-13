@@ -1,6 +1,6 @@
-package controllers;
+package src.main.java.controllers;
 
-import models.Book;
+import src.main.java.models.Book;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

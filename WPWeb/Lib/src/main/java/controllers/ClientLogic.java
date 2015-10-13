@@ -5,21 +5,28 @@ package src.main.java.controllers;
  */
 import src.main.java.models.*;
 public class ClientLogic implements IClientLogic
+{
+        LogicFactory logicFactory;
+
+        public ClientLogic()
         {
-public CopyStatus RentCopy(String copyCode, String userCode)
-        {
-        return LogicFactory.GetLogic().RentCopy(copyCode, userCode);
+                logicFactory = new LogicFactory();
         }
 
-public CopyStatus ReturnCopy(String copyCode)
+        public CopyStatus RentCopy(String copyCode, String userCode) throws Exception
         {
-        return LogicFactory.GetLogic().Return(copyCode);
+                return logicFactory.GetBookIOLogic().RentCopy(copyCode, userCode);
         }
 
-public boolean RegisterUser(User user)
+        public CopyStatus ReturnCopy(String copyCode) throws Exception
         {
-        return LogicFactory.GetLogic().RegisterUser(user);
+                return logicFactory.GetBookIOLogic().Return(copyCode);
+        }
+
+        public boolean RegisterUser(User user)
+        {
+                return logicFactory.GetUsersLogic().RegisterUser(user);
         }
 
 
-        }
+}

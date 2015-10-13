@@ -6,9 +6,9 @@ import src.main.java.models.*;
  */
 public interface IClientLogic
 {
-    CopyStatus ReturnCopy(String copyCode);
+    CopyStatus ReturnCopy(String copyCode) throws Exception;
 
-    CopyStatus RentCopy(String copyCode, String userCode);
+    CopyStatus RentCopy(String copyCode, String userCode) throws Exception;
 
-    bool RegisterUser(User user);
+    boolean RegisterUser(User user);
 }

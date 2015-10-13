@@ -53,13 +53,11 @@
     <Compile Include="DatabaseObjects\User.cs" />
     <Compile Include="Logic\ClientLogic.cs" />
     <Compile Include="Logic\IClientLogic.cs" />
-    <Compile Include="Logic\IWebLogic.cs" />
     <Compile Include="Logic\SubsystemLogic\DataPullSubLogic.cs" />
     <Compile Include="Logic\SubsystemLogic\ISubsystemLogic.cs" />
     <Compile Include="Logic\LogicFactory.cs" />
     <Compile Include="Logic\SubsystemLogic\BookIOSubLogic.cs" />
     <Compile Include="Logic\SubsystemLogic\UserSubLogic.cs" />
-    <Compile Include="Logic\WebLogic.cs" />
     <Compile Include="NHibernateProvider.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

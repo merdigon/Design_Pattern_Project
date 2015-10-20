@@ -1,5 +1,6 @@
 package src.main.java.controllers.subLogic;
 
+import src.main.java.controllers.HibernateOperations;
 import src.main.java.controllers.LogicFactory;
 import src.main.java.models.*;
 
@@ -78,6 +79,11 @@ public class BookIOSubLogic extends DataPullSubLogic
                 if (InsertNewCopy(copyOfBook))
                         return true;
                 return false;
+        }
+
+        public Book[] GetAllBooks()
+        {
+               return (Book[])HibernateOperations.getAll().toArray();
         }
 
         public boolean InsertNewBook(Book newBook)

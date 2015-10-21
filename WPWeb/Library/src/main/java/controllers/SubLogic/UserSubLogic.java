@@ -1,10 +1,12 @@
-package src.main.java.controllers.subLogic;
+package controllers.SubLogic;
+
+import controllers.LogicFactory;
+import models.User;
 
 /**
  * Created by Szymon on 2015-10-13.
  */
-import src.main.java.controllers.LogicFactory;
-import src.main.java.models.*;
+
 public class UserSubLogic extends DataPullSubLogic
 {
     public UserSubLogic(LogicFactory lgF)

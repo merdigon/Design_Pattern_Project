@@ -1,9 +1,12 @@
 package controllers;
 
+import models.CopyStatus;
+import models.User;
+
 /**
  * Created by Szymon on 2015-10-13.
  */
-import models.*;
+
 
 public class ClientLogic implements IClientLogic
 {

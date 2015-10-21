@@ -1,10 +1,10 @@
 package controllers;
 
-import SubLogic.*;
 
-/**
- * Created by Szymon on 2015-10-13.
- */
+import controllers.SubLogic.BookIOSubLogic;
+import controllers.SubLogic.DataPullSubLogic;
+import controllers.SubLogic.UserSubLogic;
+
 public class LogicFactory
 {
     private BookIOSubLogic bookIOLogic;

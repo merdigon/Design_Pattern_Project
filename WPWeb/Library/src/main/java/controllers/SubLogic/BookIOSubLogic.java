@@ -1,8 +1,9 @@
-package src.main.java.controllers.subLogic;
+package controllers.SubLogic;
 
-import src.main.java.controllers.HibernateOperations;
-import src.main.java.controllers.LogicFactory;
-import src.main.java.models.*;
+
+import controllers.HibernateOperations;
+import controllers.LogicFactory;
+import models.*;
 
 /**
  * Created by Szymon on 2015-10-13.
@@ -83,7 +84,7 @@ public class BookIOSubLogic extends DataPullSubLogic
 
         public Book[] GetAllBooks()
         {
-               return (Book[])HibernateOperations.getAll().toArray();
+               return (Book[]) HibernateOperations.getAll().toArray();
         }
 
         public boolean InsertNewBook(Book newBook)

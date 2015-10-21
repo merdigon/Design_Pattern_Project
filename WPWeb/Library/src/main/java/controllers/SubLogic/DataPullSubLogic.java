@@ -1,7 +1,8 @@
-package src.main.java.controllers.subLogic;
+package controllers.SubLogic;
 
-import src.main.java.controllers.LogicFactory;
-import src.main.java.models.*;
+
+import controllers.LogicFactory;
+import models.*;
 
 /**
  * Created by Szymon on 2015-10-13.

@@ -1,8 +1,8 @@
 package controllers;
 
-import src.main.java.models.Book;
-import org.json.simple.JSONArray;
 
+import models.Book;
+import org.json.simple.JSONArray;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

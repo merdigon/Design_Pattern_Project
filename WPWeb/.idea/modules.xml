@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/Lib/Library.iml" filepath="$PROJECT_DIR$/Lib/Library.iml" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/Library/LibrarySpringMVC.iml" filepath="$PROJECT_DIR$/Library/LibrarySpringMVC.iml" />
+>>>>>>> master
       <module fileurl="file://$PROJECT_DIR$/.idea/WPWeb.iml" filepath="$PROJECT_DIR$/.idea/WPWeb.iml" />
     </modules>
   </component>

@@ -22,11 +22,19 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+<<<<<<< HEAD
         <module name="Library" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="Library" target="1.5" />
+=======
+        <module name="LibrarySpringMVC" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="LibrarySpringMVC" target="1.5" />
+>>>>>>> master
     </bytecodeTargetLevel>
   </component>
 </project>

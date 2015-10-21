@@ -43,6 +43,4 @@ public class BookController {
     List<Book> getTime(){
        return HibernateOperations.getAll();
     }
-
-
 }

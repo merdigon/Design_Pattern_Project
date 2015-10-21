@@ -1,4 +1,4 @@
-package src.main.java.controllers;
+package controllers;
 
 import src.main.java.models.Book;
 import org.json.simple.JSONArray;

@@ -1,9 +1,10 @@
-package src.main.java.controllers;
+package controllers;
 
 /**
  * Created by Szymon on 2015-10-13.
  */
-import src.main.java.models.*;
+import models.*;
+
 public class ClientLogic implements IClientLogic
 {
         LogicFactory logicFactory;

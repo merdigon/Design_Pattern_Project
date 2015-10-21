@@ -1,6 +1,6 @@
-package src.main.java.controllers;
+package controllers;
 
-import src.main.java.models.*;
+import models.*;
 /**
  * Created by Szymon on 2015-10-13.
  */

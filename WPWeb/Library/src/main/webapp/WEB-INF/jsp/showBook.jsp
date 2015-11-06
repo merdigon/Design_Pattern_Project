@@ -10,6 +10,8 @@
 <head>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="http://www.jsviews.com/download/jsrender.min.js"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script>
         function showBooks() {
 
@@ -19,7 +21,7 @@
                 dataType: "json",
                 success: function (response) {
 
-                    $("#displayTable").html("<table border='1'>" + createTable(response) + "</table>");
+                    $("#displayTable").html(createTable(response));
                 },
 
                 error: function (e) {
@@ -32,9 +34,12 @@
         }
 
         function createTable(json){
-            console.log("in creteTable");
             var myTemplate = $.templates("#BookTmpl");
-            var html = myTemplate.render(json);
+            var html = "<table class='table' >"
+            html += '<tr><th>#</th><th>Author</th><th>Title</th><th>Year</th></tr>';
+            html+=myTemplate.render(json);
+            html +="</table>";
+            console.log(html);
             return html;
         }
     </script>
@@ -44,14 +49,26 @@
             <td>{{:author}}</td>
             <td>{{:title}}</td>
             <td>{{:year}}</td>
-        <tr>
+        </tr>
     </script>
 </head>
 <body onload="showBooks()">
-<h3>All books in library</h3>
 
-<button onclick="window.location.href='/index'">goToMainPage</button>
+<div class="panel panel-primary">
 
-<div id="displayTable"></div>
+    <div class="panel-heading">All books in library</div>
+    <div class="panel-body">
+        <button class="btn btn-default" onclick="window.location.href='/index'">goToMainPage</button><br>
+        Table below shows all books in library
+    </div>
+
+    <div id="displayTable">
+
+    </div>
+</div>
+
+
+
+
 </body>
 </html>

@@ -1,6 +1,8 @@
 <html>
 <head>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <title>Spring MVC Form Handling</title>
 
     <script type="text/javascript">
@@ -15,14 +17,15 @@
                     "year": $("#year").val()
                 },
                 success: function (response) {
-                    $("#form").hide();
-                    $("#responseMessage").html("zapisalo");
+                    $(".form-inline").hide();
+                    $('#alert_placeholder').append('<div class="alert alert-success">Successs</div>')
+
                 },
 
                 error: function (e) {
 
                     $("#form").hide();
-                    $("#responseMessage").html("blad zapisu");
+                    $('#alert_placeholder').append('<div class="alert alert-danger">Failure</div>')
 
                 }
             });
@@ -32,20 +35,27 @@
 
 </head>
 <body>
+<div class="panel panel-primary">
+    <div class="panel-heading">Add book</div>
 
-<h1>Add Book</h1>
 
-<div id="returnButton">
-    <button onclick="window.location.href='/index'">goToMainPage</button>
+
+    <div id="form" class="'form-group" style="display: inline">
+        <div class="panel-body">
+            <button class="btn btn-default" onclick="window.location.href='/index'">goToMainPage</button>
+
+            <div class="form-inline">
+                <input type="text" id="author" class="form-control" placeholder="author">
+                <input type="text" id="title" class="form-control" placeholder="title">
+                <input type="text" id="year" class="form-control" placeholder="year">
+                <button onclick="saveBook()" class="btn btn-default">Save</button>
+            </div>
+        </div>
+
+    </div>
 </div>
 
-<div id="form">
-    <input type="text" id="author" placeholder="author">
-    <input type="text" id="title" placeholder="title">
-    <input type="text" id="year" placeholder="year">
-    <button onclick="saveBook()">Save</button>
-</div>
+<div id="alert_placeholder"></div>
 
-<div id="responseMessage"></div>
 </body>
 </html>

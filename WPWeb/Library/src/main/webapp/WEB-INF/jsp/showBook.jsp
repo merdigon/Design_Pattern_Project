@@ -20,7 +20,6 @@
                 url: "/showBooksAjax",
                 dataType: "json",
                 success: function (response) {
-
                     $("#displayTable").html(createTable(response));
                 },
 
@@ -36,7 +35,7 @@
         function createTable(json){
             var myTemplate = $.templates("#BookTmpl");
             var html = "<table class='table' >"
-            html += '<tr><th>#</th><th>Author</th><th>Title</th><th>Year</th></tr>';
+            html += '<tr><th>#</th><th>Author</th><th>Title</th><th>Year</th><th>condition_id</th><th>typeOfBook_id</th><th>section_id</th></tr>';
             html+=myTemplate.render(json);
             html +="</table>";
             console.log(html);
@@ -46,9 +45,12 @@
     <script id="BookTmpl" type="text/x-jsrender">
         <tr>
             <td>{{:id}}</td>
-            <td>{{:author}}</td>
+            <td>{{:author.id}}</td>
             <td>{{:title}}</td>
             <td>{{:year}}</td>
+            <td>{{:condition.id}}</td>
+            <td>{{:typeOfBook.id}}</td>
+            <td>{{:section.id}}</td>
         </tr>
     </script>
 </head>
@@ -58,7 +60,7 @@
 
     <div class="panel-heading">All books in library</div>
     <div class="panel-body">
-        <button class="btn btn-default" onclick="window.location.href='/index'">goToMainPage</button><br>
+        <button class="btn btn-default" onclick="window.location.href='/'">goToMainPage</button><br>
         Table below shows all books in library
     </div>
 

@@ -11,16 +11,27 @@
 <body>
 <h2>Library</h2>
 
+<div class="btn-group" style="position: absolute; top: 10; right: 100;">
+    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+        Sing in <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+        <li><a href="/admin">as Administrator</a></li>
+        <li><a href="/user">as User</a></li>
+    </ul>
+</div>
+
 <p>Click below button to redirect the result to new page</p>
 
 <div class="panel panel-primary">
     <div class="panel-heading">Book operations</div>
     <div class="panel-body">
-
-        <input type="button" class="btn btn-default" onclick="location.href='/addBook'" value="AddBook">
         <input type="button" class="btn btn-default" onclick="location.href='/showBook'" value="Show Books">
 
     </div>
 </div>
+
+
+
 </body>
 </html>

@@ -61,11 +61,6 @@ public class Author extends DatabaseObject
 
         @Override
         public String toString() {
-                return "{" +
-                        "\"id\":\"" + id  + '\"' +
-                        ", \"author\":\"" + name + '\"' +
-                        ", \"title\":\"" + surname + '\"' +
-                        ", \"year\":\"" + bornYear + '\"' +
-                        '}';
+                return id + " " + name + " " + surname + " " + bornYear;
         }
 }

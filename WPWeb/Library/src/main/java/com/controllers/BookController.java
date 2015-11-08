@@ -31,12 +31,12 @@ public class BookController {
     private TypeOfBookDAO typeOfBookDAO;
 
 
-    @RequestMapping(value = "/addBook", method = RequestMethod.GET)
+    @RequestMapping(value = "/admin/addBook", method = RequestMethod.GET)
     public ModelAndView addBook() {
         return new ModelAndView("addBook", "command", new Book());
     }
 
-    @RequestMapping(value = "/saveBook", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/saveBook", method = RequestMethod.POST)
     @ResponseBody
     public String saveBook(@RequestParam("author") String authorData,
                            @RequestParam("title") String title,
@@ -76,14 +76,37 @@ public class BookController {
     }
 
     @RequestMapping(value = "/showBook", method = RequestMethod.GET)
-    public String showBooks() {
-
+    public String showBook() {
         return "showBook";
     }
 
     @RequestMapping(value = "/showBooksAjax", method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
     public List<Book> showBooksAjax() {
+        System.out.println("table "+bookDAO.getAll());
+        return bookDAO.getAll();
+    }
+
+    @RequestMapping(value = "/user/showBook", method = RequestMethod.GET)
+    public String showBooksUser() {
+        return "showBook";
+    }
+
+    @RequestMapping(value = "/user/showBooksAjax", method = RequestMethod.POST, headers = "Accept=application/json")
+    @ResponseBody
+    public List<Book> showBooksAjaxUser() {
+        System.out.println("table "+bookDAO.getAll());
+        return bookDAO.getAll();
+    }
+
+    @RequestMapping(value = "/admin/showBook", method = RequestMethod.GET)
+    public String showBooks() {
+        return "showBook";
+    }
+
+    @RequestMapping(value = "/admin/showBooksAjax", method = RequestMethod.POST, headers = "Accept=application/json")
+    @ResponseBody
+    public List<Book> showBooksAjaxAdmin() {
         System.out.println("table "+bookDAO.getAll());
         return bookDAO.getAll();
     }

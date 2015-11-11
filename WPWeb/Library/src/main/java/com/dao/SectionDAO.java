@@ -5,6 +5,7 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by piotrek on 07.11.15.
@@ -15,6 +16,16 @@ public class SectionDAO extends DatabaseDAO<Section>{
     public void save(Section section) {
 
         getSession().save(section);
+    }
+
+    public Section saveIfNotInDB(Section section) {
+        Optional<Section> sectionOptional = isContain(section);
+        if(sectionOptional.isPresent()){
+            return sectionOptional.get();
+        }else{
+            save(section);
+            return section;
+        }
     }
 
 
@@ -29,5 +40,10 @@ public class SectionDAO extends DatabaseDAO<Section>{
         List<Section> list = query.list();
         return list;
 
+    }
+
+    public Optional<Section> isContain(final Section section) {
+
+        return getAll().stream().filter(a -> a.equals(section)).findFirst();
     }
 }

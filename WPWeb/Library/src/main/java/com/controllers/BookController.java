@@ -5,12 +5,12 @@ import com.models.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 @Controller
@@ -31,27 +31,20 @@ public class BookController extends BaseController {
                            @RequestParam("typeOfBook") String typeData,
                            @RequestParam("year") int year) {
 
+
         String[] authorsString = authorData.split((","));
         List<Author> authors = new ArrayList<Author>();
 
         for(String authorString : authorsString) {
-            Author author = new Author(authorString.split(" ")[0], authorString.split("")[1], Integer.parseInt(authorString.split(" ")[2]));
-            authors.add(author);
-            authorDAO.save(author);
+            Author author = new Author(authorString.split(" ")[0], authorString.split(" ")[1], Integer.parseInt(authorString.split(" ")[2]));
+            authors.add(authorDAO.saveIfNotInDB(author));
         }
 
 
-        Condition condition = new Condition(Conditions.valueOf(conditionData));
-        conditionDAO.save(condition);
-
-        Section section = new Section(sectionData.split(" ")[0], sectionData.split(" ")[1]);
-        sectionDAO.save(section);
-
-        TypeOfBook typeOfBook = new TypeOfBook(typeData.split(" ")[0], typeData.split(" ")[1]);
-        typeOfBookDAO.save(typeOfBook);
-
+        Condition condition = conditionDAO.saveIfNotInDB(new Condition(Conditions.valueOf(conditionData)));
+        Section section = sectionDAO.saveIfNotInDB(new Section(sectionData.split(" ")[0], sectionData.split(" ")[1]));
+        TypeOfBook typeOfBook = typeOfBookDAO.saveIfNotInDB(new TypeOfBook(typeData.split(" ")[0], typeData.split(" ")[1]));
         Book book = new Book(authors,title,year,condition,typeOfBook,section);
-
         bookDAO.save(book);
 
         return "zapisalo";
@@ -65,8 +58,9 @@ public class BookController extends BaseController {
     @RequestMapping(value = {"/showBooksAjax", "/user/showBooksAjax", "/admin/showBooksAjax"}, method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
     public List<Book> showBooksAjax() {
-        System.out.println("table "+bookDAO.getAll());
-        return bookDAO.getAll();
+      //  System.out.println("table "+bookDAO.getAll());
+       return bookDAO.getAll();
+
     }
 
     @RequestMapping(value = "/searchBook", method = RequestMethod.GET)
@@ -79,7 +73,7 @@ public class BookController extends BaseController {
     public List<Book> searchBookAjax(@RequestParam("column") String column,
                            @RequestParam("value") String value){
         List<Book> books = new ArrayList<Book>();
-        if(column=="author"){
+        if(column.equals("author")){
 
         }else if(column.equals("title")){
            books = bookDAO.findByColumn(column, value);
@@ -87,6 +81,13 @@ public class BookController extends BaseController {
 
         System.out.println(books.toString());
         return books;
+    }
+
+    @RequestMapping(value = {"/showBooksJsp"}, method = RequestMethod.GET)
+    public String showBooksAjax(Model model) {
+        model.addAttribute("books",bookDAO.getAll());
+        return "showBook";
+
     }
 
 }

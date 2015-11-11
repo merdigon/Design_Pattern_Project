@@ -1,23 +1,29 @@
 package com.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Szymon on 2015-10-13.
  */
 @Entity
-public class Author extends DatabaseObject
-{
+public class Author extends DatabaseObject {
         @Id
-        @GeneratedValue
+        @GeneratedValue(strategy=GenerationType.AUTO)
         private int id;
 
-        public String name;
+        private String name;
 
-        public String surname;
+        private String surname;
 
-        public int bornYear;
+        private int bornYear;
+
+        @ManyToMany(fetch = FetchType.EAGER)
+        private Set<Book> books = new HashSet<Book>();
 
         public int getId() {
                 return id;
@@ -25,6 +31,14 @@ public class Author extends DatabaseObject
 
         public void setId(int id) {
                 this.id = id;
+        }
+
+        public Set<Book> getBooks() {
+                return books;
+        }
+
+        public void setBooks(Set<Book> books) {
+                this.books = books;
         }
 
         public String getName() {
@@ -57,15 +71,40 @@ public class Author extends DatabaseObject
                 this.bornYear = bornYear;
         }
 
-        public Author(){};
+        public Author() {
+        }
+
+        ;
 
         @Override
         public String toString() {
                 return "{" +
-                        "\"id\":\"" + id  + '\"' +
+                        "\"id\":\"" + id + '\"' +
                         ", \"name\":\"" + name + '\"' +
                         ", \"surname\":\"" + surname + '\"' +
                         ", \"bornYear\":\"" + bornYear + '\"' +
+                        ", \"books\":" + books +
                         '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+
+                Author author = (Author) o;
+
+                if (bornYear != author.bornYear) return false;
+                if (name != null ? !name.equals(author.name) : author.name != null) return false;
+                return !(surname != null ? !surname.equals(author.surname) : author.surname != null);
+
+        }
+
+        @Override
+        public int hashCode() {
+                int result = name != null ? name.hashCode() : 0;
+                result = 31 * result + (surname != null ? surname.hashCode() : 0);
+                result = 31 * result + bornYear;
+                return result;
         }
 }

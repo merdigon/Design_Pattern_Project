@@ -3,34 +3,53 @@ package com.models;
 
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table
 public class Book extends DatabaseObject{
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private int id;
-    @OneToMany
+
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name="BOOK_AUTHOR", joinColumns = @JoinColumn(name="BOOK_ID"),
+            inverseJoinColumns = @JoinColumn(name="AUTHOR_ID"))
     private List<Author> authors = new ArrayList<Author>();
     private String title;
     private int year;
-    @OneToOne
+
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinTable(name="BOOK_CONDITION", joinColumns = @JoinColumn(name="BOOK_ID"),
+                inverseJoinColumns = @JoinColumn(name="CONDITION_ID"))
     private Condition condition;
-    @OneToOne
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinTable(name="BOOK_TYPE", joinColumns = @JoinColumn(name="BOOK_ID"),
+            inverseJoinColumns = @JoinColumn(name="TYPE_ID"))
     private TypeOfBook typeOfBook;
-    @OneToOne
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinTable(name="BOOK_SECTION", joinColumns = @JoinColumn(name="BOOK_ID"),
+            inverseJoinColumns = @JoinColumn(name="SECTION_ID"))
     private Section section;
 
-    public List<Author> getAuthor() {
+    public List<Author> getAuthors() {
         return authors;
     }
 
-    public void setAuthor(List<Author> author) {
-        this.authors = author;
+    public void setAuthors(List<Author> authors) {
+        this.authors = authors;
     }
 
     public int getId() {
@@ -92,18 +111,18 @@ public class Book extends DatabaseObject{
 
     public Book(){}
 
+
     @Override
     public String toString() {
         return "{" +
                 "\"id\":\"" + id  + '\"' +
-                ", \"author\":\"" + authors + '\"' +
+                ", \"authors\":" + authors +
                 ", \"title\":\"" + title + '\"' +
                 ", \"year\":\"" + year + '\"' +
-                ", \"condition\":\"" + condition + '\"' +
-                ", \"typeOfBook\":\"" + typeOfBook + '\"' +
-                ", \"section\":\"" + section + '\"' +
+                ", \"condition\":" + condition  +
+                ", \"typeOfBook\":" + typeOfBook  +
+                ", \"section\":" + section  +
                 '}';
     }
-
 
 }

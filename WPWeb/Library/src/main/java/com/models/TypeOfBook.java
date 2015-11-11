@@ -1,9 +1,11 @@
 package com.models;
 
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Szymon on 2015-10-13.
@@ -17,6 +19,18 @@ public class TypeOfBook extends DatabaseObject
     private String code;
 
     private String name;
+
+
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<Book> books = new ArrayList<>();
+
+    public List<Book> getBooks() {
+        return books;
+    }
+
+    public void setBooks(List<Book> books) {
+        this.books = books;
+    }
 
     public int getId() {
         return id;
@@ -55,5 +69,24 @@ public class TypeOfBook extends DatabaseObject
                 ", \"code\":\"" + code + '\"' +
                 ", \"name\":\"" + name + '\"' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TypeOfBook that = (TypeOfBook) o;
+
+        if (code != null ? !code.equals(that.code) : that.code != null) return false;
+        return !(name != null ? !name.equals(that.name) : that.name != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = code != null ? code.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
     }
 }

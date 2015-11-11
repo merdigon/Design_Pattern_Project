@@ -20,7 +20,7 @@ public class BookDAO extends DatabaseDAO<Book>{
 
     public void save(Book book) {
 
-        getSession().save(book);
+        getSession().persist(book);
     }
 
     public Book get(int key) {

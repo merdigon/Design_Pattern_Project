@@ -17,7 +17,7 @@
     </button>
     <ul class="dropdown-menu">
         <li><a href="/admin">as Administrator</a></li>
-        <li><a href="/user">as User</a></li>
+        <li><a href="/userModel">as User</a></li>
     </ul>
 </div>
 
@@ -27,6 +27,7 @@
     <div class="panel-heading">Book operations</div>
     <div class="panel-body">
         <input type="button" class="btn btn-default" onclick="location.href='/showBook'" value="Show Books">
+        <input type="button" class="btn btn-default" onclick="location.href='/searchBook'" value="search Book">
 
     </div>
 </div>

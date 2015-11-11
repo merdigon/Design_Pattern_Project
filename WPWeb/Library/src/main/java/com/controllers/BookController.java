@@ -8,35 +8,21 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
 
 @Controller
-public class BookController {
-
-    @Autowired
-    private BookDAO bookDAO;
-
-    @Autowired
-    private AuthorDAO authorDAO;
-
-    @Autowired
-    private ConditionDAO conditionDAO;
-
-    @Autowired
-    private SectionDAO sectionDAO;
-
-    @Autowired
-    private TypeOfBookDAO typeOfBookDAO;
+public class BookController extends BaseController {
 
 
-    @RequestMapping(value = "/admin/addBook", method = RequestMethod.GET)
+    @RequestMapping(value = {"/admin/addBook", "/addBook"}, method = RequestMethod.GET)
     public ModelAndView addBook() {
         return new ModelAndView("addBook", "command", new Book());
     }
 
-    @RequestMapping(value = "/admin/saveBook", method = RequestMethod.POST)
+    @RequestMapping(value = {"/admin/saveBook", "/saveBook"}, method = RequestMethod.POST)
     @ResponseBody
     public String saveBook(@RequestParam("author") String authorData,
                            @RequestParam("title") String title,
@@ -44,70 +30,63 @@ public class BookController {
                            @RequestParam("section") String sectionData,
                            @RequestParam("typeOfBook") String typeData,
                            @RequestParam("year") int year) {
-        System.out.println("author" + authorData);
-        System.out.println("title" + title);
-        System.out.println("condition" + conditionData);
-        System.out.println("section" + sectionData);
-        System.out.println("type" + typeData);
-        System.out.println("year" + year);
 
+        String[] authorsString = authorData.split((","));
+        List<Author> authors = new ArrayList<Author>();
 
-        Author author =new Author(authorData.split(" ")[0], authorData.split("")[1], Integer.parseInt(authorData.split(" ")[2]));
-        authorDAO.save(author);
-        System.out.println("year" + authorData.split(" ")[0]+ " " + authorData.split("")[1] + " " + Integer.parseInt(authorData.split(" ")[2]));
+        for(String authorString : authorsString) {
+            Author author = new Author(authorString.split(" ")[0], authorString.split("")[1], Integer.parseInt(authorString.split(" ")[2]));
+            authors.add(author);
+            authorDAO.save(author);
+        }
+
 
         Condition condition = new Condition(Conditions.valueOf(conditionData));
         conditionDAO.save(condition);
-        System.out.println("year" + year);
 
         Section section = new Section(sectionData.split(" ")[0], sectionData.split(" ")[1]);
         sectionDAO.save(section);
-        System.out.println("year" + year);
 
         TypeOfBook typeOfBook = new TypeOfBook(typeData.split(" ")[0], typeData.split(" ")[1]);
         typeOfBookDAO.save(typeOfBook);
-        System.out.println("year" + year);
 
-        Book book = new Book(author,title,year,condition,typeOfBook,section);
+        Book book = new Book(authors,title,year,condition,typeOfBook,section);
 
         bookDAO.save(book);
 
         return "zapisalo";
     }
 
-    @RequestMapping(value = "/showBook", method = RequestMethod.GET)
+    @RequestMapping(value ={"/showBook","/user/showBook", "/admin/showBook",} , method = RequestMethod.GET)
     public String showBook() {
         return "showBook";
     }
 
-    @RequestMapping(value = "/showBooksAjax", method = RequestMethod.POST, headers = "Accept=application/json")
+    @RequestMapping(value = {"/showBooksAjax", "/user/showBooksAjax", "/admin/showBooksAjax"}, method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
     public List<Book> showBooksAjax() {
         System.out.println("table "+bookDAO.getAll());
         return bookDAO.getAll();
     }
 
-    @RequestMapping(value = "/user/showBook", method = RequestMethod.GET)
-    public String showBooksUser() {
-        return "showBook";
+    @RequestMapping(value = "/searchBook", method = RequestMethod.GET)
+    public String searchBook() {
+            return "searchBooks";
     }
 
-    @RequestMapping(value = "/user/showBooksAjax", method = RequestMethod.POST, headers = "Accept=application/json")
+    @RequestMapping(value = "/searchBookAjax", method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
-    public List<Book> showBooksAjaxUser() {
-        System.out.println("table "+bookDAO.getAll());
-        return bookDAO.getAll();
+    public List<Book> searchBookAjax(@RequestParam("column") String column,
+                           @RequestParam("value") String value){
+        List<Book> books = new ArrayList<Book>();
+        if(column=="author"){
+
+        }else if(column.equals("title")){
+           books = bookDAO.findByColumn(column, value);
+        }
+
+        System.out.println(books.toString());
+        return books;
     }
 
-    @RequestMapping(value = "/admin/showBook", method = RequestMethod.GET)
-    public String showBooks() {
-        return "showBook";
-    }
-
-    @RequestMapping(value = "/admin/showBooksAjax", method = RequestMethod.POST, headers = "Accept=application/json")
-    @ResponseBody
-    public List<Book> showBooksAjaxAdmin() {
-        System.out.println("table "+bookDAO.getAll());
-        return bookDAO.getAll();
-    }
 }

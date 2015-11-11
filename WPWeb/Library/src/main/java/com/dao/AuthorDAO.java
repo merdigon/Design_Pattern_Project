@@ -33,5 +33,11 @@ public class AuthorDAO extends DatabaseDAO<Author> {
 
     }
 
+    public List<Author> findByColumn(String column, String expression){
+
+        return getSession().createQuery("from author where " + column + " LIKE lower('%" + expression +"%')").list();
+
+    }
+
 
 }

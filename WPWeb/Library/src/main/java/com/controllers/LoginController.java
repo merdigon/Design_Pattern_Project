@@ -17,11 +17,8 @@ import org.springframework.stereotype.Controller;
  */
 
 
-
-
-
 @Controller
-public class LoginController {
+public class LoginController extends BaseController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String index(ModelMap model) {
@@ -42,13 +39,18 @@ public class LoginController {
         return "user";
     }
 
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public String loginPage() {
+        return "login";
+    }
+
     @RequestMapping(value="/logout", method = RequestMethod.GET)
     public String logoutPage (HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null){
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
-        return "/";
+        return "redirect:/login?logout";
     }
 
     @RequestMapping(value = "/Access_Denied", method = RequestMethod.GET)

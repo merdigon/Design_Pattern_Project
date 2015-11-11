@@ -4,6 +4,7 @@ package com.models;
 
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -13,8 +14,8 @@ public class Book extends DatabaseObject{
     @Id
     @GeneratedValue
     private int id;
-    @OneToOne
-    private Author author;
+    @OneToMany
+    private List<Author> authors = new ArrayList<Author>();
     private String title;
     private int year;
     @OneToOne
@@ -24,12 +25,12 @@ public class Book extends DatabaseObject{
     @OneToOne
     private Section section;
 
-    public Author getAuthor() {
-        return author;
+    public List<Author> getAuthor() {
+        return authors;
     }
 
-    public void setAuthor(Author author) {
-        this.author = author;
+    public void setAuthor(List<Author> author) {
+        this.authors = author;
     }
 
     public int getId() {
@@ -80,8 +81,8 @@ public class Book extends DatabaseObject{
         this.section = section;
     }
 
-    public Book(Author author, String title, int year, Condition condition, TypeOfBook typeOfBook, Section section) {
-        this.author = author;
+    public Book(List<Author> authors, String title, int year, Condition condition, TypeOfBook typeOfBook, Section section) {
+        this.authors = authors;
         this.title = title;
         this.year = year;
         this.condition = condition;
@@ -95,7 +96,7 @@ public class Book extends DatabaseObject{
     public String toString() {
         return "{" +
                 "\"id\":\"" + id  + '\"' +
-                ", \"author\":\"" + author + '\"' +
+                ", \"author\":\"" + authors + '\"' +
                 ", \"title\":\"" + title + '\"' +
                 ", \"year\":\"" + year + '\"' +
                 ", \"condition\":\"" + condition + '\"' +

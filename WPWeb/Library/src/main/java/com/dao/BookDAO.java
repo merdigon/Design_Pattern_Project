@@ -37,4 +37,11 @@ public class BookDAO extends DatabaseDAO<Book>{
 
     }
 
+    public List<Book> findByColumn(String column, String expression){
+
+        return getSession().createQuery("from Book where " + column + " LIKE lower('%" + expression +"%')").list();
+
+    }
+
+
 }

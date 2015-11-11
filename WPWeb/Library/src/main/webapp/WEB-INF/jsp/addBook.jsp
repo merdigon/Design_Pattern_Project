@@ -10,7 +10,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/saveBook",
+                url: "/admin/saveBook",
                 data: {
                     "author": $("#author").val(),
                     "title": $("#title").val(),

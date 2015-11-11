@@ -27,7 +27,7 @@
   <div class="panel-heading">Book operations</div>
   <div class="panel-body">
 
-    <input type="button" class="btn btn-default" onclick="location.href='/user/showBook'" value="Show Books">
+    <input type="button" class="btn btn-default" onclick="location.href='/userModel/showBook'" value="Show Books">
 
   </div>
 </div>

@@ -9,7 +9,7 @@ public class CopyStatus extends DatabaseObject
 {
         public Copy copy;
 
-        public User rentBy;
+        public UserModel rentBy;
 
         public Date rentTime;
 

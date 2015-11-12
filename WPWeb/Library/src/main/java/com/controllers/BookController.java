@@ -40,7 +40,6 @@ public class BookController extends BaseController {
             authors.add(authorDAO.saveIfNotInDB(author));
         }
 
-
         Condition condition = conditionDAO.saveIfNotInDB(new Condition(Conditions.valueOf(conditionData)));
         Section section = sectionDAO.saveIfNotInDB(new Section(sectionData.split(" ")[0], sectionData.split(" ")[1]));
         TypeOfBook typeOfBook = typeOfBookDAO.saveIfNotInDB(new TypeOfBook(typeData.split(" ")[0], typeData.split(" ")[1]));
@@ -68,26 +67,47 @@ public class BookController extends BaseController {
             return "searchBooks";
     }
 
-    @RequestMapping(value = "/searchBookAjax", method = RequestMethod.POST, headers = "Accept=application/json")
+    @RequestMapping(value = "/searchBook", method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
-    public List<Book> searchBookAjax(@RequestParam("column") String column,
-                           @RequestParam("value") String value){
-        List<Book> books = new ArrayList<Book>();
-        if(column.equals("author")){
+    public Collection<Book> searchBookAjax(@RequestParam("searchType") String searchType,
+                                     @RequestParam("authorName") String authorName,
+                                     @RequestParam("authorSurname") String authorSurname,
+                                     @RequestParam("title") String title,
+                                     @RequestParam("year") String year,
+                                     @RequestParam("condition") String condition){
+        if(searchType.equals("author")){
+            List<Book> books = new ArrayList<Book>();
+            for(Author author : authorDAO.get(authorName, authorSurname)){
+                books.addAll(bookDAO.getAllByAuthor(author));
+            }
+            return new LinkedHashSet<>(books);
 
-        }else if(column.equals("title")){
-           books = bookDAO.findByColumn(column, value);
+        }else if(searchType.equals("title")){
+           return bookDAO.findByColumn("title", title);
+        }else if(searchType.equals("year")){
+            return bookDAO.findByColumn("year", year);
+        }else if(searchType.equals("condition")){
+            return bookDAO.getAllByCondition(new Condition(Conditions.valueOf(condition)));
         }
-
-        System.out.println(books.toString());
-        return books;
+        return null;
     }
+
 
     @RequestMapping(value = {"/showBooksJsp"}, method = RequestMethod.GET)
     public String showBooksAjax(Model model) {
         model.addAttribute("books",bookDAO.getAll());
         return "showBook";
 
+    }
+
+    @RequestMapping(value = "/borrowBook", method = RequestMethod.POST)
+    @ResponseBody
+    public String searchBookAjax(@RequestParam("id") String id){
+        Book book = bookDAO.get(Integer.parseInt(id));
+        Condition condition = new Condition(Conditions.valueOf("Borrowed"));
+        condition = conditionDAO.saveIfNotInDB(condition);
+        bookDAO.changeCondition(book, condition);
+        return "success";
     }
 
 }

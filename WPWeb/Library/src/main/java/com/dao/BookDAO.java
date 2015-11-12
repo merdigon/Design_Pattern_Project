@@ -2,13 +2,11 @@ package com.dao;
 
 import com.models.Author;
 import com.models.Book;
-import jdk.nashorn.api.scripting.JSObject;
+import com.models.Condition;
 import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,8 +38,31 @@ public class BookDAO extends DatabaseDAO<Book>{
     public List<Book> findByColumn(String column, String expression){
 
         return getSession().createQuery("from Book where " + column + " LIKE lower('%" + expression +"%')").list();
-
     }
 
+    public List<Book> getAllByAuthor(Author author){
+        List<Book> books = new ArrayList<Book>();
+        for(Book book: getAll()){
+            if(book.getAuthors().stream().filter(x->x.equals(author)).findAny().isPresent())
+                books.add(book);
+        }
 
+        return books;
+    }
+
+    public List<Book> getAllByCondition(Condition condition){
+        List<Book> books = new ArrayList<Book>();
+        for(Book book: getAll()){
+            if(book.getAuthors().stream().filter(x->x.equals(condition)).findAny().isPresent())
+                books.add(book);
+        }
+
+        return books;
+    }
+    public void changeCondition(Book book, Condition condition){
+        book.setCondition(condition);
+        getSession().update(book);
+
+
+    }
 }

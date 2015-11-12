@@ -43,9 +43,12 @@ public class AuthorDAO extends DatabaseDAO<Author> {
 
     }
 
-    public List<Author> findByColumn(String column, String expression) {
+    public List<Author> get(String name, String surname) {
 
-        return getSession().createQuery("from author where " + column + " LIKE lower('%" + expression + "%')").list();
+        Query query = getSession().createQuery("from Author where name LIKE lower(?) and surname LIKE lower(?)");
+        query.setString(0, "%" + name + "%");
+        query.setString(1, "%" + surname + "%");
+        return query.list();
 
     }
 
@@ -53,6 +56,7 @@ public class AuthorDAO extends DatabaseDAO<Author> {
 
         return getAll().stream().filter(a -> a.equals(author)).findFirst();
     }
+
 
 
 }

@@ -7,16 +7,25 @@
     <title>Spring MVC Form Handling</title>
 
     <script type="text/javascript">
-        function search(column) {
+        var searchType="";
+
+        function search(type) {
             $.ajax({
                 type: "POST",
-                url: "/searchBookAjax",
+                url: "/searchBook",
                 data: {
-                    "column": column,
-                    "value": $('#param').val()
+                    "searchType": type,
+                    "authorName": $("#authorName").val(),
+                    "authorSurname": $("#authorSurname").val(),
+                    "authorYear": $("#authorYear").val(),
+                    "title": $("#title").val(),
+                    "year": $("#year").val(),
+                    "condition": $("#condition").val()
                 },
                 dataType: "json",
                 success: function (response) {
+                    searchType=type;
+                    console.log(response);
                     $("#displayTable").html(createTable(response));
                 },
 
@@ -30,28 +39,61 @@
         }
 
 
-
-        function createTable(json){
+        function createTable(json) {
             var myTemplate = $.templates("#BookTmpl");
             var html = "<table class='table' >"
-            html += '<tr><th>#</th><th>Author</th><th>Title</th><th>Year</th><th>condition_id</th><th>typeOfBook_id</th><th>section_id</th></tr>';
-            html+=myTemplate.render(json);
-            html +="</table>";
+            html += '<tr><th>Title</th><th>Year</th><th>Author</th><th>condition</th><th>typeOfBook</th><th>section</th><th>action</th></tr>';
+            html += myTemplate.render(json);
+            html += "</table>";
             console.log(html);
             return html;
+        }
+
+        function borrow(id){
+            $.ajax({
+            type: "POST",
+            url: "/borrowBook",
+            data: {
+                "id": id
+            },
+            dataType: "text",
+            success: function (response) {
+                alert("Contgratulation! You borrow this book :)");
+                search(searchType);
+
+            },
+
+            error: function (e) {
+                alert("Oops! Something has gone wrong")
+                search(searchType);
+
+            }
+        });
         }
     </script>
 
     <script id="BookTmpl" type="text/x-jsrender">
         <tr>
-            <td>{{:id}}</td>
-            <td>{{:author.id}}</td>
+
             <td>{{:title}}</td>
             <td>{{:year}}</td>
-            <td>{{:condition.id}}</td>
-            <td>{{:typeOfBook.id}}</td>
-            <td>{{:section.id}}</td>
+            <td>
+            {{for authors}}
+                {{:name}} {{:surname}} {{:bornYear}} <br>
+            {{/for}}
+            </td>
+            <td id='condition{{:id}}'>{{:condition.condition}}</td>
+            <td>{{:typeOfBook.name}}</td>
+            <td>{{:section.name}}</td>
+            {{if condition.condition=='Available'}}
+                <td id="borrowButton{{:id}}"><button class="btn btn-default" onclick="borrow({{:id}})">borrow</button></td>
+            {{else}}
+                <td>not available</td>
+                {{/if}}
         </tr>
+
+
+
     </script>
 
 
@@ -64,24 +106,42 @@
         <div class="panel-body">
             <button class="btn btn-default" onclick="window.location.href='/'">goToMainPage</button>
 
-            <div class="col-lg-6">
-                <div class="input-group">
-                    <input type="text" class="form-control" aria-label="...", id="param">
-                    <div class="input-group-btn">
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Find<span class="caret"></span></button>
-                        <ul class="dropdown-menu dropdown-menu-right">
-                            <li onclick="search('title')"><a>by title</a></li>
-                            <li onclick="search('author')"><a>by author</a></li>
-                        </ul>
-                    </div><!-- /btn-group -->
-                </div><!-- /input-group -->
-            </div><!-- /.col-lg-6 -->
-            <div id="displayTable">
+                    <div class="form-inline">
 
+                        by Author:
+                        <input type="text" id="authorName" class="form-control" placeholder="name">
+                        <input type="text" id="authorSurname" class="form-control" placeholder="surname">
+                        <button onclick="search('author')" class="btn btn-default">Search</button>
+                    </div>
+
+                    <div class="form-inline">
+
+                        by Title:
+                        <input type="text" id="title" class="form-control" placeholder="title">
+                        <button onclick="search('title')" class="btn btn-default">Search</button>
+                    </div>
+
+
+                    <div class="form-inline">
+
+                        by Year:
+                        <input type="text" id="year" class="form-control" placeholder="year">
+                        <button onclick="search('year')" class="btn btn-default">Search</button>
+                    </div>
+
+
+                    <div class="form-inline">
+
+                        by Condition:
+                        <input type="text" id="condition" class="form-control" placeholder="condition">
+                        <button onclick="search('condition')" class="btn btn-default">Search</button>
+                    </div>
+                </div>
+        <div id="displayTable">
+
+        </div>
     </div>
+
 </div>
-
-
-
 </body>
 </html>

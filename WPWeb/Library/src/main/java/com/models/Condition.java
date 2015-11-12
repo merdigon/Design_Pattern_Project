@@ -16,9 +16,9 @@ public class Condition extends DatabaseObject
     @GeneratedValue
     private int id;
     private Conditions condition;
-
-    @OneToMany(fetch = FetchType.EAGER)
-    private List<Book> books = new ArrayList<>();
+//
+//    @OneToMany(fetch = FetchType.EAGER)
+//    private List<Book> books = new ArrayList<>();
 
     public String ToString()
     {
@@ -57,13 +57,13 @@ public class Condition extends DatabaseObject
     }
     public Condition(){}
 
-    public List<Book> getBooks() {
-        return books;
-    }
-
-    public void setBooks(List<Book> books) {
-        this.books = books;
-    }
+//    public List<Book> getBooks() {
+//        return books;
+//    }
+//
+//    public void setBooks(List<Book> books) {
+//        this.books = books;
+//    }
 
     @Override
     public String toString() {

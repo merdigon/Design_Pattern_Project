@@ -7,7 +7,7 @@ package com.models;
 public enum Conditions {
     Available,
 
-    Borrow,
+    Borrowed,
 
     Missing,
 

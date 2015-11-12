@@ -21,16 +21,16 @@ public class TypeOfBook extends DatabaseObject
     private String name;
 
 
-    @OneToMany(fetch = FetchType.EAGER)
-    private List<Book> books = new ArrayList<>();
+//    @OneToMany(fetch = FetchType.EAGER)
+//    private List<Book> books = new ArrayList<>();
 
-    public List<Book> getBooks() {
-        return books;
-    }
-
-    public void setBooks(List<Book> books) {
-        this.books = books;
-    }
+//    public List<Book> getBooks() {
+//        return books;
+//    }
+//
+//    public void setBooks(List<Book> books) {
+//        this.books = books;
+//    }
 
     public int getId() {
         return id;

@@ -4,9 +4,12 @@ package com.models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,7 +25,7 @@ public class Book extends DatabaseObject{
 
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name="BOOK_AUTHOR", joinColumns = @JoinColumn(name="BOOK_ID"),
+    @JoinTable(name="BOOK_AUTHOR", joinColumns = @JoinColumn(name="BOOK_ID", updatable = false, insertable = false),
             inverseJoinColumns = @JoinColumn(name="AUTHOR_ID"))
     private List<Author> authors = new ArrayList<Author>();
     private String title;
@@ -111,6 +114,32 @@ public class Book extends DatabaseObject{
 
     public Book(){}
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Book book = (Book) o;
+
+        if (year != book.year) return false;
+        if (authors != null ? !authors.equals(book.authors) : book.authors != null) return false;
+        if (title != null ? !title.equals(book.title) : book.title != null) return false;
+        if (condition != null ? !condition.equals(book.condition) : book.condition != null) return false;
+        if (typeOfBook != null ? !typeOfBook.equals(book.typeOfBook) : book.typeOfBook != null) return false;
+        return !(section != null ? !section.equals(book.section) : book.section != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = authors != null ? authors.hashCode() : 0;
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + year;
+        result = 31 * result + (condition != null ? condition.hashCode() : 0);
+        result = 31 * result + (typeOfBook != null ? typeOfBook.hashCode() : 0);
+        result = 31 * result + (section != null ? section.hashCode() : 0);
+        return result;
+    }
 
     @Override
     public String toString() {

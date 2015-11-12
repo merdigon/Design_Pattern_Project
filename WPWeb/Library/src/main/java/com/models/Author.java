@@ -3,9 +3,7 @@ package com.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Szymon on 2015-10-13.
@@ -22,8 +20,8 @@ public class Author extends DatabaseObject {
 
         private int bornYear;
 
-        @ManyToMany(fetch = FetchType.EAGER)
-        private Set<Book> books = new HashSet<Book>();
+//        @ManyToMany(fetch = FetchType.EAGER)
+//        private List<Book> books = new ArrayList<>();
 
         public int getId() {
                 return id;
@@ -33,13 +31,13 @@ public class Author extends DatabaseObject {
                 this.id = id;
         }
 
-        public Set<Book> getBooks() {
-                return books;
-        }
-
-        public void setBooks(Set<Book> books) {
-                this.books = books;
-        }
+//        public List<Book> getBooks() {
+//                return books;
+//        }
+//
+//        public void setBooks(List<Book> books) {
+//                this.books = books;
+//        }
 
         public String getName() {
                 return name;
@@ -74,7 +72,7 @@ public class Author extends DatabaseObject {
         public Author() {
         }
 
-        ;
+
 
         @Override
         public String toString() {
@@ -83,7 +81,7 @@ public class Author extends DatabaseObject {
                         ", \"name\":\"" + name + '\"' +
                         ", \"surname\":\"" + surname + '\"' +
                         ", \"bornYear\":\"" + bornYear + '\"' +
-                        ", \"books\":" + books +
+//                        ", \"books\":" + books +
                         '}';
         }
 

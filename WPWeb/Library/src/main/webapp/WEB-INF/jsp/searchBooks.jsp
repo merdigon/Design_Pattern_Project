@@ -1,3 +1,4 @@
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <html>
 <head>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
@@ -10,9 +11,10 @@
         var searchType="";
 
         function search(type) {
+            console.log('in search');
             $.ajax({
                 type: "POST",
-                url: "/searchBook",
+                url: "/searchBooks",
                 data: {
                     "searchType": type,
                     "authorName": $("#authorName").val(),
@@ -100,7 +102,7 @@
 </head>
 <body>
 <div class="panel panel-primary">
-    <div class="panel-heading">Add book</div>
+    <div class="panel-heading">Search book</div>
 
     <div id="form" class="'form-group" style="display: inline">
         <div class="panel-body">
@@ -111,6 +113,7 @@
                         by Author:
                         <input type="text" id="authorName" class="form-control" placeholder="name">
                         <input type="text" id="authorSurname" class="form-control" placeholder="surname">
+                        <input type="text" id="authorYear" class="form-control" placeholder="bornYear">
                         <button onclick="search('author')" class="btn btn-default">Search</button>
                     </div>
 

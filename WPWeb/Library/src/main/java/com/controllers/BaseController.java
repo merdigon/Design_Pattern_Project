@@ -21,4 +21,10 @@ abstract class BaseController {
 
     @Autowired
     TypeOfBookDAO typeOfBookDAO;
+
+    @Autowired
+    UserModelDAO userModelDAO;
+
+    @Autowired
+    UserRoleDAO userRoleDAO;
 }

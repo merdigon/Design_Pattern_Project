@@ -43,11 +43,12 @@ public class AuthorDAO extends DatabaseDAO<Author> {
 
     }
 
-    public List<Author> get(String name, String surname) {
+    public List<Author> get(String name, String surname, String bornYear) {
 
-        Query query = getSession().createQuery("from Author where name LIKE lower(?) and surname LIKE lower(?)");
+        Query query = getSession().createQuery("from Author where name LIKE lower(?) and surname LIKE lower(?) and CAST(bornYear as text) like lower(?)");
         query.setString(0, "%" + name + "%");
         query.setString(1, "%" + surname + "%");
+        query.setString(2, "%" + bornYear + "%");
         return query.list();
 
     }

@@ -35,6 +35,7 @@ public class BookDAO extends DatabaseDAO<Book>{
 
     }
 
+    //only to column type String
     public List<Book> findByColumn(String column, String expression){
 
         return getSession().createQuery("from Book where " + column + " LIKE lower('%" + expression +"%')").list();
@@ -50,10 +51,14 @@ public class BookDAO extends DatabaseDAO<Book>{
         return books;
     }
 
+    public List<Book> getAllByYear(String year){
+        return getSession().createQuery("from Book where CAST(year as text) Like '%" + year + "%'").list();
+    }
+
     public List<Book> getAllByCondition(Condition condition){
         List<Book> books = new ArrayList<Book>();
         for(Book book: getAll()){
-            if(book.getAuthors().stream().filter(x->x.equals(condition)).findAny().isPresent())
+            if(book.getCondition().equals(condition))
                 books.add(book);
         }
 
@@ -62,7 +67,5 @@ public class BookDAO extends DatabaseDAO<Book>{
     public void changeCondition(Book book, Condition condition){
         book.setCondition(condition);
         getSession().update(book);
-
-
     }
 }

@@ -49,35 +49,34 @@ public class BookController extends BaseController {
         return "zapisalo";
     }
 
-    @RequestMapping(value ={"/showBook","/user/showBook", "/admin/showBook",} , method = RequestMethod.GET)
+    @RequestMapping(value ={"/showBooks","/user/showBooks", "/admin/showBooks",} , method = RequestMethod.GET)
     public String showBook() {
         return "showBook";
     }
 
-    @RequestMapping(value = {"/showBooksAjax", "/user/showBooksAjax", "/admin/showBooksAjax"}, method = RequestMethod.POST, headers = "Accept=application/json")
+    @RequestMapping(value = {"/showBooks", "/user/showBooks", "/admin/showBooks"}, method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
     public List<Book> showBooksAjax() {
-      //  System.out.println("table "+bookDAO.getAll());
        return bookDAO.getAll();
-
     }
 
-    @RequestMapping(value = "/searchBook", method = RequestMethod.GET)
+    @RequestMapping(value = "/searchBooks", method = RequestMethod.GET)
     public String searchBook() {
             return "searchBooks";
     }
 
-    @RequestMapping(value = "/searchBook", method = RequestMethod.POST, headers = "Accept=application/json")
+    @RequestMapping(value = "/searchBooks", method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
     public Collection<Book> searchBookAjax(@RequestParam("searchType") String searchType,
                                      @RequestParam("authorName") String authorName,
                                      @RequestParam("authorSurname") String authorSurname,
+                                     @RequestParam("authorYear") String authorYear,
                                      @RequestParam("title") String title,
                                      @RequestParam("year") String year,
                                      @RequestParam("condition") String condition){
         if(searchType.equals("author")){
             List<Book> books = new ArrayList<Book>();
-            for(Author author : authorDAO.get(authorName, authorSurname)){
+            for(Author author : authorDAO.get(authorName, authorSurname, authorYear)){
                 books.addAll(bookDAO.getAllByAuthor(author));
             }
             return new LinkedHashSet<>(books);
@@ -85,7 +84,7 @@ public class BookController extends BaseController {
         }else if(searchType.equals("title")){
            return bookDAO.findByColumn("title", title);
         }else if(searchType.equals("year")){
-            return bookDAO.findByColumn("year", year);
+            return bookDAO.getAllByYear(year);
         }else if(searchType.equals("condition")){
             return bookDAO.getAllByCondition(new Condition(Conditions.valueOf(condition)));
         }
@@ -109,5 +108,6 @@ public class BookController extends BaseController {
         bookDAO.changeCondition(book, condition);
         return "success";
     }
+
 
 }

@@ -4,6 +4,8 @@ import com.dao.*;
 import com.models.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +47,8 @@ public class BookController extends BaseController {
         TypeOfBook typeOfBook = typeOfBookDAO.saveIfNotInDB(new TypeOfBook(typeData.split(" ")[0], typeData.split(" ")[1]));
         Book book = new Book(authors,title,year,condition,typeOfBook,section);
         bookDAO.save(book);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userModelDAO.addBook(userDetails.getUsername(), book);
 
         return "zapisalo";
     }
@@ -94,7 +98,7 @@ public class BookController extends BaseController {
 
     @RequestMapping(value = {"/showBooksJsp"}, method = RequestMethod.GET)
     public String showBooksAjax(Model model) {
-        model.addAttribute("books",bookDAO.getAll());
+        model.addAttribute("books", bookDAO.getAll());
         return "showBook";
 
     }
@@ -108,6 +112,9 @@ public class BookController extends BaseController {
         bookDAO.changeCondition(book, condition);
         return "success";
     }
+
+
+
 
 
 }

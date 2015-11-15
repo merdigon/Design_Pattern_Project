@@ -19,7 +19,7 @@
                 url: "/registration",
                 data: {
                     "login": $("#login").val(),
-                    "password": $("#pasword").val(),
+                    "password": $("#password").val(),
                     "name": $("#name").val(),
                     "surname": $("#surname").val(),
                     "mail": $("#mail").val()
@@ -50,7 +50,7 @@
 
 
                 <input type="text" id="login" class="form-control" placeholder="Login">
-                <input type="text" id="password" class="form-control" placeholder="Password">
+                <input type="password" id="password" class="form-control" placeholder="Password">
                 <input type="text" id="mail" class="form-control" placeholder="e-mail adress">
                 <input type="text" id="name" class="form-control" placeholder="name">
                 <input type="text" id="surname" class="form-control" placeholder="surname">

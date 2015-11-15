@@ -31,10 +31,8 @@ public class UserModel extends DatabaseObject
         private String surname;
 
 
-
-        @Column(nullable = false)
+        @Column(unique = true, nullable = false)
         private String mail;
-
 
 
         @ManyToMany(fetch = FetchType.EAGER)
@@ -43,9 +41,9 @@ public class UserModel extends DatabaseObject
                         inverseJoinColumns = {@JoinColumn(name="userProfileId")})
 
         private Set<UserRole> userRole = new HashSet<UserRole>();
-//        @OneToMany
-//        @NotFound(action = NotFoundAction.IGNORE)
-//        private List<Book> books;
+        @OneToMany
+        @NotFound(action = NotFoundAction.IGNORE)
+        private List<Book> books;
 
 //        private String code;
 //
@@ -63,13 +61,21 @@ public class UserModel extends DatabaseObject
                 this.id = id;
         }
 
-//        public List<Book> getBooks() {
-//                return books;
-//        }
+        public List<Book> getBooks() {
+                return books;
+        }
 
-//        public void setBooks(List<Book> books) {
-//                this.books = books;
-//        }
+        public void setBooks(List<Book> books) {
+                this.books = books;
+        }
+
+        public void addBook(Book book){
+                this.books.add(book);
+        }
+
+        public void removeBook(Book book){
+                this.books.remove(book);
+        }
 
 //        public String getCode() {
 //                return code;
@@ -145,11 +151,17 @@ public class UserModel extends DatabaseObject
 
 
 
+
         @Override
         public String toString() {
-                return "UserModel [id=" + id + ", login=" + login + ", password=" + password
-                        + ", Name=" + name + ", surname=" + surname
-                        + "]";
+                return "{" +
+                        "\"id\":\"" + id  + '\"' +
+                        ", \"login\":\"" + login + '\"'+
+                        ", \"name\":\"" + name + '\"' +
+                        ", \"surname\":\"" + surname + '\"' +
+                        ", \"mail\":\"" + mail + '\"' +
+                        ", \"books\":" + books  +
+                        '}';
         }
 
         @Override

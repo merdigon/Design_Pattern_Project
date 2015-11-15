@@ -72,10 +72,10 @@ public class LoginController extends BaseController {
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     @ResponseBody
     public String addUser(@RequestParam("login") String login,
-                        @RequestParam("password") String password,
-                        @RequestParam("name") String name,
-                        @RequestParam("surname") String surname,
-                        @RequestParam("mail") String mail) {
+                          @RequestParam("password") String password,
+                          @RequestParam("name") String name,
+                          @RequestParam("surname") String surname,
+                          @RequestParam("mail") String mail) {
         UserModel user = new UserModel();
         user.setLogin(login);
         user.setPassword(password);
@@ -104,4 +104,5 @@ public class LoginController extends BaseController {
         }
         return userName;
     }
+
 }

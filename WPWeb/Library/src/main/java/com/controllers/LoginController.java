@@ -71,7 +71,8 @@ public class LoginController extends BaseController {
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     @ResponseBody
-    public String addUser(@RequestParam("login") String login,
+    public String addUser(@RequestParam("role") String userRole,
+                          @RequestParam("login") String login,
                           @RequestParam("password") String password,
                           @RequestParam("name") String name,
                           @RequestParam("surname") String surname,
@@ -83,7 +84,7 @@ public class LoginController extends BaseController {
         user.setSurname(surname);
         user.setMail(mail);
         UserRole role = new UserRole();
-        role.setType("USER");
+        role.setType(userRole);
         userRoleDAO.save(role);
         Set<UserRole> userRoleSet = new HashSet<>();
         userRoleSet.add(role);
@@ -92,6 +93,25 @@ public class LoginController extends BaseController {
         return "Success";
     }
 
+//    uruchomic tylko raz, dodaje konto admina
+    @RequestMapping(value = "/addAdmin", method = RequestMethod.GET)
+    @ResponseBody
+    public String addAdmin() {
+        UserModel user = new UserModel();
+        user.setLogin("admin");
+        user.setPassword("password");
+        user.setName("adminName");
+        user.setSurname("adminSurname");
+        user.setMail("adminMail");
+        UserRole role = new UserRole();
+        role.setType("ADMIN");
+        userRoleDAO.save(role);
+        Set<UserRole> userRoleSet = new HashSet<>();
+        userRoleSet.add(role);
+        user.setUserRole(userRoleSet);
+        userModelDAO.save(user);
+        return "Success";
+    }
 
     private String getPrincipal(){
         String userName = null;

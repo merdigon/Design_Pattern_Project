@@ -1,17 +1,14 @@
 package com.controllers;
 
-import com.dao.*;
 import com.models.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.lang.annotation.Annotation;
 import java.util.*;
 
 
@@ -47,9 +44,6 @@ public class BookController extends BaseController {
         TypeOfBook typeOfBook = typeOfBookDAO.saveIfNotInDB(new TypeOfBook(typeData.split(" ")[0], typeData.split(" ")[1]));
         Book book = new Book(authors,title,year,condition,typeOfBook,section);
         bookDAO.save(book);
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        userModelDAO.addBook(userDetails.getUsername(), book);
-
         return "zapisalo";
     }
 
@@ -110,6 +104,8 @@ public class BookController extends BaseController {
         Condition condition = new Condition(Conditions.valueOf("Borrowed"));
         condition = conditionDAO.saveIfNotInDB(condition);
         bookDAO.changeCondition(book, condition);
+        String login = SecurityContextHolder.getContext().getAuthentication().getName();
+        userModelDAO.addBook(login, book);
         return "success";
     }
 

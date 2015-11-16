@@ -73,24 +73,8 @@
     </script>
 </head>
 <body onload="view('userDetails')">
-
-<sec:authorize access="hasAnyRole('ADMIN', 'USER')">
-    <sec:authentication var="principal" property="principal"/>
-
-    <div class="btn-group" style="position: absolute; top: 10; right: 100;">
-        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false">
-            Log in as ${principal.username} <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-            <li><a href="/userProfile">Show profile</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
-    </div>
-</sec:authorize>
-
+<h2>Library</h2>
+<%@include file="partOfPage/buttons/loginRegistrationButton.jsp"%>
 
 <div class="panel panel-primary">
     <div class="panel-heading">User profile</div>

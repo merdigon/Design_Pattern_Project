@@ -28,4 +28,6 @@ abstract class DatabaseDAO<T> {
     public abstract  T get(int key);
     public abstract List<? extends T> getAll();
 
+
+
 }

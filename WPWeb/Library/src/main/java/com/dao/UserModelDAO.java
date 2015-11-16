@@ -4,6 +4,7 @@ import com.models.Book;
 import com.models.UserModel;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
@@ -15,6 +16,7 @@ import java.util.Optional;
  */
 @Repository
 public class UserModelDAO extends DatabaseDAO<UserModel>{
+
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -47,6 +49,7 @@ public class UserModelDAO extends DatabaseDAO<UserModel>{
         getSession().update(user);
     }
 
+
     public void removeBook(UserModel user, Book book){
         user.removeBook(book);
         getSession().update(user);
@@ -57,6 +60,7 @@ public class UserModelDAO extends DatabaseDAO<UserModel>{
         List<UserModel> list = query.list();
         return list;
     }
+
 
     public UserModel getUser(String login){
         Query query = getSession().createQuery("from userModel where login='" + login + "'");

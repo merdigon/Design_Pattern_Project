@@ -5,6 +5,7 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,15 +44,13 @@ public class UserModel extends DatabaseObject
         private Set<UserRole> userRole = new HashSet<UserRole>();
         @OneToMany
         @NotFound(action = NotFoundAction.IGNORE)
-        private List<Book> books;
+        private List<Book> books= new ArrayList<>();
 
 //        private String code;
 //
 
-//        private double debt;
+        private double debt=0;
 
-//        @OneToMany
-//        private  List<UserRole> userRole;
 
         public int getId() {
                 return id;
@@ -73,17 +72,16 @@ public class UserModel extends DatabaseObject
                 this.books.add(book);
         }
 
-        public void removeBook(Book book){
-                this.books.remove(book);
+        public boolean removeBook(Book book){
+
+                for(int i=0; i<this.books.size(); i++){
+                        if(this.books.get(i).getId() == book.getId()) {
+                                this.books.remove(i);
+                                return true;
+                        }
+                }
+                return false;
         }
-
-//        public String getCode() {
-//                return code;
-//        }
-
-//        public void setCode(String code) {
-//                this.code = code;
-//        }
 
         public String getLogin() {
                 return login;
@@ -117,22 +115,6 @@ public class UserModel extends DatabaseObject
                 this.surname = surname;
         }
 
-//        public double getDebt() {
-//                return debt;
-//        }
-
-//        public void setDebt(double debt) {
-//                this.debt = debt;
-//        }
-
-//        public List<UserRole> getUserRole() {
-//                return userRole;
-//        }
-
-//        public void setUserRole(List<UserRole> userRole) {
-//                this.userRole = userRole;
-//        }
-
         public String getMail() {
                 return mail;
         }
@@ -149,8 +131,13 @@ public class UserModel extends DatabaseObject
                 this.userRole = userRole;
         }
 
+        public double getDebt() {
+                return debt;
+        }
 
-
+        public void setDebt(double debt) {
+                this.debt = debt;
+        }
 
         @Override
         public String toString() {
@@ -161,6 +148,7 @@ public class UserModel extends DatabaseObject
                         ", \"surname\":\"" + surname + '\"' +
                         ", \"mail\":\"" + mail + '\"' +
                         ", \"books\":" + books  +
+                        ", \"debt\":\"" + debt  + '\"' +
                         '}';
         }
 

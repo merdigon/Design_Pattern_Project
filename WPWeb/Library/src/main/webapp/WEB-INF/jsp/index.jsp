@@ -17,14 +17,23 @@
     <div class="panel-heading">Book operations</div>
     <div class="panel-body">
         <sec:authorize access="hasRole('ADMIN')">
-            <input type="button" class="btn btn-default" onclick="location.href='/admin/addBook'" value="AddBook">
+
         </sec:authorize>
         <input type="button" class="btn btn-default" onclick="location.href='/showBooks'" value="Show Books">
         <input type="button" class="btn btn-default" onclick="location.href='/searchBooks'" value="search Book">
 
     </div>
 </div>
+<sec:authorize access="hasRole('ADMIN')">
+<div class="panel panel-primary">
+    <div class="panel-heading">Admin tools</div>
+    <div class="panel-body">
+        <input type="button" class="btn btn-default" onclick="location.href='/admin/addBook'" value="AddBook">
+        <input type="button" class="btn btn-default" onclick="location.href='/addSection'" value="Add Section">
+        <input type="button" class="btn btn-default" onclick="location.href='/showUsers'" value="Show Users">
+    </div>
+</div>
 
-
+</sec:authorize>
 </body>
 </html>

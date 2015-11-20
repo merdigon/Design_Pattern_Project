@@ -46,11 +46,42 @@
 <div class="panel panel-primary">
     <div class="panel-heading">Add book</div>
     <button class="btn btn-default" onclick="window.location.href='/'">goToMainPage</button>
-    <%@include file="partOfPage/forms/addBookForm.jsp"%>
+
+    <div id="form" class="'form-group" style="display: inline">
+        <div class="panel-body">
+
+
+            <div class="form-inline">
+
+                <input type="text" id="authors" class="form-control" value="${name} ${surname} ${authorYear}">
+                <input type="text" id="title" class="form-control" value="${title}">
+                <input type="text" id="year" class="form-control" value="${year}">
+                <select id="condition" class="form-control" value="${condition}">
+                    <option value="Available">Available</option>
+                    <option value="Reserved">Reserved</option>
+                    <option value="Borrowed">Borrowed</option>
+                    <option value="Missing">Missing</option>
+                    <option value="Damaged">Damaged</option>
+                    <option value="Destroyed">Destroyed</option>
+                </select>
+                <input type="text" id="type" class="form-control" value="${code} ${type}">
+                <select id="section" class="form-control" value="${section}">
+                    <option value="">section</option>
+                    <c:forEach items="${sections}" var="section">
+                        <option value="${section.name}">${section.name}</option>
+                    </c:forEach>
+                </select>
+
+                <button onclick="saveBook()" class="btn btn-default">Save</button>
+
+            </div>
+        </div>
+    </div>
+
 </div>
 
 
-        <div id="alert_placeholder"></div>
+<div id="alert_placeholder"></div>
 
 </body>
 </html>

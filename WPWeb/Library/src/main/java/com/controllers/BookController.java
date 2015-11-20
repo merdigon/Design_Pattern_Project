@@ -1,7 +1,11 @@
 package com.controllers;
 
+import com.dao.DateDAO;
+import com.dao.SectionDAO;
 import com.models.*;
 
+import org.apache.commons.lang3.time.DateUtils;
+import org.joda.time.LocalDate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -9,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -17,8 +22,9 @@ public class BookController extends BaseController {
 
 
     @RequestMapping(value = {"/admin/addBook", "/addBook"}, method = RequestMethod.GET)
-    public ModelAndView addBook() {
-        return new ModelAndView("addBook", "command", new Book());
+    public String addBook(Model model) {
+        model.addAttribute("sections", sectionDAO.getAll());
+        return "addBook";
     }
 
     @RequestMapping(value = {"/admin/saveBook", "/saveBook"}, method = RequestMethod.POST)
@@ -40,7 +46,7 @@ public class BookController extends BaseController {
         }
 
         Condition condition = conditionDAO.saveIfNotInDB(new Condition(Conditions.valueOf(conditionData)));
-        Section section = sectionDAO.saveIfNotInDB(new Section(sectionData.split(" ")[0], sectionData.split(" ")[1]));
+        Section section = sectionDAO.saveIfNotInDB(new Section(sectionData));
         TypeOfBook typeOfBook = typeOfBookDAO.saveIfNotInDB(new TypeOfBook(typeData.split(" ")[0], typeData.split(" ")[1]));
         Book book = new Book(authors,title,year,condition,typeOfBook,section);
         bookDAO.save(book);
@@ -48,7 +54,8 @@ public class BookController extends BaseController {
     }
 
     @RequestMapping(value ={"/showBooks","/user/showBooks", "/admin/showBooks",} , method = RequestMethod.GET)
-    public String showBook() {
+    public String showBook(Model model) {
+        model.addAttribute("books", bookDAO.getAll());
         return "showBook";
     }
 
@@ -99,15 +106,47 @@ public class BookController extends BaseController {
 
     @RequestMapping(value = "/borrowBook", method = RequestMethod.POST)
     @ResponseBody
-    public String searchBookAjax(@RequestParam("id") String id){
+    public String borrowBook(@RequestParam("id") String id){
+
+        String login = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserModel user = userModelDAO.getByLogin(login);
+        LocalDate currentDate = new LocalDate();
+        LocalDate planningReturnDate = new LocalDate().plusMonths(1);
+
+
         Book book = bookDAO.get(Integer.parseInt(id));
+        BookDate date = new BookDate();
+        date.setBorrowedDate(currentDate);
+        date.setPlanningReturnDate(planningReturnDate);
+        date.setLogin(login);
+        dateDAO.save(date);
+
         Condition condition = new Condition(Conditions.valueOf("Borrowed"));
         condition = conditionDAO.saveIfNotInDB(condition);
         bookDAO.changeCondition(book, condition);
-        String login = SecurityContextHolder.getContext().getAuthentication().getName();
+        bookDAO.addDate(book, date);
+
         userModelDAO.addBook(login, book);
         return "success";
     }
+    @RequestMapping(value = "/returnBook", method = RequestMethod.POST)
+    @ResponseBody
+    public String returnBook(@RequestParam("id") String id){
+
+        Book book = bookDAO.get(Integer.parseInt(id));
+        String login = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserModel user = userModelDAO.getByLogin(login);
+        userModelDAO.removeBook(user, book);
+        dateDAO.addReturnDate(book.getDates().get(book.getDates().size()-1), new LocalDate());
+        bookDAO.addReturnDate(book, new LocalDate());
+        Condition condition = new Condition(Conditions.valueOf("Available"));
+        condition = conditionDAO.saveIfNotInDB(condition);
+        bookDAO.changeCondition(book, condition);
+
+
+            return "success";
+    }
+
 
 
 

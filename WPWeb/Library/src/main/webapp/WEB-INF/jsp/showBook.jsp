@@ -62,13 +62,13 @@
                 dataType: "text",
                 success: function (response) {
                     alert("Contgratulation! You borrow this book :)");
-                    search(searchType);
+                    show();
 
                 },
 
                 error: function (e) {
                     alert("Oops! Something has gone wrong")
-                    search(searchType);
+                    show();
 
                 }
             });
@@ -94,6 +94,7 @@
         {{else}}
         <td>not available</td>
         {{/if}}
+        <td id="editBook{{:id}}"><button class="btn btn-default" onclick="editBook({{:id}})">edit</button></td>
     </sec:authorize>
         </tr>
 
@@ -119,6 +120,7 @@
             </div>
         </div>
 
+    </div>
     </div>
 </body>
 </html>

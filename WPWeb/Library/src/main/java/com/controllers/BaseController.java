@@ -27,4 +27,8 @@ abstract class BaseController {
 
     @Autowired
     UserRoleDAO userRoleDAO;
+
+    @Autowired
+    DateDAO dateDAO;
+
 }

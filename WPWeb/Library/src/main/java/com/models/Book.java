@@ -30,7 +30,11 @@ public class Book extends DatabaseObject{
     private List<Author> authors = new ArrayList<Author>();
     private String title;
     private int year;
-
+//
+//    @OneToMany
+//    @JoinTable(name="BOOK_DATE", joinColumns = @JoinColumn(name="BOOK_ID"),
+//            inverseJoinColumns = @JoinColumn(name="DATE_ID"))
+//    private List<BookDate> bookDates = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinTable(name="BOOK_CONDITION", joinColumns = @JoinColumn(name="BOOK_ID"),
@@ -46,6 +50,19 @@ public class Book extends DatabaseObject{
     @JoinTable(name="BOOK_SECTION", joinColumns = @JoinColumn(name="BOOK_ID"),
             inverseJoinColumns = @JoinColumn(name="SECTION_ID"))
     private Section section;
+
+    @OneToMany
+    @JoinTable(name="BOOK_DATE", joinColumns = @JoinColumn(name="BOOK_ID"),
+            inverseJoinColumns = @JoinColumn(name="DATE_ID"))
+    private List<BookDate> dates = new ArrayList<BookDate>();
+
+    public List<BookDate> getDates() {
+        return dates;
+    }
+
+    public void setDates(List<BookDate> dates) {
+        this.dates = dates;
+    }
 
     public List<Author> getAuthors() {
         return authors;
@@ -103,6 +120,14 @@ public class Book extends DatabaseObject{
         this.section = section;
     }
 
+//    public List<BookDate> getBookDates() {
+//        return bookDates;
+//    }
+//
+//    public void setBookDate(List<BookDate> bookDates) {
+//        this.bookDates = bookDates;
+//    }
+
     public Book(List<Author> authors, String title, int year, Condition condition, TypeOfBook typeOfBook, Section section) {
         this.authors = authors;
         this.title = title;
@@ -112,23 +137,13 @@ public class Book extends DatabaseObject{
         this.section = section;
     }
 
+    public void addDate(BookDate date){
+        dates.add(date);
+    }
+
     public Book(){}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
 
-        Book book = (Book) o;
-
-        if (year != book.year) return false;
-        if (authors != null ? !authors.equals(book.authors) : book.authors != null) return false;
-        if (title != null ? !title.equals(book.title) : book.title != null) return false;
-        if (condition != null ? !condition.equals(book.condition) : book.condition != null) return false;
-        if (typeOfBook != null ? !typeOfBook.equals(book.typeOfBook) : book.typeOfBook != null) return false;
-        return !(section != null ? !section.equals(book.section) : book.section != null);
-
-    }
 
     @Override
     public int hashCode() {

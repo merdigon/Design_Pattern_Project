@@ -16,19 +16,8 @@ public class Section extends DatabaseObject
     @Id
     @GeneratedValue
     private int id;
-    private String code;
     private String name;
 
-//    @OneToMany(fetch = FetchType.EAGER)
-//    private List<Book> books = new ArrayList<>();
-
-//    public List<Book> getBooks() {
-//        return books;
-//    }
-//
-//    public void setBooks(List<Book> books) {
-//        this.books = books;
-//    }
 
     public int getId() {
         return id;
@@ -38,13 +27,6 @@ public class Section extends DatabaseObject
         this.id = id;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public String getName() {
         return name;
@@ -54,8 +36,7 @@ public class Section extends DatabaseObject
         this.name = name;
     }
 
-    public Section(String code, String name) {
-        this.code = code;
+    public Section(String name) {
         this.name = name;
     }
 
@@ -65,7 +46,6 @@ public class Section extends DatabaseObject
     public String toString() {
         return "{" +
                 "\"id\":\"" + id  + '\"' +
-                ", \"code\":\"" + code + '\"' +
                 ", \"name\":\"" + name + '\"' +
                 '}';
     }
@@ -77,15 +57,12 @@ public class Section extends DatabaseObject
 
         Section section = (Section) o;
 
-        if (code != null ? !code.equals(section.code) : section.code != null) return false;
         return !(name != null ? !name.equals(section.name) : section.name != null);
 
     }
 
     @Override
     public int hashCode() {
-        int result = code != null ? code.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        return result;
+        return name != null ? name.hashCode() : 0;
     }
 }

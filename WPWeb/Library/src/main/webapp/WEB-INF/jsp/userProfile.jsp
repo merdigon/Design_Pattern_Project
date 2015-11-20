@@ -25,9 +25,9 @@
                 success: function (response) {
                     console.log(response)
 
-                    if(bookmark=='userDetails'){
+                    if (bookmark == 'userDetails') {
                         createUserDetails(response);
-                    }else{
+                    } else {
                         createMyBooks(response);
                     }
 
@@ -40,7 +40,7 @@
             });
         }
 
-        function createUserDetails(json){
+        function createUserDetails(json) {
             $('#myBooks').hide();
             $('#userDetails').show();
             document.getElementById("userDetailsBookmark").className = "active";
@@ -55,26 +55,90 @@
             $('#userDetails').html(userDetails)
         }
 
-        function createMyBooks(json){
+        function createMyBooks(json) {
             $('#myBooks').show();
             $('#userDetails').hide();
+            console.log("json");
+            console.log(json);
             document.getElementById("userDetailsBookmark").className = "";
             document.getElementById("myBooksBookmark").className = "active";
 
             var myBooks = "";
-            json.forEach(function(book){
-                myBooks += book + "<br>";
+            json.forEach(function (book) {
+                console.log(book);
+                myBooks += book.title + " " + book.authors[0].name + " " + book.authors[0].surname + " " + book.year + "<br>";
             })
 
-            console.log(myBooks);
-            $('#myBooks').html(myBooks);
+            $('#myBooks').html(createTable(json));
 
         }
+
+        function createTable(json) {
+            var myTemplate = $.templates("#BookTmpl");
+            var html = "<table class='table' >"
+            html += '<tr>' +
+                    '<th>Title</th>' +
+                    '<th>Year</th>' +
+                    '<th>Author</th>' +
+                    '<th>condition</th>' +
+                    '<th>typeOfBook</th>' +
+                    '<th>section</th>' +
+                    '<th>action</th>' +
+                    '<th>debt</th>' +
+                    '</tr>';
+
+            html += myTemplate.render(json);
+            html += "</table>";
+            console.log(html);
+            return html;
+        }
+
+        function returnBook(id) {
+            $.ajax({
+                type: "POST",
+                url: "/returnBook",
+                data: {
+                    "id": id
+                },
+                dataType: "text",
+                success: function (response) {
+                    alert("Contgratulation! You return this book :)");
+                    view('myBooks');
+
+                },
+
+                error: function (e) {
+                    alert("Oops! Something has gone wrong")
+                    view('myBooks');
+
+                }
+            });
+        }
     </script>
+
+    <script id="BookTmpl" type="text/x-jsrender">
+        <tr>
+
+            <td>{{:title}}</td>
+            <td>{{:year}}</td>
+            <td>
+            {{for authors}}
+                {{:name}} {{:surname}} {{:bornYear}} <br>
+            {{/for}}
+            </td>
+            <td id='condition{{:id}}'>{{:condition.condition}}</td>
+            <td>{{:typeOfBook.name}}</td>
+            <td>{{:section.name}}</td>
+
+            <td id="returnButton{{:id}}"><button class="btn btn-default" onclick="returnBook({{:id}})">return</button></td>
+            <td>{{:debt}}</td>
+        </tr>
+        </script>
+
 </head>
 <body onload="view('userDetails')">
 <h2>Library</h2>
-<%@include file="partOfPage/buttons/loginRegistrationButton.jsp"%>
+<%@include file="partOfPage/buttons/loginRegistrationButton.jsp" %>
 
 <div class="panel panel-primary">
     <div class="panel-heading">User profile</div>

@@ -1,13 +1,17 @@
 package com.controllers;
 
+import com.LibraryConfiguration.Conf;
 import com.dao.DateDAO;
 import com.dao.SectionDAO;
+import com.dao.UserModelDAO;
 import com.models.*;
 
 import org.apache.commons.lang3.time.DateUtils;
+import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,14 +25,14 @@ import java.util.*;
 public class BookController extends BaseController {
 
 
-    @RequestMapping(value = {"/admin/addBook", "/addBook"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/admin/addBook"}, method = RequestMethod.GET)
     public String addBook(Model model) {
         model.addAttribute("sections", sectionDAO.getAll());
         model.addAttribute("typesOfBooks", typeOfBookDAO.getAll());
         return "addBook";
     }
 
-    @RequestMapping(value = {"/admin/saveBook", "/saveBook"}, method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/saveBook", method = RequestMethod.POST)
     @ResponseBody
     public String saveBook(@RequestParam("authors") String authorData,
                            @RequestParam("title") String title,
@@ -44,17 +48,16 @@ public class BookController extends BaseController {
             Author author = new Author(authorString.split(" ")[0], authorString.split(" ")[1], Integer.parseInt(authorString.split(" ")[2]));
             authors.add(authorDAO.saveIfNotInDB(author));
         }
-
         Condition condition = conditionDAO.saveIfNotInDB(new Condition(Conditions.valueOf(conditionData)));
         Book book = new Book(authors,title,year,condition,typeOfBookDAO.get(uuidType),sectionDAO.get(uuidSection));
         bookDAO.save(book);
         return "zapisalo";
     }
 
-    @RequestMapping(value ={"/showBooks","/user/showBooks", "/admin/showBooks",} , method = RequestMethod.GET)
+    @RequestMapping(value ={"/showBooks"} , method = RequestMethod.GET)
     public String showBook(Model model) {
         model.addAttribute("books", bookDAO.getAll());
-        return "showBook";
+        return "showBooks";
     }
 
     @RequestMapping(value = {"/showBooks", "/user/showBooks", "/admin/showBooks"}, method = RequestMethod.POST, headers = "Accept=application/json")
@@ -63,7 +66,7 @@ public class BookController extends BaseController {
        return bookDAO.getAll();
     }
 
-    @RequestMapping(value = "/searchBooks", method = RequestMethod.GET)
+    @RequestMapping(value = {"/searchBooks"}, method = RequestMethod.GET)
     public String searchBook(Model model) {
         model.addAttribute("conditions", conditionDAO.getAll());
         return "searchBooks";
@@ -96,63 +99,68 @@ public class BookController extends BaseController {
     }
 
 
-    @RequestMapping(value = {"/showBooksJsp"}, method = RequestMethod.GET)
-    public String showBooksAjax(Model model) {
-        model.addAttribute("books", bookDAO.getAll());
-        return "showBook";
 
-    }
-
-    @RequestMapping(value = "/borrowBook", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/borrowBook", method = RequestMethod.POST)
     @ResponseBody
-    public String borrowBook(@RequestParam("uuid") String uuid){
+    public String borrowBook(@RequestParam("userUuid") String userUuid,
+                             @RequestParam("bookUuid") String bookUuid){
 
-        String login = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserModel user = userModelDAO.getByLogin(login);
-        LocalDate currentDate = new LocalDate();
-        LocalDate planningReturnDate = new LocalDate().plusMonths(1);
+        UserModel user = userModelDAO.get(userUuid);
+        Book book = bookDAO.get(bookUuid);
+        if(!book.getCondition().equals(Conditions.valueOf("Available")))
+            return "Failure: book is not available";
 
-        Book book = bookDAO.get(uuid);
+
+        LocalDate planningReturnDate = new LocalDate().plusDays(Conf.getBorrowedDays());
+
 
         BookDate date = new BookDate();
-        date.setBorrowedDate(currentDate);
+        date.setBorrowedDate(new LocalDate());
         date.setPlanningReturnDate(planningReturnDate);
-        date.setLogin(login);
-
-        dateDAO.saveIfNotInDB(date);
+        date.setLogin(user.getLogin());
 
         Condition condition = new Condition(Conditions.valueOf("Borrowed"));
-        condition = conditionDAO.saveIfNotInDB(condition);
-        bookDAO.changeCondition(book, condition);
-        bookDAO.addDate(book, date);
 
-        userModelDAO.addBook(login, book);
+        book.setCondition(conditionDAO.saveIfNotInDB(condition));
+        book.addDate(dateDAO.saveIfNotInDB(date));
+        bookDAO.update(book);
+        userModelDAO.addBook(user, book);
         return "success";
     }
 
-    @RequestMapping(value = "/returnBook", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/returnBook", method = RequestMethod.POST)
     @ResponseBody
-    public String returnBook(@RequestParam("uuid") String uuid){
+    public String returnBook(@RequestParam("uuidUser") String uuidUser,
+                             @RequestParam("uuidBook") String uuidBook){
 
-        Book book = bookDAO.get(uuid);
+        Book book = bookDAO.get(uuidBook);
+        UserModel user = userModelDAO.get(uuidUser);
+
+        if(!user.getBooks().contains(book))
+            return "Failure: user doesn't borrowed this book";
+
         BookDate date = bookDAO.getLastDate(book);
 
-        String login = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserModel user = userModelDAO.getByLogin(login);
+        double debt = 0;
+        if(date.getPlanningReturnDate().isBefore(new LocalDate())){
+            debt = Days.daysBetween(date.getPlanningReturnDate(),new LocalDate()).getDays() * Conf.getInterests();
+        }
 
-        userModelDAO.removeBook(user, book);
+        user.addDebt(debt);
+        user.removeBook(book);
 
         date.setReturnDate(new LocalDate());
         dateDAO.updateDate(date);
 
         Condition condition = new Condition(Conditions.valueOf("Available"));
         condition = conditionDAO.saveIfNotInDB(condition);
-        bookDAO.changeCondition(book, condition);
-
+        book.setCondition(condition);
+        bookDAO.update(book);
+        userModelDAO.update(user);
             return "success";
     }
 
-    @RequestMapping(value = "/editBook/{uuid}", method = RequestMethod.GET)
+    @RequestMapping(value = "/admin/editBook/{uuid}", method = RequestMethod.GET)
     public String editBook(@PathVariable("uuid")String uuid,Model model) {
         model.addAttribute("book", bookDAO.get(uuid));
         model.addAttribute("conditions", conditionDAO.getAll());
@@ -162,7 +170,7 @@ public class BookController extends BaseController {
 
     }
 
-    @RequestMapping(value = "/editBook", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/editBook", method = RequestMethod.POST)
     @ResponseBody
     public String editBook(@RequestParam("author") String authorData,
                            @RequestParam("uuid") String uuid,
@@ -189,10 +197,66 @@ public class BookController extends BaseController {
         book.setYear(year);
         bookDAO.update(book);
         return "zapisalo";
-
-
     }
 
+    @RequestMapping(value = "/reserveBook", method = RequestMethod.POST)
+    @ResponseBody
+    public String reserveBook(@RequestParam("userUuid") String userUuid,
+                             @RequestParam("bookUuid") String bookUuid){
+
+        UserModel user;
+        Book book = bookDAO.get(bookUuid);
+
+        if(userUuid==""){
+            UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            user = userModelDAO.getByLogin(userDetails.getUsername());
+        }else
+            user = userModelDAO.get(userUuid);
+
+
+        if(book==null)
+            return "Failure: there is no such book";
+        if(user==null)
+            return "Failure: there is no such user";
+
+        if(!book.getCondition().equals(Conditions.valueOf("Available")))
+            return "Failure: book is not available";
+
+        Condition condition = new Condition(Conditions.valueOf("Reserved"));
+        book.setCondition(conditionDAO.saveIfNotInDB(condition));
+        bookDAO.update(book);
+        userModelDAO.addReservedBook(user, book);
+        return "success";
+    }
+
+    @RequestMapping(value = "/admin/cancelReservedBook", method = RequestMethod.POST)
+    @ResponseBody
+    public String cancelReserveBook(@RequestParam("userUuid") String userUuid,
+                              @RequestParam("bookUuid") String bookUuid){
+
+        UserModel user;
+        if(userUuid==""){
+            UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            user = userModelDAO.getByLogin(userDetails.getUsername());
+        }else
+            user = userModelDAO.get(userUuid);
+
+        Book book = bookDAO.get(bookUuid);
+        if(book==null)
+            return "Failure: there is no such book";
+        if(user==null)
+            return "Failure: there is no such user";
+
+        if(!book.getCondition().equals(Conditions.valueOf("Reserved")))
+            return "Failure: book is not reserved";
+
+        Condition condition = new Condition(Conditions.valueOf("Available"));
+        book.setCondition(conditionDAO.saveIfNotInDB(condition));
+        bookDAO.update(book);
+        userModelDAO.removeReservedBook(user, book);
+
+        return "success";
+    }
 
 
 

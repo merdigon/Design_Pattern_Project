@@ -39,12 +39,13 @@
                     '<th>Title</th>' +
                     '<th>Year</th>' +
                     '<th>Author</th>' +
-                    '<th>condition</th>' +
-                    '<th>typeOfBook</th>' +
-                    '<th>section</th>' +
-                    <sec:authorize access="hasAnyRole('ADMIN', 'USER')">
-                    '<th>action</th>' +
-                    '<th>edit</th>' +
+                    '<th>Condition</th>' +
+                    '<th>Type Of Book</th>' +
+                    '<th>sSction</th>' +
+                    <sec:authorize access="hasRole('ADMIN')">
+                    '<th>Edit</th>' +
+                    '<th>Uuid</th>' +
+                    '<th>Action</th>' +
                     </sec:authorize>
                     '</tr>';
 
@@ -54,42 +55,18 @@
             return html;
         }
 
-        function borrow(uuid) {
-            console.log("inborrow");
-            console.log(uuid);
-            $.ajax({
-                type: "POST",
-                url: "/borrowBook",
-                data: {
-                    "uuid": uuid
-                },
-                dataType: "text",
-                success: function (response) {
-                    alert("Contgratulation! You borrow this book :)");
-                    show();
-
-                },
-
-                error: function (e) {
-                    alert("Oops! Something has gone wrong")
-                    show();
-
-                }
-            });
-        }
 
         function editBook(uuid) {
-            console.log("inborrow");
-            console.log(uuid);
+
             $.ajax({
                 type: "POST",
-                url: "/editBook",
+                url: "/admin/editBook",
                 data: {
                     "uuid": uuid
                 },
                 dataType: "text",
                 success: function (response) {
-                    alert("Contgratulation! You borrow this book :)");
+                    alert(response);
                     show();
 
                 },
@@ -97,10 +74,33 @@
                 error: function (e) {
                     alert("Oops! Something has gone wrong")
                     show();
-
                 }
             });
         }
+
+        function reserveBook(uuid) {
+            console.log("inreserveBook");
+            $.ajax({
+                type: "POST",
+                url: "/reserveBook",
+                data: {
+                    "bookUuid": uuid,
+                    "userUuid": ""
+                },
+                dataType: "text",
+                success: function (response) {
+                    alert(response);
+                    show();
+
+                },
+
+                error: function (e) {
+                    alert("Oops! Something has gone wrong")
+                    show();
+                }
+            });
+        }
+
 
     </script>
 
@@ -117,15 +117,18 @@
             <td id='condition{{:uuid}}'>{{:condition.condition}}</td>
             <td>{{:typeOfBook.name}}</td>
             <td>{{:section.name}}</td>
-            <sec:authorize access="hasAnyRole('ADMIN', 'USER')">
-        {{if condition.condition=='Available'}}
-        <td id="borrowButton{{:uuid}}"><button class="btn btn-default" onclick="borrow('{{:uuid}}')">borrow</button></td>
-        {{else}}
-        <td>not available</td>
-        {{/if}}
-       <td><a href="<c:url value='/editBook/{{:uuid}}' />" ><button class="btn btn-primary">edit</button><a><td>
+            <sec:authorize access="hasRole('ADMIN')">
+            {{if condition.condition=='Available'}}
+                <td><button class="btn btn-default" onclick="reserveBook('{{:uuid}}')">reserveBook</button></td>
+            {{else}}
+                <td>not available</td>
+            {{/if}}
+
+        <td>{{:uuid}}</td>
+        <td><a href="<c:url value='/admin/editBook/{{:uuid}}'/>" ><button class="btn btn-primary">edit</button><a><td>
     </sec:authorize>
         </tr>
+
 
     </script>
 
@@ -134,7 +137,7 @@
 <body onload="show()">
 
 <h2>Library</h2>
-<%@include file="partOfPage/buttons/loginRegistrationButton.jsp"%>
+<%@include file="partOfPage/buttons/loginRegistrationButton.jsp" %>
 
 <div class="panel panel-primary">
     <div class="panel-heading">Show books</div>
@@ -143,16 +146,12 @@
         <div class="panel-body">
 
 
-
             <div id="displayTable">
 
             </div>
         </div>
 
     </div>
-    </div>
-
-
-
+</div>
 </body>
 </html>

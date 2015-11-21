@@ -1,11 +1,15 @@
 package com.models;
 
 
+import com.LibraryConfiguration.Conf;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
 
 import javax.persistence.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -48,9 +52,15 @@ public class UserModel extends DatabaseObject
         private Set<UserRole> userRole = new HashSet<UserRole>();
         @OneToMany
         @NotFound(action = NotFoundAction.IGNORE)
+        @JoinTable(name="USER_BOOK", joinColumns = @JoinColumn(name="USER_UUID"),
+                inverseJoinColumns = @JoinColumn(name="BOOK_UUID"))
         private List<Book> books= new ArrayList<>();
 
-
+        @OneToMany
+        @NotFound(action = NotFoundAction.IGNORE)
+        @JoinTable(name="USER_RESERVEDBOOK", joinColumns = @JoinColumn(name="USER_UUID"),
+                inverseJoinColumns = @JoinColumn(name="RESERVEDBOOK_UUID"))
+        private List<Book> reservedBooks= new ArrayList<>();
 
         private double debt;
 
@@ -73,6 +83,7 @@ public class UserModel extends DatabaseObject
         public void addBook(Book book){
                 this.books.add(book);
         }
+
 
         public void removeBook(Book book){
                 this.books.remove(book);
@@ -134,6 +145,41 @@ public class UserModel extends DatabaseObject
                 this.userRole = userRole;
         }
 
+        public List<Book> getReservedBooks() {
+                return reservedBooks;
+        }
+
+        public void setReservedBooks(List<Book> reservedBooks) {
+                this.reservedBooks = reservedBooks;
+        }
+
+        public void removeReservedBook(Book book){
+                this.reservedBooks.remove(book);
+        }
+
+        public void addReservedBook(Book book){
+                this.reservedBooks.add(book);
+        }
+
+        public double countDebt(){
+                double debt = this.debt;
+                int daysOver = 0;
+                LocalDate planningReturnDay;
+                for(Book book: books){
+                         planningReturnDay = book.getDates().get(book.getDates().size()-1).getPlanningReturnDate();
+                        if(planningReturnDay.isBefore(new LocalDate())){
+                                debt += Days.daysBetween(planningReturnDay, new LocalDate()).getDays() * Conf.getInterests();
+                        }
+
+                }
+                return debt;
+        }
+
+        public void addDebt(double debt){
+                this.debt = this.debt+debt;
+        }
+
+
         @Override
         public String toString() {
                 return "{" +
@@ -144,6 +190,7 @@ public class UserModel extends DatabaseObject
                         ", \"mail\":\"" + mail + '\"' +
                         ", \"debt\":\"" + debt + '\"' +
                         ", \"books\":" + books  +
+                        ", \"reservedBooks\":" + reservedBooks  +
                         '}';
         }
 
@@ -153,9 +200,7 @@ public class UserModel extends DatabaseObject
                 if (o == null || getClass() != o.getClass()) return false;
 
                 UserModel userModel = (UserModel) o;
-
                 return !(login != null ? !login.equals(userModel.login) : userModel.login != null);
-
         }
 
         @Override

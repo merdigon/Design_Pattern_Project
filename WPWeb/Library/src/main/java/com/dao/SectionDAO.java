@@ -46,4 +46,8 @@ public class SectionDAO extends DatabaseDAO<Section>{
 
         return getAll().stream().filter(a -> a.equals(section)).findFirst();
     }
+
+    public boolean isExist(Section section){
+        return getSession().contains(section);
+    }
 }

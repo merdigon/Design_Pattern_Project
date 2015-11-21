@@ -1,44 +1,65 @@
 package com.dao;
 
+import com.models.UserModel;
 import com.models.UserRole;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Created by pietrek on 13.11.15.
  */
 
-    @Repository
-    public class UserRoleDAO extends DatabaseDAO<UserRole> {
+@Repository
+public class UserRoleDAO extends DatabaseDAO<UserRole> {
 
-        public void save(UserRole role) {
-            getSession().save(role);
-        }
-
-
-        public UserRole get(String uuid) {
-
-            return getSession().get(com.models.UserRole.class, uuid);
-        }
-
-        public List<UserRole> getAll() {
-
-            Query query = getSession().createQuery("from UserRole");
-            List<UserRole> list = query.list();
-            return list;
-
-        }
+    public void save(UserRole role) {
+        getSession().save(role);
+    }
 
 
+    public UserRole get(String uuid) {
 
-        public Optional<UserRole> isContain(final UserRole role) {
+        return getSession().get(com.models.UserRole.class, uuid);
+    }
 
-            return getAll().stream().filter(a -> a.equals(role)).findFirst();
-        }
+    public List<UserRole> getAll() {
 
-
+        Query query = getSession().createQuery("from UserRole");
+        List<UserRole> list = query.list();
+        return list;
 
     }
+
+
+    public Optional<UserRole> isContain(final UserRole role) {
+
+        return getAll().stream().filter(a -> a.equals(role)).findFirst();
+    }
+
+    public UserRole saveIfNotInDB(UserRole userRole) {
+        Optional<UserRole> userRoleOptional = isContain(userRole);
+        if (userRoleOptional.isPresent()) {
+            return userRoleOptional.get();
+        } else {
+            save(userRole);
+            return userRole;
+        }
+    }
+
+    public Set<UserRole> saveIfNotInDB(Set<UserRole> userRoles) {
+        Set<UserRole> userRoles1 = new HashSet<>();
+        for (UserRole role : userRoles) {
+            userRoles1.add(saveIfNotInDB(role));
+        }
+        return userRoles1;
+    }
+
+    public void addInterests(UserModel user, double interest){
+        user.setDebt(user.getDebt() + interest);
+        getSession().update(user);
+    }
+
+
+}

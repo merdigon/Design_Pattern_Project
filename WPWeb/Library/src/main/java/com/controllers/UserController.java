@@ -7,6 +7,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,51 +25,88 @@ import java.util.List;
 
 @Controller
 public class UserController extends  BaseController {
-    @RequestMapping(value ={"/userProfile"} , method = RequestMethod.GET)
+    @RequestMapping(value ={"/user/userProfile", "/admin/userProfile"} , method = RequestMethod.GET)
     public String showBook() {
         return "userProfile";
     }
 
-    @RequestMapping(value = {"/userDetails"}, method = RequestMethod.POST, headers = "Accept=application/json")
+    @RequestMapping(value = {"/admin/userDetails", "/user/userDetails"}, method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
-    public String userDetail() {
+    public UserModel userDetail() {
         UserDetails userDetails =
                 (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserModel user = userModelDAO.getByLogin(userDetails.getUsername());
-        return user.toString();
+        user.setDebt(user.countDebt());
+
+        return user;
 
     }
 
-    @RequestMapping(value = {"/myBooks"}, method = RequestMethod.POST, headers = "Accept=application/json")
+    @RequestMapping(value = {"/admin/borrowedBooks", "/user/borrowedBooks"}, method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
-    public List<Book> myBooks() {
+    public List<Book> borrowedBooks() {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserModel user = userModelDAO.getByLogin(userDetails.getUsername());
 
-        for(Book book: user.getBooks()){
-            BookDate date = book.getDates().get(0);
-
-        }
         return user.getBooks();
+    }
+
+
+    @RequestMapping(value = {"/admin/reservedBooks", "/user/reservedBooks"}, method = RequestMethod.POST, headers = "Accept=application/json")
+    @ResponseBody
+    public List<Book> reservedBooks() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserModel user = userModelDAO.getByLogin(userDetails.getUsername());
+
+        return user.getReservedBooks();
 
     }
 
-    @RequestMapping(value ={"/searchUser"} , method = RequestMethod.GET)
+    @RequestMapping(value ={"/admin/searchUser"} , method = RequestMethod.GET)
     public String searchUser() {
         return "searchUser";
     }
 
-    @RequestMapping(value = "/searchUser", method = RequestMethod.POST, headers = "Accept=application/json")
+    @RequestMapping(value = "/admin/searchUser", method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
     public UserModel searchUser(@RequestParam("searchType") String searchType,
                                            @RequestParam("userData") String userData
                                            ){
        if(searchType.equals("uuid")){
-            return userModelDAO.get(userData);
+           UserModel user = userModelDAO.get(userData);
+           user.setDebt(user.countDebt());
+            return user;
         }else if(searchType.equals("login")){
-            return userModelDAO.getByLogin(userData);
+           UserModel user = userModelDAO.getByLogin(userData);
+           user.setDebt(user.countDebt());
+            return user;
         }
         return null;
+    }
+
+    @RequestMapping(value ={"/admin/showUsers"} , method = RequestMethod.GET)
+    public String moveToShowUsers(Model model) {
+        List<UserModel> users = userModelDAO.getAll();
+        for(UserModel user: users){
+            user.setDebt(user.countDebt());
+        }
+        model.addAttribute("users", users);
+        return "showUsers";
+    }
+
+    @RequestMapping(value = "/admin/payDebt", method = RequestMethod.POST)
+    @ResponseBody
+    public String editBook(@RequestParam("uuidUser") String uuidUser,
+                           @RequestParam("debt") double debt) {
+
+        UserModel user = userModelDAO.get(uuidUser);
+        if(user == null)
+            return "Failure: no user with this uuid";
+
+        user.setDebt(user.getDebt()- debt);
+        userModelDAO.update(user);
+        return "Success: pay debt";
+
     }
 
 }

@@ -43,9 +43,19 @@ public class UserModelDAO extends DatabaseDAO<UserModel>{
             getSession().update(user);
     }
 
+    public void addReservedBook(UserModel user, Book book){
+        user.addReservedBook(book);
+        getSession().update(user);
+    }
+
     public void addBook(String login, Book book){
         UserModel user = getByLogin(login);
         user.addBook(book);
+        getSession().update(user);
+    }
+
+    public void addDebt(UserModel user, double debt){
+        user.setDebt(user.getDebt() + debt);
         getSession().update(user);
     }
 
@@ -55,10 +65,24 @@ public class UserModelDAO extends DatabaseDAO<UserModel>{
         getSession().update(user);
     }
 
+    public void removeReservedBook(UserModel user, Book book){
+        user.removeReservedBook(book);
+        getSession().update(user);
+    }
+
     public List<UserModel> getAll() {
         Query query = getSession().createQuery("from UserModel");
         List<UserModel> list = query.list();
         return list;
+    }
+
+
+    public void update(UserModel user){
+        getSession().update(user);
+    }
+
+    public void delete(String uuid){
+        getSession().delete(get(uuid));
     }
 
 }

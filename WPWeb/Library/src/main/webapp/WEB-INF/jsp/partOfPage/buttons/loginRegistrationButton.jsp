@@ -8,7 +8,7 @@
       Log in as ${principal.username} <span class="caret"></span>
     </button>
     <ul class="dropdown-menu">
-      <li><a href="/userProfile">Show profile</a></li>
+      <li><a href="/user/userProfile">Show profile</a></li>
       <li role="separator" class="divider"></li>
       <li><a href="/logout">Logout</a></li>
 

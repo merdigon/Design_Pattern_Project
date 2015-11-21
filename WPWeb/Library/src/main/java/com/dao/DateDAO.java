@@ -6,6 +6,7 @@ import org.hibernate.Query;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,16 @@ public class DateDAO extends DatabaseDAO<BookDate>{
             save(date);
             return date;
         }
+    }
+
+    public List<BookDate> saveIfNotInDB(List<BookDate> dates) {
+        List<BookDate> dates1 = new ArrayList<>();
+
+        for(BookDate date: dates){
+            dates1.add(saveIfNotInDB(date));
+        }
+
+        return dates1;
     }
 
     public void addReturnDate(BookDate bookDate, LocalDate date ){

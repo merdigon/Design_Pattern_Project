@@ -31,7 +31,6 @@ public class BookDAO extends DatabaseDAO<Book>{
 
         Query query = getSession().createQuery("from Book");
         List<Book> list = query.list();
-        System.out.println(list);
         return list;
 
     }
@@ -82,4 +81,13 @@ public class BookDAO extends DatabaseDAO<Book>{
     public void update(Book book){
         getSession().update(book);
     }
+
+    public boolean isExist(Book book){
+        return getSession().contains(book);
+    }
+
+    public void delete (String uuid){
+        getSession().delete(get(uuid));
+    }
+
 }

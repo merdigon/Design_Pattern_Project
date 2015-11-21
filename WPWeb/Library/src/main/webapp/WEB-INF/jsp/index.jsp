@@ -29,10 +29,11 @@
     <div class="panel-heading">Admin tools</div>
     <div class="panel-body">
         <input type="button" class="btn btn-default" onclick="location.href='/admin/addBook'" value="AddBook">
-        <input type="button" class="btn btn-default" onclick="location.href='/addSection'" value="Add Section">
-        <input type="button" class="btn btn-default" onclick="location.href='/addType'" value="Add Type Of Book">
-        <input type="button" class="btn btn-default" onclick="location.href='/showUsers'" value="Show Users">
-        <input type="button" class="btn btn-default" onclick="location.href='/searchUser'" value="Search User">
+        <input type="button" class="btn btn-default" onclick="location.href='/admin/addSection'" value="Add Section">
+        <input type="button" class="btn btn-default" onclick="location.href='/admin/addType'" value="Add Type Of Book">
+        <input type="button" class="btn btn-default" onclick="location.href='/admin/showUsers'" value="Show Users">
+        <input type="button" class="btn btn-default" onclick="location.href='/admin/searchUser'" value="Search User">
+        <input type="button" class="btn btn-default" onclick="location.href='/admin/configureLibrary'" value="Configure Library">
 
     </div>
 </div>

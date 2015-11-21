@@ -6,6 +6,7 @@ import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,6 +29,15 @@ public class AuthorDAO extends DatabaseDAO<Author> {
             save(author);
             return author;
         }
+    }
+
+    public List<Author> saveIfNotInDB(List<Author> authors) {
+        List<Author> authors1 = new ArrayList<>();
+
+        for(Author author: authors){
+            authors1.add(saveIfNotInDB(author));
+        }
+        return authors1;
     }
 
     public Author get(String uuid) {

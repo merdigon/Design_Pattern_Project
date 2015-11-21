@@ -28,11 +28,12 @@
                 },
                 dataType: "text",
                 success: function (response) {
-                    alert("Success! You can now log in");
+                    $('#alert_placeholder').append('<div class="alert alert-success">Successs</div>');
+                    $('#form').hide();
                 },
 
                 error: function (e) {
-                    alert("Error")
+                    $('#alert_placeholder').append('<div class="alert alert-failure">failure</div>');
 
                 }
             });
@@ -51,6 +52,9 @@
     <%@include file="partOfPage/forms/registrationForm.jsp"%>
     
     
+</div>
+<div id="alert_placeholder">
+
 </div>
 
 </body>

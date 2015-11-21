@@ -13,14 +13,17 @@
       console.log($('#type').val());
       $.ajax({
         type: "POST",
-        url: "/addType",
+        url: "/admin/addType",
         data: {
           "type" : $('#type').val()
         },
         dataType: "text",
         success: function (response) {
           $("#form").hide();
-          $('#alert_placeholder').append('<div class="alert alert-success">Successs</div>');
+          if(response =="success")
+            $('#alert_placeholder').append('<div class="alert alert-success">' + response +'</div>');
+          else
+            $('#alert_placeholder').append('<div class="alert alert-danger">' + response +'</div>');
         },
 
         error: function (e) {

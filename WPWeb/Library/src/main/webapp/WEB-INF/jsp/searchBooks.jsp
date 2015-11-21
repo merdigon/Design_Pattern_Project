@@ -42,6 +42,27 @@
         }
 
 
+        function show() {
+            console.log("in show");
+            $.ajax({
+                type: "POST",
+                url: "/showBooks",
+                data: {},
+                dataType: "json",
+                success: function (response) {
+                    $("#displayTable").html(createTable(response));
+                },
+
+                error: function (e) {
+
+                    alert('Error: ' + e);
+                    console.log(e)
+
+                }
+            });
+        }
+
+
         function createTable(json) {
             var myTemplate = $.templates("#BookTmpl");
             var html = "<table class='table' >"
@@ -52,29 +73,31 @@
                     '<th>condition</th>' +
                     '<th>typeOfBook</th>' +
                     '<th>section</th>' +
-                    <sec:authorize access="hasAnyRole('ADMIN', 'USER')">
+                    <sec:authorize access="hasRole('ADMIN')">
+                    '<th>edit</th>' +
+                    '<th>Uuid</th>' +
                     '<th>action</th>' +
-                    '<td>edit</td>' +
                     </sec:authorize>
                     '</tr>';
+
             html += myTemplate.render(json);
             html += "</table>";
             console.log(html);
             return html;
         }
 
-        function borrow(uuid) {
-            console.log("inborrow");
-            console.log(uuid);
+
+        function editBook(uuid) {
+
             $.ajax({
                 type: "POST",
-                url: "/borrowBook",
+                url: "/admin/editBook",
                 data: {
                     "uuid": uuid
                 },
                 dataType: "text",
                 success: function (response) {
-                    alert("Contgratulation! You borrow this book :)");
+                    alert(response);
                     show();
 
                 },
@@ -82,7 +105,29 @@
                 error: function (e) {
                     alert("Oops! Something has gone wrong")
                     show();
+                }
+            });
+        }
 
+        function reserveBook(uuid) {
+            console.log("inreserveBook");
+            $.ajax({
+                type: "POST",
+                url: "/reserveBook",
+                data: {
+                    "bookUuid": uuid,
+                    "userUuid": ""
+                },
+                dataType: "text",
+                success: function (response) {
+                    alert(response);
+                    show();
+
+                },
+
+                error: function (e) {
+                    alert("Oops! Something has gone wrong")
+                    show();
                 }
             });
         }
@@ -101,13 +146,15 @@
             <td id='condition{{:uuid}}'>{{:condition.condition}}</td>
             <td>{{:typeOfBook.name}}</td>
             <td>{{:section.name}}</td>
-            <sec:authorize access="hasAnyRole('ADMIN', 'USER')">
-        {{if condition.condition=='Available'}}
-        <td id="borrowButton{{:uuid}}"><button class="btn btn-default" onclick="borrow('{{:uuid}}')">borrow</button></td>
-        {{else}}
-        <td>not available</td>
-        {{/if}}
-        <td><a href="<c:url value='/editBook/{{:uuid}}' />" ><button class="btn btn-primary">edit</button><a><td>
+<sec:authorize access="hasRole('ADMIN')">
+            {{if condition.condition=='Available'}}
+                <td><button class="btn btn-default" onclick="reserveBook('{{:uuid}}')">reserveBook</button></td>
+            {{else}}
+                <td>not available</td>
+            {{/if}}
+
+        <td>{{:uuid}}</td>
+        <td><a href="<c:url value='/admin/editBook/{{:uuid}}'/>" ><button class="btn btn-primary">edit</button><a><td>
     </sec:authorize>
         </tr>
 

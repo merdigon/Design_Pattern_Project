@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Created by pietrek on 10.11.15.
  */
-abstract class BaseController {
+public abstract class BaseController {
     @Autowired
     BookDAO bookDAO;
 
@@ -31,4 +31,6 @@ abstract class BaseController {
     @Autowired
     DateDAO dateDAO;
 
+    @Autowired
+    TestDAO testDAO;
 }

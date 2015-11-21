@@ -20,7 +20,7 @@
 
       $.ajax({
         type: "POST",
-        url: "/editBook",
+        url: "/admin/editBook",
         data: {
           "uuid" : "${uuid}",
           "author": $("#authors").val(),

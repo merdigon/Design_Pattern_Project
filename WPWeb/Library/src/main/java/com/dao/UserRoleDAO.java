@@ -19,9 +19,9 @@ import java.util.Optional;
         }
 
 
-        public UserRole get(int key) {
+        public UserRole get(String uuid) {
 
-            return getSession().get(com.models.UserRole.class, key);
+            return getSession().get(com.models.UserRole.class, uuid);
         }
 
         public List<UserRole> getAll() {

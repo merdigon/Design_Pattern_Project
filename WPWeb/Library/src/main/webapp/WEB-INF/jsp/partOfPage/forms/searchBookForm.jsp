@@ -30,7 +30,12 @@
     <div class="form-inline">
 
       by Condition:
-      <input type="text" id="condition" class="form-control" placeholder="condition">
+      <select id="condition" class="form-control">
+        <option value="">--condition--</option>
+        <c:forEach items="${conditions}" var="condition">
+          <option value="${condition.condition}">${condition.condition}</option>
+        </c:forEach>
+      </select>
       <button onclick="search('condition')" class="btn btn-default">Search</button>
     </div>
   </div>

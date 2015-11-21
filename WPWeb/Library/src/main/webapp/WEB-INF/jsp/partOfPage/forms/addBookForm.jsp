@@ -9,6 +9,7 @@
             <input type="text" id="title" class="form-control" placeholder="title">
             <input type="text" id="year" class="form-control" placeholder="year">
             <select id="condition" class="form-control">
+                <option value="Condition">--Condition--</option>
                 <option value="Available">Available</option>
                 <option value="Reserved">Reserved</option>
                 <option value="Borrowed">Borrowed</option>
@@ -16,11 +17,16 @@
                 <option value="Damaged">Damaged</option>
                 <option value="Destroyed">Destroyed</option>
             </select>
-            <input type="text" id="type" class="form-control" placeholder="typeOfBook(code name)">
-            <select id="section" class="form-control">
-                <option value="">section</option>
+            <select id="uuidType" class="form-control">
+                <option value="">--type of book--</option>
+                <c:forEach items="${typesOfBooks}" var="type">
+                    <option value="${type.uuid}">${type.name}</option>
+                </c:forEach>
+            </select>
+            <select id="uuidSection" class="form-control">
+                <option value="">--section--</option>
                 <c:forEach items="${sections}" var="section">
-                    <option value="${section.name}">${section.name}</option>
+                    <option value="${section.uuid}">${section.name}</option>
                 </c:forEach>
             </select>
 

@@ -1,6 +1,7 @@
 package com.models;
 
 
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
@@ -15,8 +16,11 @@ import java.util.Set;
 public class UserModel extends DatabaseObject
 {
         @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private int id;
+        @GeneratedValue(generator = "uuid")
+        @GenericGenerator(name = "uuid", strategy = "uuid")
+        @Column(name = "uuid", unique = true)
+
+        private String uuid;
 
         @Column(unique = true, nullable = false)
         private String login;
@@ -46,18 +50,16 @@ public class UserModel extends DatabaseObject
         @NotFound(action = NotFoundAction.IGNORE)
         private List<Book> books= new ArrayList<>();
 
-//        private String code;
-//
-
-        private double debt=0;
 
 
-        public int getId() {
-                return id;
+        private double debt;
+
+        public String getUuid() {
+                return uuid;
         }
 
-        public void setId(int id) {
-                this.id = id;
+        public void setUuid(String uuid) {
+                this.uuid = uuid;
         }
 
         public List<Book> getBooks() {
@@ -72,15 +74,8 @@ public class UserModel extends DatabaseObject
                 this.books.add(book);
         }
 
-        public boolean removeBook(Book book){
-
-                for(int i=0; i<this.books.size(); i++){
-                        if(this.books.get(i).getId() == book.getId()) {
-                                this.books.remove(i);
-                                return true;
-                        }
-                }
-                return false;
+        public void removeBook(Book book){
+                this.books.remove(book);
         }
 
         public String getLogin() {
@@ -115,6 +110,14 @@ public class UserModel extends DatabaseObject
                 this.surname = surname;
         }
 
+        public double getDebt() {
+                return debt;
+        }
+
+        public void setDebt(double debt) {
+                this.debt = debt;
+        }
+
         public String getMail() {
                 return mail;
         }
@@ -131,24 +134,16 @@ public class UserModel extends DatabaseObject
                 this.userRole = userRole;
         }
 
-        public double getDebt() {
-                return debt;
-        }
-
-        public void setDebt(double debt) {
-                this.debt = debt;
-        }
-
         @Override
         public String toString() {
                 return "{" +
-                        "\"id\":\"" + id  + '\"' +
+                        "\"uuid\":\"" + uuid  + '\"' +
                         ", \"login\":\"" + login + '\"'+
                         ", \"name\":\"" + name + '\"' +
                         ", \"surname\":\"" + surname + '\"' +
                         ", \"mail\":\"" + mail + '\"' +
+                        ", \"debt\":\"" + debt + '\"' +
                         ", \"books\":" + books  +
-                        ", \"debt\":\"" + debt  + '\"' +
                         '}';
         }
 

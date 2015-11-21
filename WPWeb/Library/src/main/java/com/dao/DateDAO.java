@@ -1,5 +1,6 @@
 package com.dao;
 
+import com.models.Book;
 import com.models.BookDate;
 import org.hibernate.Query;
 import org.joda.time.LocalDate;
@@ -37,9 +38,9 @@ public class DateDAO extends DatabaseDAO<BookDate>{
     }
 
 
-    public BookDate get(int key) {
+    public BookDate get(String uuid) {
 
-        return getSession().get(com.models.BookDate.class, key);
+        return getSession().get(com.models.BookDate.class, uuid);
     }
 
     public List<BookDate> getAll() {
@@ -53,5 +54,11 @@ public class DateDAO extends DatabaseDAO<BookDate>{
 
         return getAll().stream().filter(a -> a.equals(date)).findFirst();
     }
+
+    public void updateDate(BookDate date){
+        getSession().update(date);
+    }
+
+
 
 }

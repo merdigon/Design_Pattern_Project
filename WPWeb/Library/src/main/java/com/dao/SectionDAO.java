@@ -29,9 +29,9 @@ public class SectionDAO extends DatabaseDAO<Section>{
     }
 
 
-    public Section get(int key) {
+    public Section get(String uuid) {
 
-        return getSession().get(com.models.Section.class, key);
+        return getSession().get(com.models.Section.class, uuid);
     }
 
     public List<Section> getAll() {

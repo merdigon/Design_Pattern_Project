@@ -9,17 +9,23 @@
 
     <script type="text/javascript">
         function saveBook() {
-
+            console.log($("#authors").val());
+            console.log($("#title").val());
+            console.log($("#year").val());
+            console.log($("#year").val());
+            console.log($("#condition").val());
+            console.log($("#uuidType").val());
+            console.log($("#uuidSection").val());
             $.ajax({
                 type: "POST",
                 url: "/admin/saveBook",
                 data: {
-                    "author": $("#authors").val(),
+                    "authors": $("#authors").val(),
                     "title": $("#title").val(),
                     "year": $("#year").val(),
                     "condition": $("#condition").val(),
-                    "typeOfBook": $("#type").val(),
-                    "section": $("#section").val()
+                    "uuidType": $("#uuidType").val(),
+                    "uuidSection": $("#uuidSection").val()
                 },
                 success: function (response) {
                     $(".form-inline").hide();

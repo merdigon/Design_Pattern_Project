@@ -9,9 +9,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -48,6 +51,24 @@ public class UserController extends  BaseController {
         }
         return user.getBooks();
 
+    }
+
+    @RequestMapping(value ={"/searchUser"} , method = RequestMethod.GET)
+    public String searchUser() {
+        return "searchUser";
+    }
+
+    @RequestMapping(value = "/searchUser", method = RequestMethod.POST, headers = "Accept=application/json")
+    @ResponseBody
+    public UserModel searchUser(@RequestParam("searchType") String searchType,
+                                           @RequestParam("userData") String userData
+                                           ){
+       if(searchType.equals("uuid")){
+            return userModelDAO.get(userData);
+        }else if(searchType.equals("login")){
+            return userModelDAO.getByLogin(userData);
+        }
+        return null;
     }
 
 }

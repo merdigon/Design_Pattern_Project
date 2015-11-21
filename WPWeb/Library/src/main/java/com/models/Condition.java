@@ -1,6 +1,7 @@
 package com.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -13,12 +14,12 @@ import java.util.List;
 public class Condition extends DatabaseObject
 {
     @Id
-    @GeneratedValue
-    private int id;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid")
+    @Column(name = "uuid", unique = true)
+    private String uuid;
+
     private Conditions condition;
-//
-//    @OneToMany(fetch = FetchType.EAGER)
-//    private List<Book> books = new ArrayList<>();
 
     public String ToString()
     {
@@ -44,12 +45,12 @@ public class Condition extends DatabaseObject
         this.condition = condition;
     }
 
-    public int getId() {
-        return id;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public Condition(Conditions condition) {
@@ -57,18 +58,10 @@ public class Condition extends DatabaseObject
     }
     public Condition(){}
 
-//    public List<Book> getBooks() {
-//        return books;
-//    }
-//
-//    public void setBooks(List<Book> books) {
-//        this.books = books;
-//    }
-
     @Override
     public String toString() {
         return "{" +
-                "\"id\":\"" + id  + '\"' +
+                "\"uuid\":\"" + uuid  + '\"' +
                 ", \"Condition\":\"" + condition.name() + '\"' +
                 '}';
     }

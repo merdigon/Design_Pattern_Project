@@ -1,9 +1,8 @@
 package com.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
 
 /**
  * Created by pietrek on 10.11.15.
@@ -13,17 +12,19 @@ import javax.persistence.Table;
 public class UserRole {
 
     @Id
-    @GeneratedValue
-    private int id;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid")
+    @Column(name = "uuid", unique = true)
+    private String uuid;
 
     private String type = UserRoleType.USER.getUserRoleType();
 
-    public int getId() {
-        return id;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public String getType() {
@@ -34,28 +35,11 @@ public class UserRole {
         this.type = type;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
 
-        UserRole userRole = (UserRole) o;
-
-        if (id != userRole.id) return false;
-        return !(type != null ? !type.equals(userRole.type) : userRole.type != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        return result;
-    }
 
     @Override
     public String toString() {
-        return "UserProfile [id=" + id + ",  type=" + type  + "]";
+        return "UserProfile [uuid=" + uuid + ",  type=" + type  + "]";
     }
 
 

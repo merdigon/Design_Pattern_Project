@@ -1,5 +1,6 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
@@ -8,18 +9,26 @@
     <title>Spring MVC Form Handling</title>
 
     <script type="text/javascript">
-        function saveBook() {
+        $(function() {
+
+            $('#type').val('${book.typeOfBook.uuid}');
+            $('#condition').val('${book.condition.condition}');
+            $('#section').val('${book.section.uuid}');
+        });
+
+        function update() {
 
             $.ajax({
                 type: "POST",
-                url: "/admin/saveBook",
+                url: "/editBook",
                 data: {
+                    "uuid" : "${uuid}",
                     "author": $("#authors").val(),
                     "title": $("#title").val(),
                     "year": $("#year").val(),
                     "condition": $("#condition").val(),
-                    "typeOfBook": $("#type").val(),
-                    "section": $("#section").val()
+                    "uuidTypeOfBook": $("#type").val(),
+                    "uuidSection": $("#section").val()
                 },
                 success: function (response) {
                     $(".form-inline").hide();
@@ -49,14 +58,12 @@
 
     <div id="form" class="'form-group" style="display: inline">
         <div class="panel-body">
+ <div class="form-inline">
 
-
-            <div class="form-inline">
-
-                <input type="text" id="authors" class="form-control" value="${name} ${surname} ${authorYear}">
-                <input type="text" id="title" class="form-control" value="${title}">
-                <input type="text" id="year" class="form-control" value="${year}">
-                <select id="condition" class="form-control" value="${condition}">
+                <input type="text" id="authors" class="form-control" value="${book.authors[0].name} ${book.authors[0].surname} ${book.authors[0].bornYear}">
+                <input type="text" id="title" class="form-control" value="${book.title}">
+                <input type="text" id="year" class="form-control" value="${book.year}">
+                <select id="condition" class="form-control">
                     <option value="Available">Available</option>
                     <option value="Reserved">Reserved</option>
                     <option value="Borrowed">Borrowed</option>
@@ -64,16 +71,22 @@
                     <option value="Damaged">Damaged</option>
                     <option value="Destroyed">Destroyed</option>
                 </select>
-                <input type="text" id="type" class="form-control" value="${code} ${type}">
-                <select id="section" class="form-control" value="${section}">
-                    <option value="">section</option>
-                    <c:forEach items="${sections}" var="section">
-                        <option value="${section.name}">${section.name}</option>
+
+
+                <select id="type" class="form-control" >
+                    <option value="">type</option>
+                    <c:forEach items="${types}" var="type">
+                        <option value="${type.uuid}">${type.name}</option>
                     </c:forEach>
                 </select>
 
-                <button onclick="saveBook()" class="btn btn-default">Save</button>
-
+                <select id="section" class="form-control">
+                    <option value="">--section--</option>
+                    <c:forEach items="${sections}" var="section">
+                        <option value="${section.uuid}">${section.name}</option>
+                    </c:forEach>
+                </select>
+                <button onclick="update()" class="btn btn-default">Update</button>
             </div>
         </div>
     </div>

@@ -25,7 +25,7 @@ abstract class DatabaseDAO<T> {
 
 
     public abstract void save(T item);
-    public abstract  T get(int key);
+    public abstract  T get(String uuid);
     public abstract List<? extends T> getAll();
 
 

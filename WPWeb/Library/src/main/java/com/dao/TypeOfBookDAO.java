@@ -31,9 +31,9 @@ public class TypeOfBookDAO extends DatabaseDAO<TypeOfBook> {
     }
 
 
-    public TypeOfBook get(int key) {
+    public TypeOfBook get(String uuid) {
 
-        return getSession().get(com.models.TypeOfBook.class, key);
+        return getSession().get(com.models.TypeOfBook.class, uuid);
     }
 
     public List<TypeOfBook> getAll() {

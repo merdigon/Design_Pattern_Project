@@ -2,6 +2,7 @@ package com.models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -14,19 +15,20 @@ import java.util.List;
 public class Section extends DatabaseObject
 {
     @Id
-    @GeneratedValue
-    private int id;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid")
+    @Column(name = "uuid", unique = true)
+    private String uuid;
+
     private String name;
 
-
-    public int getId() {
-        return id;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
-
 
     public String getName() {
         return name;
@@ -45,7 +47,7 @@ public class Section extends DatabaseObject
     @Override
     public String toString() {
         return "{" +
-                "\"id\":\"" + id  + '\"' +
+                "\"uuid\":\"" + uuid  + '\"' +
                 ", \"name\":\"" + name + '\"' +
                 '}';
     }

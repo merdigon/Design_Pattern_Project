@@ -30,9 +30,9 @@ public class AuthorDAO extends DatabaseDAO<Author> {
         }
     }
 
-    public Author get(int key) {
+    public Author get(String uuid) {
 
-        return getSession().get(com.models.Author.class, key);
+        return getSession().get(com.models.Author.class, uuid);
     }
 
     public List<Author> getAll() {

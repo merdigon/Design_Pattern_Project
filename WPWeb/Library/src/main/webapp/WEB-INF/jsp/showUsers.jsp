@@ -16,22 +16,40 @@
     <title>Title</title>
 </head>
 <body>
-<%@include file="partOfPage/buttons/loginRegistrationButton.jsp" %>
-<button class="btn btn-default" onclick="window.location.href='/'">goToMainPage</button>
-<table class="table">
+<h2>Library</h2>
+<%@include file="partOfPage/buttons/loginRegistrationButton.jsp"%>
+<div class="panel panel-primary">
+    <div class="panel-heading">Book operations</div>
+    <div class="panel-body">
+        <button class="btn btn-default" onclick="window.location.href='/'">goToMainPage</button>
+        <table class="table">
+            <tr>
+                <td>login</td>
+                <td>name</td>
+                <td>surname</td>
+                <td>mail</td>
+                <td>borrowed books</td>
+                <td>debt</td>
+            </tr>
 
+            <c:forEach items="${users}" var="user">
+                <tr>
+                    <td>${user.login}</td>
+                    <td>${user.name}</td>
+                    <td>${user.surname}</td>
+                    <td>${user.mail}</td>
+                    <td>
+                        <c:forEach items="${user.books}" var="book">
+                            ${book.title} ${book.year} <br>
+                        </c:forEach>
+                    </td>
+                    <td>${user.debt}</td>
+                </tr>
+            </c:forEach>
 
-    <c:forEach items="${users}" var="user">
-        <tr>
-            <td>${user.login}</td>
-            <td>${user.name}</td>
-            <td>${user.surname}</td>
-            <td>${user.mail}</td>
-            <td>${user.books}</td>
-            <td>${user.debt}</td>
-        </tr>
-    </c:forEach>
+        </table>
+    </div>
+</div>
 
-</table>
 </body>
 </html>

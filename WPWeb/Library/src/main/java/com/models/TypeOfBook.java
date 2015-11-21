@@ -2,6 +2,7 @@ package com.models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -14,38 +15,19 @@ import java.util.List;
 public class TypeOfBook extends DatabaseObject
 {
     @Id
-    @GeneratedValue
-    private int id;
-    private String code;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid")
+    @Column(name = "uuid", unique = true)
+    private String uuid;
 
     private String name;
 
-
-//    @OneToMany(fetch = FetchType.EAGER)
-//    private List<Book> books = new ArrayList<>();
-
-//    public List<Book> getBooks() {
-//        return books;
-//    }
-//
-//    public void setBooks(List<Book> books) {
-//        this.books = books;
-//    }
-
-    public int getId() {
-        return id;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public String getName() {
@@ -56,8 +38,7 @@ public class TypeOfBook extends DatabaseObject
         this.name = name;
     }
 
-    public TypeOfBook(String code, String name) {
-        this.code = code;
+    public TypeOfBook(String name) {
         this.name = name;
     }
     public TypeOfBook(){};
@@ -65,8 +46,7 @@ public class TypeOfBook extends DatabaseObject
     @Override
     public String toString() {
         return "{" +
-                "\"id\":\"" + id  + '\"' +
-                ", \"code\":\"" + code + '\"' +
+                "\"uuid\":\"" + uuid + '\"' +
                 ", \"name\":\"" + name + '\"' +
                 '}';
     }
@@ -78,15 +58,12 @@ public class TypeOfBook extends DatabaseObject
 
         TypeOfBook that = (TypeOfBook) o;
 
-        if (code != null ? !code.equals(that.code) : that.code != null) return false;
         return !(name != null ? !name.equals(that.name) : that.name != null);
 
     }
 
     @Override
     public int hashCode() {
-        int result = code != null ? code.hashCode() : 0;
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        return result;
+        return name != null ? name.hashCode() : 0;
     }
 }

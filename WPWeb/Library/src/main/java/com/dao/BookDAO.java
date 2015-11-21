@@ -5,11 +5,9 @@ import com.models.Book;
 import com.models.BookDate;
 import com.models.Condition;
 import org.hibernate.Query;
-import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,9 +22,9 @@ public class BookDAO extends DatabaseDAO<Book>{
         getSession().persist(book);
     }
 
-    public Book get(int key) {
+    public Book get(String uuid) {
 
-        return getSession().get(com.models.Book.class, key);
+        return getSession().get(com.models.Book.class, uuid);
     }
 
     public List<Book> getAll() {
@@ -36,6 +34,11 @@ public class BookDAO extends DatabaseDAO<Book>{
         System.out.println(list);
         return list;
 
+    }
+
+    public void addDate(Book book, BookDate date){
+        book.addDate(date);
+        getSession().update(book);
     }
 
     //only to column type String
@@ -58,16 +61,6 @@ public class BookDAO extends DatabaseDAO<Book>{
         return getSession().createQuery("from Book where CAST(year as text) Like '%" + year + "%'").list();
     }
 
-    public void addDate(Book book, BookDate date){
-        book.addDate(date);
-        getSession().update(book);
-    }
-
-    public void addReturnDate(Book book, LocalDate date){
-        book.getDates().get(book.getDates().size()-1).setReturnDate(date);
-        getSession().update(book);
-    }
-
     public List<Book> getAllByCondition(Condition condition){
         List<Book> books = new ArrayList<Book>();
         for(Book book: getAll()){
@@ -82,5 +75,11 @@ public class BookDAO extends DatabaseDAO<Book>{
         getSession().update(book);
     }
 
+    public BookDate getLastDate(Book book){
+        return book.getDates().get(book.getDates().size()-1);
+    }
 
+    public void update(Book book){
+        getSession().update(book);
+    }
 }

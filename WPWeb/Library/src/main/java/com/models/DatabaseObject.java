@@ -8,10 +8,10 @@ package com.models;
 public abstract class DatabaseObject
 {
 
-    public int id;
+    public String uuid;
 
     public String ToString()
     {
-        return String.valueOf(id);
+        return uuid;
     }
 }

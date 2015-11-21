@@ -30,10 +30,15 @@
     <div class="panel-body">
         <input type="button" class="btn btn-default" onclick="location.href='/admin/addBook'" value="AddBook">
         <input type="button" class="btn btn-default" onclick="location.href='/addSection'" value="Add Section">
+        <input type="button" class="btn btn-default" onclick="location.href='/addType'" value="Add Type Of Book">
         <input type="button" class="btn btn-default" onclick="location.href='/showUsers'" value="Show Users">
+        <input type="button" class="btn btn-default" onclick="location.href='/searchUser'" value="Search User">
+
     </div>
 </div>
 
 </sec:authorize>
+
+
 </body>
 </html>

@@ -1,6 +1,7 @@
 package com.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.*;
@@ -11,8 +12,10 @@ import java.util.*;
 @Entity
 public class Author extends DatabaseObject {
         @Id
-        @GeneratedValue(strategy=GenerationType.AUTO)
-        private int id;
+        @GeneratedValue(generator = "uuid")
+        @GenericGenerator(name = "uuid", strategy = "uuid")
+        @Column(name = "uuid", unique = true)
+        private String uuid;
 
         private String name;
 
@@ -20,24 +23,13 @@ public class Author extends DatabaseObject {
 
         private int bornYear;
 
-//        @ManyToMany(fetch = FetchType.EAGER)
-//        private List<Book> books = new ArrayList<>();
-
-        public int getId() {
-                return id;
+        public String getUuid() {
+                return uuid;
         }
 
-        public void setId(int id) {
-                this.id = id;
+        public void setUuid(String uuid) {
+                this.uuid = uuid;
         }
-
-//        public List<Book> getBooks() {
-//                return books;
-//        }
-//
-//        public void setBooks(List<Book> books) {
-//                this.books = books;
-//        }
 
         public String getName() {
                 return name;
@@ -77,11 +69,10 @@ public class Author extends DatabaseObject {
         @Override
         public String toString() {
                 return "{" +
-                        "\"id\":\"" + id + '\"' +
+                        "\"uuid\":\"" + uuid + '\"' +
                         ", \"name\":\"" + name + '\"' +
                         ", \"surname\":\"" + surname + '\"' +
                         ", \"bornYear\":\"" + bornYear + '\"' +
-//                        ", \"books\":" + books +
                         '}';
         }
 

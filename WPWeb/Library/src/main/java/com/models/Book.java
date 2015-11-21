@@ -20,21 +20,20 @@ import java.util.Set;
 public class Book extends DatabaseObject{
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private int id;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid")
+    @Column(name = "uuid", unique = true)
+    private String uuid;
 
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="BOOK_AUTHOR", joinColumns = @JoinColumn(name="BOOK_ID", updatable = false, insertable = false),
             inverseJoinColumns = @JoinColumn(name="AUTHOR_ID"))
     private List<Author> authors = new ArrayList<Author>();
+
     private String title;
+
     private int year;
-//
-//    @OneToMany
-//    @JoinTable(name="BOOK_DATE", joinColumns = @JoinColumn(name="BOOK_ID"),
-//            inverseJoinColumns = @JoinColumn(name="DATE_ID"))
-//    private List<BookDate> bookDates = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinTable(name="BOOK_CONDITION", joinColumns = @JoinColumn(name="BOOK_ID"),
@@ -56,6 +55,14 @@ public class Book extends DatabaseObject{
             inverseJoinColumns = @JoinColumn(name="DATE_ID"))
     private List<BookDate> dates = new ArrayList<BookDate>();
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
     public List<BookDate> getDates() {
         return dates;
     }
@@ -72,13 +79,6 @@ public class Book extends DatabaseObject{
         this.authors = authors;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getTitle() {
         return title;
@@ -120,13 +120,6 @@ public class Book extends DatabaseObject{
         this.section = section;
     }
 
-//    public List<BookDate> getBookDates() {
-//        return bookDates;
-//    }
-//
-//    public void setBookDate(List<BookDate> bookDates) {
-//        this.bookDates = bookDates;
-//    }
 
     public Book(List<Author> authors, String title, int year, Condition condition, TypeOfBook typeOfBook, Section section) {
         this.authors = authors;
@@ -144,22 +137,26 @@ public class Book extends DatabaseObject{
     public Book(){}
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Book book = (Book) o;
+
+        return !(uuid != null ? !uuid.equals(book.uuid) : book.uuid != null);
+
+    }
 
     @Override
     public int hashCode() {
-        int result = authors != null ? authors.hashCode() : 0;
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + year;
-        result = 31 * result + (condition != null ? condition.hashCode() : 0);
-        result = 31 * result + (typeOfBook != null ? typeOfBook.hashCode() : 0);
-        result = 31 * result + (section != null ? section.hashCode() : 0);
-        return result;
+        return uuid != null ? uuid.hashCode() : 0;
     }
 
     @Override
     public String toString() {
         return "{" +
-                "\"id\":\"" + id  + '\"' +
+                "\"uuid\":\"" + uuid  + '\"' +
                 ", \"authors\":" + authors +
                 ", \"title\":\"" + title + '\"' +
                 ", \"year\":\"" + year + '\"' +

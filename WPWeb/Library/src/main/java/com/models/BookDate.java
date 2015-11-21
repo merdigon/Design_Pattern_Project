@@ -1,5 +1,6 @@
 package com.models;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.joda.time.LocalDate;
 
 import javax.persistence.*;
@@ -11,8 +12,10 @@ import java.util.Date;
 public class BookDate {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    private int id;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid")
+    @Column(name = "uuid", unique = true)
+    private String uuid;
 
     private LocalDate borrowedDate;
     private LocalDate planningReturnDate;
@@ -20,12 +23,12 @@ public class BookDate {
 
     private String login;
 
-    public int getId() {
-        return id;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public LocalDate getBorrowedDate() {

@@ -93,12 +93,12 @@
             return html;
         }
 
-        function returnBook(id) {
+        function returnBook(uuid) {
             $.ajax({
                 type: "POST",
                 url: "/returnBook",
                 data: {
-                    "id": id
+                    "uuid": uuid
                 },
                 dataType: "text",
                 success: function (response) {
@@ -129,8 +129,9 @@
             <td id='condition{{:id}}'>{{:condition.condition}}</td>
             <td>{{:typeOfBook.name}}</td>
             <td>{{:section.name}}</td>
-
-            <td id="returnButton{{:id}}"><button class="btn btn-default" onclick="returnBook({{:id}})">return</button></td>
+            {{if condition.condition=='Borrowed'}}
+            <td id="returnButton{{:uuid}}"><button class="btn btn-default" onclick="returnBook('{{:uuid}}')">return</button></td>
+            {{/if}}
             <td>{{:debt}}</td>
         </tr>
         </script>

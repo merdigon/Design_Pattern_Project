@@ -1,4 +1,5 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
@@ -43,6 +44,7 @@
                     '<th>section</th>' +
                     <sec:authorize access="hasAnyRole('ADMIN', 'USER')">
                     '<th>action</th>' +
+                    '<th>edit</th>' +
                     </sec:authorize>
                     '</tr>';
 
@@ -52,12 +54,14 @@
             return html;
         }
 
-        function borrow(id) {
+        function borrow(uuid) {
+            console.log("inborrow");
+            console.log(uuid);
             $.ajax({
                 type: "POST",
                 url: "/borrowBook",
                 data: {
-                    "id": id
+                    "uuid": uuid
                 },
                 dataType: "text",
                 success: function (response) {
@@ -73,28 +77,53 @@
                 }
             });
         }
+
+        function editBook(uuid) {
+            console.log("inborrow");
+            console.log(uuid);
+            $.ajax({
+                type: "POST",
+                url: "/editBook",
+                data: {
+                    "uuid": uuid
+                },
+                dataType: "text",
+                success: function (response) {
+                    alert("Contgratulation! You borrow this book :)");
+                    show();
+
+                },
+
+                error: function (e) {
+                    alert("Oops! Something has gone wrong")
+                    show();
+
+                }
+            });
+        }
+
     </script>
 
     <script id="BookTmpl" type="text/x-jsrender">
         <tr>
 
-            <td>{{:title}}</td>
-            <td>{{:year}}</td>
-            <td>
+            <td id='title{{:uuid}}'>{{:title}}</td>
+            <td id='year{{:uuid}}'>{{:year}}</td>
+            <td id='title{{:uuid}}'>
             {{for authors}}
                 {{:name}} {{:surname}} {{:bornYear}} <br>
             {{/for}}
             </td>
-            <td id='condition{{:id}}'>{{:condition.condition}}</td>
+            <td id='condition{{:uuid}}'>{{:condition.condition}}</td>
             <td>{{:typeOfBook.name}}</td>
             <td>{{:section.name}}</td>
             <sec:authorize access="hasAnyRole('ADMIN', 'USER')">
         {{if condition.condition=='Available'}}
-        <td id="borrowButton{{:id}}"><button class="btn btn-default" onclick="borrow({{:id}})">borrow</button></td>
+        <td id="borrowButton{{:uuid}}"><button class="btn btn-default" onclick="borrow('{{:uuid}}')">borrow</button></td>
         {{else}}
         <td>not available</td>
         {{/if}}
-        <td id="editBook{{:id}}"><button class="btn btn-default" onclick="editBook({{:id}})">edit</button></td>
+       <td><a href="<c:url value='/editBook/{{:uuid}}' />" ><button class="btn btn-primary">edit</button><a><td>
     </sec:authorize>
         </tr>
 
@@ -122,5 +151,8 @@
 
     </div>
     </div>
+
+
+
 </body>
 </html>

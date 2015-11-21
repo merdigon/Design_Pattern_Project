@@ -34,9 +34,9 @@ public class ConditionDAO extends DatabaseDAO<Condition>{
     }
 
 
-    public Condition get(int key) {
+    public Condition get(String uuid) {
 
-        return getSession().get(com.models.Condition.class, key);
+        return getSession().get(com.models.Condition.class, uuid);
     }
 
     public List<Condition> getAll() {

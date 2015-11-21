@@ -18,7 +18,8 @@
             },
             dataType: "text",
             success: function (response) {
-                alert("Success! You can now log in");
+                $("#form").hide();
+                $('#alert_placeholder').append('<div class="alert alert-success">Successs</div>');
             },
 
             error: function (e) {
@@ -51,5 +52,6 @@
 
     </div>
 </div>
+<div id="alert_placeholder"></div>
 </body>
 </html>

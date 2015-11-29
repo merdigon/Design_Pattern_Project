@@ -108,7 +108,7 @@
 
             $.ajax({
                 type: "POST",
-                url: "/admin/cancelReservedBook",
+                url: "/cancelReservedBook",
                 data: {
                     "userUuid": $('#userUuid').val(),
                     "bookUuid": $('#bookUuid').val()
@@ -130,48 +130,54 @@
 </head>
 <body>
 <h2>Library</h2>
-<%@include file="partOfPage/buttons/loginRegistrationButton.jsp"%>
+<%@include file="partOfPage/buttons/loginRegistrationButton.jsp" %>
 <div class="panel panel-primary">
     <div class="panel-heading">Book operations</div>
     <div class="panel-body">
         <button class="btn btn-default" onclick="window.location.href='/'">goToMainPage</button>
-        <table class="table">
-            <tr>
-                <th>uuid</th>
-                <th>login</th>
-                <th>name</th>
-                <th>surname</th>
-                <th>mail</th>
-                <th>borrowed books</th>
-                <th>reserved</th>
-                <th>debt</th>
-                <th>action</th>
-            </tr>
-
-            <c:forEach items="${users}" var="user">
+        <div class="table-responsive">
+            <table class="table">
                 <tr>
-                    <td>${user.uuid}</td>
-                    <td>${user.login}</td>
-                    <td>${user.name}</td>
-                    <td>${user.surname}</td>
-                    <td>${user.mail}</td>
-                    <td>
-                        <c:forEach items="${user.books}" var="book">
-                            ${book.title} ${book.year} <br>
-                        </c:forEach>
-                    </td>
-                    <td>
-                        <c:forEach items="${user.reservedBooks}" var="reservedBook">
-                            ${reservedBook.title} ${reservedBook.year} <br>
-                        </c:forEach>
-                    </td>
-                    <td>${user.debt}</td>
-                    <td><button onclick="$('#userUuid').val('${user.uuid}')" class="btn btn-default" data-toggle="modal" data-target="#myModal">action</button></td>
+                    <th>uuid</th>
+                    <th>login</th>
+                    <th>name</th>
+                    <th>surname</th>
+                    <th>mail</th>
+                    <th>borrowed books</th>
+                    <th>reserved</th>
+                    <th>debt</th>
+                    <th>action</th>
                 </tr>
-            </c:forEach>
+
+                <c:forEach items="${users}" var="user">
+                    <tr>
+                        <td>${user.uuid}</td>
+                        <td>${user.login}</td>
+                        <td>${user.name}</td>
+                        <td>${user.surname}</td>
+                        <td>${user.mail}</td>
+                        <td>
+                            <c:forEach items="${user.books}" var="book">
+                                ${book.title} ${book.year} <br>
+                            </c:forEach>
+                        </td>
+                        <td>
+                            <c:forEach items="${user.reservedBooks}" var="reservedBook">
+                                ${reservedBook.title} ${reservedBook.year} <br>
+                            </c:forEach>
+                        </td>
+                        <td>${user.debt}</td>
+                        <td>
+                            <button onclick="$('#userUuid').val('${user.uuid}')" class="btn btn-default"
+                                    data-toggle="modal" data-target="#myModal">action
+                            </button>
+                        </td>
+                    </tr>
+                </c:forEach>
 
 
-        </table>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -188,11 +194,12 @@
             <div class="modal-body">
                 <input type="text" id="bookUuid">
                 <input type="hidden" id="userUuid">
-                <button onclick = "borrow()">borrow</button>
-                <button onclick = "returnBook()">return </button>
-                <button onclick = "reserveBook()">reserve </button>
-                <button onclick = "cancelReserveBook()">cancel reseve </button>
-                <input type="text" id="debtReturn"> <button onclick="payDebt()">payDebt</button>
+                <button onclick="borrow()">borrow</button>
+                <button onclick="returnBook()">return</button>
+                <button onclick="reserveBook()">reserve</button>
+                <button onclick="cancelReserveBook()">cancel reseve</button>
+                <input type="text" id="debtReturn">
+                <button onclick="payDebt()">payDebt</button>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

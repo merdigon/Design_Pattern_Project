@@ -35,7 +35,21 @@ public class UserRole {
         this.type = type;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        UserRole userRole = (UserRole) o;
+
+        return !(type != null ? !type.equals(userRole.type) : userRole.type != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return type != null ? type.hashCode() : 0;
+    }
 
     @Override
     public String toString() {

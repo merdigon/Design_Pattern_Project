@@ -9,11 +9,10 @@ import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
 import javax.persistence.*;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
+
 
 @Entity
 @Table
@@ -44,12 +43,11 @@ public class UserModel extends DatabaseObject
         private String mail;
 
 
-        @ManyToMany(fetch = FetchType.EAGER)
+        @ManyToOne(fetch = FetchType.EAGER)
         @JoinTable(name="user_userRole",
                         joinColumns = {@JoinColumn(name="userId")},
                         inverseJoinColumns = {@JoinColumn(name="userProfileId")})
-
-        private Set<UserRole> userRole = new HashSet<UserRole>();
+        private UserRole userRole;
         @OneToMany
         @NotFound(action = NotFoundAction.IGNORE)
         @JoinTable(name="USER_BOOK", joinColumns = @JoinColumn(name="USER_UUID"),
@@ -137,11 +135,11 @@ public class UserModel extends DatabaseObject
                 this.mail = mail;
         }
 
-        public Set<UserRole> getUserRole() {
+        public UserRole getUserRole() {
                 return userRole;
         }
 
-        public void setUserRole(Set<UserRole> userRole) {
+        public void setUserRole(UserRole userRole) {
                 this.userRole = userRole;
         }
 

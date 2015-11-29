@@ -22,7 +22,10 @@
                 url: "/admin/editLibraryConfiguration",
                 data: {
                     "days": $('#days').val(),
-                    "interests": $("#interests").val()
+                    "interests": $("#interests").val(),
+                    "maxBorrowedBooks": $("#maxBorrowedBooks").val(),
+                    "maxReservedBooks": $("#maxReservedBooks").val(),
+                    "expirationTime": $("#expirationTime").val()
                 },
                 dataType: "text",
                 success: function (response) {
@@ -48,6 +51,9 @@
     <div class="panel-body">
   The omount of interests by day: ${interests}<br>
   Number of borrowed days: ${borrowedDays}<br>
+  Limit of borrowed books per user: ${maxBorrowedBooks}<br>
+  Limit of reserved books per user: ${maxReservedBooks}<br>
+  Expiration session time: ${expirationTime}<br>
       <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">edit</button>
       </div>
     </div>
@@ -66,6 +72,9 @@
             <div class="modal-body">
                 <input type="text" id="days" placeholder="days">
                 <input type="text" id="interests" placeholder="interests">
+                <input type="text" id="maxReservedBooks" placeholder="max reserved books">
+                <input type="text" id="maxBorrowedBooks" placeholder="max borrowed books">
+                <input type="text" id="expirationTime" placeholder="expiration session time">
                 <button onclick = "edit()">edit</button>
             </div>
             <div class="modal-footer">

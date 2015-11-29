@@ -28,8 +28,15 @@
                 },
                 dataType: "text",
                 success: function (response) {
-                    $('#alert_placeholder').append('<div class="alert alert-success">Successs</div>');
-                    $('#form').hide();
+                    if(response =="Success") {
+                        $('#alert_placeholder').append('<div class="alert alert-success">' + response + '</div>');
+                        $('#form').hide();
+                    }
+                    else {
+                        $('#alert_placeholder').append('<div class="alert alert-danger">' + response + '</div>');
+
+                    }
+
                 },
 
                 error: function (e) {

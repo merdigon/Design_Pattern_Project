@@ -48,18 +48,11 @@ public class UserRoleDAO extends DatabaseDAO<UserRole> {
         }
     }
 
-    public Set<UserRole> saveIfNotInDB(Set<UserRole> userRoles) {
-        Set<UserRole> userRoles1 = new HashSet<>();
-        for (UserRole role : userRoles) {
-            userRoles1.add(saveIfNotInDB(role));
-        }
-        return userRoles1;
-    }
 
-    public void addInterests(UserModel user, double interest){
-        user.setDebt(user.getDebt() + interest);
-        getSession().update(user);
-    }
+//    public void addInterests(UserModel user, double interest){
+//        user.setDebt(user.getDebt() + interest);
+//        getSession().update(user);
+//    }
 
 
 }

@@ -41,12 +41,15 @@
                     '<th>Author</th>' +
                     '<th>Condition</th>' +
                     '<th>Type Of Book</th>' +
-                    '<th>sSction</th>' +
+                    '<th>Section</th>' +
                     <sec:authorize access="hasRole('ADMIN')">
                     '<th>Edit</th>' +
                     '<th>Uuid</th>' +
+                    </sec:authorize>
+                    <sec:authorize access="hasAnyRole('ADMIN', 'USER')">
                     '<th>Action</th>' +
                     </sec:authorize>
+
                     '</tr>';
 
             html += myTemplate.render(json);
@@ -117,17 +120,20 @@
             <td id='condition{{:uuid}}'>{{:condition.condition}}</td>
             <td>{{:typeOfBook.name}}</td>
             <td>{{:section.name}}</td>
+            <sec:authorize access="hasAnyRole('ADMIN', 'USER')">
+                {{if condition.condition=='Available'}}
+                    <td><button class="btn btn-default" onclick="reserveBook('{{:uuid}}')">reserveBook</button></td>
+                {{else}}
+                    <td>not available</td>
+                {{/if}}
+            </sec:authorize>
             <sec:authorize access="hasRole('ADMIN')">
-            {{if condition.condition=='Available'}}
-                <td><button class="btn btn-default" onclick="reserveBook('{{:uuid}}')">reserveBook</button></td>
-            {{else}}
-                <td>not available</td>
-            {{/if}}
-
-        <td>{{:uuid}}</td>
-        <td><a href="<c:url value='/admin/editBook/{{:uuid}}'/>" ><button class="btn btn-primary">edit</button><a><td>
-    </sec:authorize>
+                <td>{{:uuid}}</td>
+                <td><a href="<c:url value='/admin/editBook/{{:uuid}}'/>" ><button class="btn btn-primary">edit</button><a><td>
+            </sec:authorize>
         </tr>
+
+
 
 
     </script>
@@ -145,9 +151,9 @@
     <div id="form" class="'form-group" style="display: inline">
         <div class="panel-body">
 
-
-            <div id="displayTable">
-
+            <div class="table-responsive">
+                <div id="displayTable">
+                </div>
             </div>
         </div>
 

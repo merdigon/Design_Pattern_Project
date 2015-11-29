@@ -120,6 +120,7 @@
                     '<th>condition</th>' +
                     '<th>typeOfBook</th>' +
                     '<th>section</th>' +
+                    '<th>action</th>' +
                     '</tr>';
 
             html += myTemplate.render(json);
@@ -128,6 +129,27 @@
             return html;
         }
 
+        function cancelReservation(uuid) {
+
+            $.ajax({
+                type: "POST",
+                url: "/cancelReservedBook",
+                data: {
+                    "userUuid": '',
+                    "bookUuid": uuid
+                },
+                dataType: "text",
+                success: function (response) {
+                    alert(response);
+                    location.reload();
+                },
+
+                error: function (e) {
+                    alert("Oops! Something has gone wrong");
+                    location.reload();
+                }
+            });
+        }
 
     </script>
 
@@ -170,6 +192,7 @@
             <td id='condition{{:id}}'>{{:condition.condition}}</td>
             <td>{{:typeOfBook.name}}</td>
             <td>{{:section.name}}</td>
+            <td><button class="btn btn-default" onclick="cancelReservation('{{:uuid}}')">Cancel reservation</button></td>
 
         </tr>
 

@@ -6,6 +6,9 @@ package com.LibraryConfiguration;
 public class Conf {
     private static int borrowedDays = 30;
     private static double interests = 0.2;
+    private static int maxBorrowedBooks = 3;
+    private static int maxReservedBooks = 3;
+    private static int expirationSessionMinutes = 30;
 
     public static int getBorrowedDays() {
         return borrowedDays;
@@ -19,7 +22,33 @@ public class Conf {
         return interests;
     }
 
+
     public static void setInterests(double interests) {
         Conf.interests = interests;
+    }
+
+
+    public static int getMaxBorrowedBooks() {
+        return maxBorrowedBooks;
+    }
+
+    public static void setMaxBorrowedBooks(int maxBorrowedBooks) {
+        Conf.maxBorrowedBooks = maxBorrowedBooks;
+    }
+
+    public static int getMaxReservedBooks() {
+        return maxReservedBooks;
+    }
+
+    public static void setMaxReservedBooks(int maxReservedBooks) {
+        Conf.maxReservedBooks = maxReservedBooks;
+    }
+
+    public static int getExpirationSessionMinutes() {
+        return expirationSessionMinutes;
+    }
+
+    public static void setExpirationSessionMinutes(int expirationSessionMinutes) {
+        Conf.expirationSessionMinutes = expirationSessionMinutes;
     }
 }

@@ -19,8 +19,8 @@
         <sec:authorize access="hasRole('ADMIN')">
 
         </sec:authorize>
-        <input type="button" class="btn btn-default" onclick="location.href='/showBooks'" value="Show Books">
-        <input type="button" class="btn btn-default" onclick="location.href='/searchBooks'" value="search Book">
+        <input type="button" class="btn btn-default" onclick="location.href='/showBooks'" value="Show books">
+        <input type="button" class="btn btn-default" onclick="location.href='/searchBooks'" value="Search books">
 
     </div>
 </div>
@@ -28,11 +28,11 @@
 <div class="panel panel-primary">
     <div class="panel-heading">Admin tools</div>
     <div class="panel-body">
-        <input type="button" class="btn btn-default" onclick="location.href='/admin/addBook'" value="AddBook">
-        <input type="button" class="btn btn-default" onclick="location.href='/admin/addSection'" value="Add Section">
-        <input type="button" class="btn btn-default" onclick="location.href='/admin/addType'" value="Add Type Of Book">
-        <input type="button" class="btn btn-default" onclick="location.href='/admin/showUsers'" value="Show Users">
-        <input type="button" class="btn btn-default" onclick="location.href='/admin/searchUser'" value="Search User">
+        <input type="button" class="btn btn-default" onclick="location.href='/admin/addBook'" value="Add book">
+        <input type="button" class="btn btn-default" onclick="location.href='/admin/addSection'" value="Add section">
+        <input type="button" class="btn btn-default" onclick="location.href='/admin/addType'" value="Add type of book">
+        <input type="button" class="btn btn-default" onclick="location.href='/admin/showUsers'" value="Show users">
+        <input type="button" class="btn btn-default" onclick="location.href='/admin/searchUser'" value="Search users">
         <input type="button" class="btn btn-default" onclick="location.href='/admin/configureLibrary'" value="Configure Library">
 
     </div>

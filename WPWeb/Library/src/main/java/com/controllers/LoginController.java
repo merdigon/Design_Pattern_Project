@@ -16,8 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by piotrek on 08.11.15.
@@ -78,17 +76,23 @@ public class LoginController extends BaseController {
                           @RequestParam("surname") String surname,
                           @RequestParam("mail") String mail) {
         UserModel user = new UserModel();
+
+        if(userModelDAO.isLogin(login))
+            return "Failure: login is used";
+
+        if(userModelDAO.isMail(mail)){
+            return "failure: mail is used";
+        }
+
         user.setLogin(login);
         user.setPassword(password);
         user.setName(name);
         user.setSurname(surname);
         user.setMail(mail);
         UserRole role = new UserRole();
-        role.setType(userRole);
-        userRoleDAO.save(role);
-        Set<UserRole> userRoleSet = new HashSet<>();
-        userRoleSet.add(role);
-        user.setUserRole(userRoleSet);
+        role.setType("USER");
+        role = userRoleDAO.saveIfNotInDB(role);
+        user.setUserRole(role);
         userModelDAO.save(user);
         return "Success";
     }
@@ -106,9 +110,7 @@ public class LoginController extends BaseController {
         UserRole role = new UserRole();
         role.setType("ADMIN");
         userRoleDAO.save(role);
-        Set<UserRole> userRoleSet = new HashSet<>();
-        userRoleSet.add(role);
-        user.setUserRole(userRoleSet);
+        user.setUserRole(role);
         userModelDAO.save(user);
         return "Success";
     }

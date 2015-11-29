@@ -44,6 +44,7 @@ public class BookController extends BaseController {
         String[] authorsString = authorData.split((","));
         List<Author> authors = new ArrayList<Author>();
 
+
         for(String authorString : authorsString) {
             Author author = new Author(authorString.split(" ")[0], authorString.split(" ")[1], Integer.parseInt(authorString.split(" ")[2]));
             authors.add(authorDAO.saveIfNotInDB(author));
@@ -107,6 +108,10 @@ public class BookController extends BaseController {
 
         UserModel user = userModelDAO.get(userUuid);
         Book book = bookDAO.get(bookUuid);
+
+        if(user.getBooks().size()+1>=Conf.getMaxBorrowedBooks())
+            return "Failure: you borrowed too many books";
+
         if(!book.getCondition().equals(Conditions.valueOf("Available")))
             return "Failure: book is not available";
 
@@ -214,10 +219,14 @@ public class BookController extends BaseController {
             user = userModelDAO.get(userUuid);
 
 
+
         if(book==null)
             return "Failure: there is no such book";
         if(user==null)
             return "Failure: there is no such user";
+
+        if(user.getReservedBooks().size()+1>=Conf.getMaxReservedBooks())
+            return "Failure: you reserved too many books";
 
         if(!book.getCondition().equals(Conditions.valueOf("Available")))
             return "Failure: book is not available";
@@ -229,7 +238,7 @@ public class BookController extends BaseController {
         return "success";
     }
 
-    @RequestMapping(value = "/admin/cancelReservedBook", method = RequestMethod.POST)
+    @RequestMapping(value = "/cancelReservedBook", method = RequestMethod.POST)
     @ResponseBody
     public String cancelReserveBook(@RequestParam("userUuid") String userUuid,
                               @RequestParam("bookUuid") String bookUuid){

@@ -1,5 +1,6 @@
 package com.dao;
 
+import com.configuration.CryptWithMD5;
 import com.models.Book;
 import com.models.UserModel;
 import org.hibernate.Query;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
+import sun.invoke.empty.Empty;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,15 +17,24 @@ import java.util.Optional;
  * Created by pietrek on 13.11.15.
  */
 @Repository
-public class UserModelDAO extends DatabaseDAO<UserModel>{
+public class UserModelDAO extends DatabaseDAO<UserModel> {
 
+
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    CryptWithMD5 cryptWithMD5;
 
     public void save(UserModel user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        //user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(cryptWithMD5.encode(user.getPassword()));
         getSession().save(user);
+    }
+
+    public boolean isValidUser(String login, String password) {
+        Optional<UserModel> user = Optional.ofNullable(getByLogin(login));
+        return (user.isPresent() && user.get().getPassword().equals(password));
     }
 
 
@@ -32,40 +43,45 @@ public class UserModelDAO extends DatabaseDAO<UserModel>{
         return getSession().get(com.models.UserModel.class, uuid);
     }
 
-    public UserModel getByLogin(String login){
+    //    public Optional<UserModel> getByLogin(String login){
+//        Query query = getSession().createQuery("from UserModel where login LIKE ?");
+//        query.setString(0, login);
+//        return Optional.ofNullable(query.list()).map(users -> (UserModel)users.get(0)).orElse(Optional.empty());
+//    }
+    public UserModel getByLogin(String login) {
         Query query = getSession().createQuery("from UserModel where login LIKE ?");
         query.setString(0, login);
-        return (UserModel)query.list().get(0);
+        return (UserModel) query.list().get(0);
     }
 
-    public void addBook(UserModel user, Book book){
-            user.addBook(book);
-            getSession().update(user);
+    public void addBook(UserModel user, Book book) {
+        user.addBook(book);
+        getSession().update(user);
     }
 
-    public void addReservedBook(UserModel user, Book book){
+    public void addReservedBook(UserModel user, Book book) {
         user.addReservedBook(book);
         getSession().update(user);
     }
 
-    public void addBook(String login, Book book){
+    public void addBook(String login, Book book) {
         UserModel user = getByLogin(login);
         user.addBook(book);
         getSession().update(user);
     }
 
-    public void addDebt(UserModel user, double debt){
+    public void addDebt(UserModel user, double debt) {
         user.setDebt(user.getDebt() + debt);
         getSession().update(user);
     }
 
 
-    public void removeBook(UserModel user, Book book){
+    public void removeBook(UserModel user, Book book) {
         user.removeBook(book);
         getSession().update(user);
     }
 
-    public void removeReservedBook(UserModel user, Book book){
+    public void removeReservedBook(UserModel user, Book book) {
         user.removeReservedBook(book);
         getSession().update(user);
     }
@@ -77,12 +93,22 @@ public class UserModelDAO extends DatabaseDAO<UserModel>{
     }
 
 
-    public void update(UserModel user){
+    public void update(UserModel user) {
         getSession().update(user);
     }
 
-    public void delete(String uuid){
+    public void delete(String uuid) {
         getSession().delete(get(uuid));
+    }
+
+    public boolean isLogin(String login){
+        Query query = getSession().createQuery("from UserModel where login='" + login + "'");
+        return !query.list().isEmpty();
+    }
+
+    public boolean isMail(String mail){
+        Query query = getSession().createQuery("from UserModel where mail='" + mail + "'");
+        return !query.list().isEmpty();
     }
 
 }

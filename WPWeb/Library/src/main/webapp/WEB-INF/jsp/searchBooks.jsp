@@ -70,14 +70,17 @@
                     '<th>Title</th>' +
                     '<th>Year</th>' +
                     '<th>Author</th>' +
-                    '<th>condition</th>' +
-                    '<th>typeOfBook</th>' +
-                    '<th>section</th>' +
+                    '<th>Condition</th>' +
+                    '<th>Type Of Book</th>' +
+                    '<th>Section</th>' +
                     <sec:authorize access="hasRole('ADMIN')">
-                    '<th>edit</th>' +
+                    '<th>Edit</th>' +
                     '<th>Uuid</th>' +
-                    '<th>action</th>' +
                     </sec:authorize>
+                    <sec:authorize access="hasAnyRole('ADMIN', 'USER')">
+                    '<th>Action</th>' +
+                    </sec:authorize>
+
                     '</tr>';
 
             html += myTemplate.render(json);
@@ -146,17 +149,21 @@
             <td id='condition{{:uuid}}'>{{:condition.condition}}</td>
             <td>{{:typeOfBook.name}}</td>
             <td>{{:section.name}}</td>
-<sec:authorize access="hasRole('ADMIN')">
-            {{if condition.condition=='Available'}}
-                <td><button class="btn btn-default" onclick="reserveBook('{{:uuid}}')">reserveBook</button></td>
-            {{else}}
-                <td>not available</td>
-            {{/if}}
-
+            <sec:authorize access="hasAnyRole('ADMIN', 'USER')">
+        {{if condition.condition=='Available'}}
+        <td><button class="btn btn-default" onclick="reserveBook('{{:uuid}}')">reserveBook</button></td>
+        {{else}}
+        <td>not available</td>
+        {{/if}}
+    </sec:authorize>
+            <sec:authorize access="hasRole('ADMIN')">
         <td>{{:uuid}}</td>
         <td><a href="<c:url value='/admin/editBook/{{:uuid}}'/>" ><button class="btn btn-primary">edit</button><a><td>
     </sec:authorize>
         </tr>
+
+
+
 
     </script>
 

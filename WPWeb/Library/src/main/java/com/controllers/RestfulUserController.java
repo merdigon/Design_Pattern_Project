@@ -1,14 +1,12 @@
 package com.controllers;
 
+import com.models.Session;
 import com.models.UserModel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
@@ -16,13 +14,34 @@ import java.util.List;
 /**
  * Created by piotrek on 21.11.15.
  */
-public class RestfulUserController  extends BaseController{
+@RestController
+public class RestfulUserController extends BaseController {
 
 
-    //-------------------Retrieve All Users--------------------------------------------------------
+    /**
+     * Pobiera liste wszystkich ksiazek. Tylko admin
+     * @param token
+     * @return lista wszystkich ksiazek
+     */
 
-    @RequestMapping(value = "/rest/user/", method = RequestMethod.GET)
-    public ResponseEntity<List<UserModel>> listAllUsers() {
+    @RequestMapping(value = "/rest/users", method = RequestMethod.GET)
+    public ResponseEntity<List<UserModel>> listAllUsers(@RequestHeader("token") String token) {
+
+        Session session = sessionManager.getAndUpdateSession(token);
+
+        if (session == null)
+            return new ResponseEntity<List<UserModel>>(HttpStatus.NOT_FOUND);
+
+        if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
+            return new ResponseEntity<List<UserModel>>(HttpStatus.FORBIDDEN);
+
+
+        String login = session.getLogin();
+        UserModel user = userModelDAO.getByLogin(login);
+
+        if (!user.getUserRole().getType().equals("ADMIN"))
+            return new ResponseEntity<List<UserModel>>(HttpStatus.FORBIDDEN);
+
         List<UserModel> users = userModelDAO.getAll();
         if (users.isEmpty()) {
             return new ResponseEntity<List<UserModel>>(HttpStatus.NO_CONTENT);
@@ -30,10 +49,25 @@ public class RestfulUserController  extends BaseController{
         return new ResponseEntity<List<UserModel>>(users, HttpStatus.OK);
     }
 
-    //--------------------- Retrieve single user by uuid
+    /**
+     * Pobiera uzytkownika na podstawie uuid. Tylko admin
+     * @param uuid id uzytkownika
+     * @param token
+     * @return uzytkownik
+     */
 
-    @RequestMapping(value = "/rest/user/{uuid}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserModel> getUser(@PathVariable("uuid") String uuid) {
+    @RequestMapping(value = "/rest/user/{uuid}", method = RequestMethod.GET)
+    public ResponseEntity<UserModel> getUser(@PathVariable("uuid") String uuid,
+                                             @RequestHeader("token") String token) {
+        Session session = sessionManager.getAndUpdateSession(token);
+
+        if (session == null)
+            return new ResponseEntity<UserModel>(HttpStatus.NOT_FOUND);
+
+        if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
+            return new ResponseEntity<UserModel>(HttpStatus.FORBIDDEN);
+
+
         UserModel user = userModelDAO.get(uuid);
         if (user == null) {
             System.out.println("user with uuid " + uuid + " not found");
@@ -42,24 +76,24 @@ public class RestfulUserController  extends BaseController{
         return new ResponseEntity<UserModel>(user, HttpStatus.OK);
     }
 
-
-    //-------------------Create a User--------------------------------------------------------
-
-    @RequestMapping(value = "/rest/user/", method = RequestMethod.POST)
-    public ResponseEntity<Void> createUserModel(@RequestBody UserModel user, UriComponentsBuilder ucBuilder) {
-
-
-        user.setUserRole(userRoleDAO.saveIfNotInDB(user.getUserRole()));
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(ucBuilder.path("/rest/user/{uuid}").buildAndExpand(user.getUuid()).toUri());
-        return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
-    }
-
-    //-------------------Update a UserModel--------------------------------------------------------
-
+    /**
+     * Aktualizacja uzytkownika na podstawie jego uuid. Tylko admin
+     * @param uuid id uzytkownika do zmiany
+     * @param user zmieniony uzytkownik w postaci jsona
+     * @param token
+     * @return httpStatus
+     */
     @RequestMapping(value = "/rest/user/{uuid}", method = RequestMethod.PUT)
-    public ResponseEntity<UserModel> updateUserModel(@PathVariable("uuid") String uuid, @RequestBody UserModel user) {
+    public ResponseEntity<UserModel> updateUserModel(@PathVariable("uuid") String uuid, @RequestBody UserModel user,
+                                                     @RequestHeader("token") String token) {
+
+        Session session = sessionManager.getAndUpdateSession(token);
+
+        if (session == null)
+            return new ResponseEntity<UserModel>(HttpStatus.NOT_FOUND);
+
+        if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
+            return new ResponseEntity<UserModel>(HttpStatus.FORBIDDEN);
 
         UserModel currentUser = userModelDAO.get(uuid);
 
@@ -79,10 +113,24 @@ public class RestfulUserController  extends BaseController{
         return new ResponseEntity<UserModel>(currentUser, HttpStatus.OK);
     }
 
-    //-------------------Delete a User--------------------------------------------------------
+    /**
+     * Usuwanie uzytkownika na podstawie jego uuid. tylko admin
+     * @param uuid id uzytkownika
+     * @param token
+     * @return httpStatus
+     */
 
     @RequestMapping(value = "/rest/user/{uuid}", method = RequestMethod.DELETE)
-    public ResponseEntity<UserModel> deleteUser(@PathVariable("uuid") String uuid) {
+    public ResponseEntity<UserModel> deleteUser(@PathVariable("uuid") String uuid,
+                                                @RequestHeader("token") String token) {
+
+        Session session = sessionManager.getAndUpdateSession(token);
+
+        if (session == null)
+            return new ResponseEntity<UserModel>(HttpStatus.NOT_FOUND);
+
+        if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
+            return new ResponseEntity<UserModel>(HttpStatus.FORBIDDEN);
 
         UserModel user = userModelDAO.get(uuid);
         if (user == null) {
@@ -94,18 +142,35 @@ public class RestfulUserController  extends BaseController{
         return new ResponseEntity<UserModel>(HttpStatus.NO_CONTENT);
     }
 
+    /**
+     * Rozliczenie zaleglosci finansowej uzytkownika. Tylko admin
+     * @param uuid id uzytkownika
+     * @param money ilosc zaplaconych odsetek
+     * @param token
+     * @return
+     */
+
     @RequestMapping(value = "/rest/payDept/{userUuid}/{money}", method = RequestMethod.PUT)
-    public ResponseEntity<UserModel> payDept(@PathVariable("userUuid") String uuid,
-                                                 @PathVariable("money") double money) {
+    public ResponseEntity<Void> payDept(@PathVariable("userUuid") String uuid,
+                                             @PathVariable("money") double money,
+                                             @RequestHeader("token") String token) {
+
+        Session session = sessionManager.getAndUpdateSession(token);
+
+        if (session == null)
+            return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+
+        if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
+            return new ResponseEntity<Void>(HttpStatus.FORBIDDEN);
 
         UserModel user = userModelDAO.get(uuid);
-        if(user == null)
-            return new ResponseEntity<UserModel>(HttpStatus.NOT_FOUND);
+        if (user == null)
+            return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
 
-        user.setDebt(user.getDebt()- money);
+        user.setDebt(user.getDebt() - money);
         userModelDAO.update(user);
 
-        return new ResponseEntity<UserModel>(user, HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
 

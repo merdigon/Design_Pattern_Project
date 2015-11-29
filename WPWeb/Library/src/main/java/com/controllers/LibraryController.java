@@ -50,15 +50,26 @@ public class LibraryController extends BaseController {
     public String configureLibrary(Model model) {
         model.addAttribute("borrowedDays", Conf.getBorrowedDays());
         model.addAttribute("interests", Conf.getInterests());
+        model.addAttribute("maxBorrowedBooks", Conf.getMaxBorrowedBooks());
+        model.addAttribute("maxReservedBooks", Conf.getMaxReservedBooks());
+        model.addAttribute("expirationTime", Conf.getExpirationSessionMinutes());
         return "configureLibrary";
     }
+
+
 
     @RequestMapping(value = "/admin/editLibraryConfiguration", method = RequestMethod.POST)
     @ResponseBody
     public String editLibraryConfiguration(@RequestParam("days") int days,
-                                           @RequestParam("interests") double interests){
+                                           @RequestParam("interests") double interests,
+                                           @RequestParam("maxReservedBooks") int reserved,
+                                           @RequestParam("expirationTime") int expirationTime,
+                                           @RequestParam("maxBorrowedBooks") int borrowed){
         Conf.setBorrowedDays(days);
         Conf.setInterests(interests);
+        Conf.setBorrowedDays(borrowed);
+        Conf.setMaxReservedBooks(reserved);
+        Conf.setExpirationSessionMinutes(expirationTime);
         return "success";
     }
 

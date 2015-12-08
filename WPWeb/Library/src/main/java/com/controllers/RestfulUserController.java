@@ -1,5 +1,6 @@
 package com.controllers;
 
+import com.dao.UserModelDAO;
 import com.models.Session;
 import com.models.UserModel;
 import org.springframework.http.HttpHeaders;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -20,13 +22,15 @@ public class RestfulUserController extends BaseController {
 
     /**
      * Pobiera liste wszystkich ksiazek. Tylko admin
-     * @param token
+     * @param request -"token"
      * @return lista wszystkich ksiazek
      */
 
-    @RequestMapping(value = "/rest/users", method = RequestMethod.GET)
-    public ResponseEntity<List<UserModel>> listAllUsers(@RequestHeader("token") String token) {
 
+    @RequestMapping(value = "/rest/users", method = RequestMethod.GET)
+    public ResponseEntity<List<UserModel>> listAllUsers(HttpServletRequest request) {
+
+        String token = request.getParameter("token");
         Session session = sessionManager.getAndUpdateSession(token);
 
         if (session == null)
@@ -51,14 +55,14 @@ public class RestfulUserController extends BaseController {
 
     /**
      * Pobiera uzytkownika na podstawie uuid. Tylko admin
-     * @param uuid id uzytkownika
-     * @param token
+     @param request "token", "uuid"
      * @return uzytkownik
      */
 
-    @RequestMapping(value = "/rest/user/{uuid}", method = RequestMethod.GET)
-    public ResponseEntity<UserModel> getUser(@PathVariable("uuid") String uuid,
-                                             @RequestHeader("token") String token) {
+    @RequestMapping(value = "/rest/user/", method = RequestMethod.GET)
+    public ResponseEntity<UserModel> getUser(HttpServletRequest request) {
+        String token = request.getParameter("token");
+        String uuid = request.getParameter("uuid");
         Session session = sessionManager.getAndUpdateSession(token);
 
         if (session == null)
@@ -78,14 +82,18 @@ public class RestfulUserController extends BaseController {
 
     /**
      * Aktualizacja uzytkownika na podstawie jego uuid. Tylko admin
-     * @param uuid id uzytkownika do zmiany
-     * @param user zmieniony uzytkownik w postaci jsona
-     * @param token
+     * @param request "token", "uuid", "password", "name", "surname", "mail"
      * @return httpStatus
      */
-    @RequestMapping(value = "/rest/user/{uuid}", method = RequestMethod.PUT)
-    public ResponseEntity<UserModel> updateUserModel(@PathVariable("uuid") String uuid, @RequestBody UserModel user,
-                                                     @RequestHeader("token") String token) {
+    @RequestMapping(value = "/rest/user/", method = RequestMethod.PUT)
+    public ResponseEntity<UserModel> updateUserModel(HttpServletRequest request) {
+
+        String token = request.getParameter("token");
+        String uuid = request.getParameter("uuid");
+        String password = request.getParameter("password");
+        String name = request.getParameter("name");
+        String surname = request.getParameter("surname");
+        String mail = request.getParameter("mail");
 
         Session session = sessionManager.getAndUpdateSession(token);
 
@@ -101,29 +109,28 @@ public class RestfulUserController extends BaseController {
             System.out.println("UserModel with uuid " + uuid + " not found");
             return new ResponseEntity<UserModel>(HttpStatus.NOT_FOUND);
         }
-
-        currentUser.setLogin(user.getLogin());
-        currentUser.setName(user.getName());
-        currentUser.setSurname(user.getSurname());
-        currentUser.setMail(user.getMail());
-        currentUser.setUserRole(user.getUserRole());
-        currentUser.setBooks(user.getBooks());
-        currentUser.setDebt(user.getDebt());
+        if(userModelDAO.isMail(mail)){
+            System.out.println("UserModel with mail " + mail + " exist");
+            return new ResponseEntity<UserModel>(HttpStatus.NOT_FOUND);
+        }
+        currentUser.setName(name);
+        currentUser.setSurname(surname);
+        currentUser.setMail(mail);
         userModelDAO.update(currentUser);
         return new ResponseEntity<UserModel>(currentUser, HttpStatus.OK);
     }
 
     /**
      * Usuwanie uzytkownika na podstawie jego uuid. tylko admin
-     * @param uuid id uzytkownika
-     * @param token
+     * @param request "token", "uuid"
      * @return httpStatus
      */
 
-    @RequestMapping(value = "/rest/user/{uuid}", method = RequestMethod.DELETE)
-    public ResponseEntity<UserModel> deleteUser(@PathVariable("uuid") String uuid,
-                                                @RequestHeader("token") String token) {
+    @RequestMapping(value = "/rest/user/", method = RequestMethod.DELETE)
+    public ResponseEntity<UserModel> deleteUser(HttpServletRequest request) {
 
+        String token = request.getParameter("token");
+        String uuid = request.getParameter("uuid");
         Session session = sessionManager.getAndUpdateSession(token);
 
         if (session == null)
@@ -139,22 +146,21 @@ public class RestfulUserController extends BaseController {
         }
 
         userModelDAO.delete(uuid);
-        return new ResponseEntity<UserModel>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<UserModel>(HttpStatus.OK);
     }
 
     /**
      * Rozliczenie zaleglosci finansowej uzytkownika. Tylko admin
-     * @param uuid id uzytkownika
-     * @param money ilosc zaplaconych odsetek
-     * @param token
-     * @return
+     @param request "uuid", "money" - to pay debt, "token"
+     * @return status
      */
 
-    @RequestMapping(value = "/rest/payDept/{userUuid}/{money}", method = RequestMethod.PUT)
-    public ResponseEntity<Void> payDept(@PathVariable("userUuid") String uuid,
-                                             @PathVariable("money") double money,
-                                             @RequestHeader("token") String token) {
+    @RequestMapping(value = "/rest/payDept/", method = RequestMethod.PUT)
+    public ResponseEntity<Void> payDept(HttpServletRequest request) {
 
+        String uuid = request.getParameter("uuid");
+        double money = Double.parseDouble(request.getParameter("money"));
+        String token = request.getParameter("token");
         Session session = sessionManager.getAndUpdateSession(token);
 
         if (session == null)

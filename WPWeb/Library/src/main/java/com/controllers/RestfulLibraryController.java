@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+
 
 /**
  * Created by piotrek on 21.11.15.
@@ -29,50 +31,51 @@ public class RestfulLibraryController extends BaseController {
 
     /**
      * Dodanie działu. Tylko admin
-     * @param section dzial
-     * @param token token
+     * @param request"token", "section"
      * @return httpStatus
      */
 
     @RequestMapping(value = "/rest/addSection/", method = RequestMethod.POST)
-    public ResponseEntity<Void> addSection(@RequestBody Section section,
-                                           @RequestHeader("token") String token) {
+    public ResponseEntity<String> addSection(HttpServletRequest request) {
 
+        String token = request.getParameter("token");
         Session session = sessionManager.getAndUpdateSession(token);
 
+        Section section = new Section(request.getParameter("section"));
         if (session == null)
-            return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("No session", HttpStatus.NOT_FOUND);
 
         if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
-            return new ResponseEntity<Void>(HttpStatus.FORBIDDEN);
+            return new ResponseEntity<String>("No permission", HttpStatus.FORBIDDEN);
 
         if (sectionDAO.isExist(section)) {
             System.out.println("A section " + section.getName() + " already exist");
-            return new ResponseEntity<Void>(HttpStatus.CONFLICT);
+            return new ResponseEntity<String>("Alredy exist",HttpStatus.CONFLICT);
         }
 
         sectionDAO.save(section);
 
         HttpHeaders headers = new HttpHeaders();
-        return new ResponseEntity<Void>(headers, HttpStatus.CREATED);
+        return new ResponseEntity<String>("Success", HttpStatus.CREATED);
     }
 
     /**
      * Konfiguracja bibioteki. Tylko admin
-     * @param days maksymalna liczba dni dla wypozyczenia ksiazki
-     * @param interests kara za przetrzymanie, naliczana codziennie
-     * @param token
+     * @param request "token", "days" - ilosc dni wypozyczenia, "interests" - odsedki od przetrzymania ksiazki
+     *                "borrowed" - maksymalna ilosc wypozyczenia ksiezek dla uzytkownika, "reserved" - maksymalna
+     *                ilosc zarezerwowanych ksiazek przez uzytkownika, "expirationTime" - czas po ktorym sesja sie konczy
      * @return HttpStatus
      */
 
-    @RequestMapping(value = "/rest/configureLibrary/{borrowedDays}/{interests}", method = RequestMethod.PUT)
-    public ResponseEntity<Void> configureLibrary(@RequestParam("days") int days,
-                                                 @RequestParam("interests") double interests,
-                                                 @RequestParam("maxReservedBooks") int reserved,
-                                                 @RequestParam("expirationTime") int expirationTime,
-                                                 @RequestParam("maxBorrowedBooks") int borrowed,
-                                                 @RequestHeader("token") String token) {
+    @RequestMapping(value = "/rest/configureLibrary/", method = RequestMethod.PUT)
+    public ResponseEntity<Void> configureLibrary(HttpServletRequest request) {
 
+        String token = request.getParameter("token");
+        String days= request.getParameter("days");
+        String interests = request.getParameter("interests");
+        String borrowed = request.getParameter("borrowed");
+        String reserved = request.getParameter("reserved");
+        String expirationTime = request.getParameter("expirationTime");
         Session session = sessionManager.getAndUpdateSession(token);
 
         if (session == null)
@@ -81,11 +84,11 @@ public class RestfulLibraryController extends BaseController {
         if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
             return new ResponseEntity<Void>(HttpStatus.FORBIDDEN);
 
-        Conf.setBorrowedDays(days);
-        Conf.setInterests(interests);
-        Conf.setBorrowedDays(borrowed);
-        Conf.setMaxReservedBooks(reserved);
-        Conf.setExpirationSessionMinutes(expirationTime);
+        Conf.setBorrowedDays(Integer.parseInt(days));
+        Conf.setInterests(Integer.parseInt(interests));
+        Conf.setBorrowedDays(Integer.parseInt(borrowed));
+        Conf.setMaxReservedBooks(Integer.parseInt(reserved));
+        Conf.setExpirationSessionMinutes(Integer.parseInt(expirationTime));
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 

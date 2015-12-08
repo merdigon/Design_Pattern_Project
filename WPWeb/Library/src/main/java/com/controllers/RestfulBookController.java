@@ -2,6 +2,7 @@ package com.controllers;
 
 
 import com.LibraryConfiguration.Conf;
+import com.dao.SectionDAO;
 import com.models.*;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -14,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,22 +33,23 @@ public class RestfulBookController extends BaseController {
      * @return lista ksiazek
      */
 
-    @RequestMapping(value = "/rest/getBooks", method = RequestMethod.GET)
+    @RequestMapping(value = "/rest/getBooks/", method = RequestMethod.GET)
     public ResponseEntity<List<Book>> listAllbooks() {
         List<Book> books = bookDAO.getAll();
         if (books.isEmpty()) {
-            return new ResponseEntity<List<Book>>(HttpStatus.NO_CONTENT);//You many decide to return HttpStatus.NOT_FOUND
+            return new ResponseEntity<List<Book>>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<List<Book>>(books, HttpStatus.OK);
     }
 
     /**
      * Sprawdzenie stanu ksiazki. Dostep wszyscy
-     * @param bookUuid id ksiazki
+     * @param request -"uuid"
      * @return stan ksiazki
      */
-    @RequestMapping(value = "/rest/getCondition/{bookUuid}", method = RequestMethod.GET)
-    public ResponseEntity<Condition> condition(@PathVariable("bookUuid") String bookUuid) {
+    @RequestMapping(value = "/rest/getCondition/", method = RequestMethod.GET)
+    public ResponseEntity<Condition> condition(HttpServletRequest request) {
+        String bookUuid = request.getParameter("uuid");
         Book book = bookDAO.get(bookUuid);
         if (book == null) {
             return new ResponseEntity<Condition>(HttpStatus.NOT_FOUND);
@@ -55,14 +59,14 @@ public class RestfulBookController extends BaseController {
 
 
     /**
-     * Pobiera ksiazke o podanych uuid. Dostep wszyscy.
-     * @param uuid id ksiazki
+     * Zwraca ksiazke o podanych uuid. Dostep wszyscy.
+     * @param request -"uuid"
      * @return ksiazka o podanym id
      */
 
-    @RequestMapping(value = "/rest/getBook/{uuid}", method = RequestMethod.GET)
-    public ResponseEntity<Book> getBook(@PathVariable("uuid") String uuid) {
-
+    @RequestMapping(value = "/rest/getBook/", method = RequestMethod.GET)
+    public ResponseEntity<Book> getBook(HttpServletRequest request) {
+        String uuid = request.getParameter("uuid");
 
         Book book = bookDAO.get(uuid);
         if (book == null) {
@@ -74,14 +78,22 @@ public class RestfulBookController extends BaseController {
 
     /**
      * Dodanie ksiazki. Tylko admin
-     * @param book ksiazka do dodania w postaci jsona
-     * @param token
+     * na razie dziala tylko dla jednego autora.
+     * @param request -"token", "title", "authorName", "authorSurname", "authorBornYear", "condition", "type", "section", "year"
      * @return ksiazka
      */
-    @RequestMapping(value = "/rest/addBook", method = RequestMethod.POST)
-    public ResponseEntity<Void> addBook(@RequestBody Book book,
-                                        @RequestHeader("token") String token) {
+    @RequestMapping(value = "/rest/addBook/", method = RequestMethod.POST)
+    public ResponseEntity<Void> addBook(HttpServletRequest request) {
 
+        String token = request.getParameter("token");
+        String title = request.getParameter("title");
+        String authorName = request.getParameter("authorName");
+        String authorSurname = request.getParameter("authorSurname");
+        String authorBornYear = request.getParameter("authorBornYear");
+        String condition = request.getParameter("condition");
+        String type = request.getParameter("type");
+        String section = request.getParameter("section");
+        String year = request.getParameter("year");
         Session session = sessionManager.getAndUpdateSession(token);
 
         if (session == null)
@@ -90,17 +102,19 @@ public class RestfulBookController extends BaseController {
         if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
             return new ResponseEntity<Void>(HttpStatus.FORBIDDEN);
 
-        if (bookDAO.isExist(book)) {
-            System.out.println("A Book " + book.getTitle() + " already exist");
-            return new ResponseEntity<Void>(HttpStatus.CONFLICT);
-        }
+        Author author = new Author();
+        author.setName(authorName);
+        author.setSurname(authorSurname);
+        author.setBornYear(Integer.parseInt(authorBornYear));
 
-        book.setAuthors(authorDAO.saveIfNotInDB(book.getAuthors()));
-        book.setCondition(conditionDAO.saveIfNotInDB(book.getCondition()));
-        book.setTypeOfBook(typeOfBookDAO.saveIfNotInDB(book.getTypeOfBook()));
-        book.setSection(sectionDAO.saveIfNotInDB(book.getSection()));
-        book.setDates(dateDAO.saveIfNotInDB(book.getDates()));
+        Book book = new Book();
 
+        book.setAuthors(Arrays.asList(authorDAO.saveIfNotInDB(author)));
+        book.setCondition(conditionDAO.saveIfNotInDB(new Condition(Conditions.valueOf(condition))));
+        book.setTypeOfBook(typeOfBookDAO.saveIfNotInDB(new TypeOfBook(type)));
+        book.setSection(sectionDAO.saveIfNotInDB(new Section(section)));
+        book.setTitle(title);
+        book.setYear(Integer.parseInt(year));
         bookDAO.save(book);
 
         HttpHeaders headers = new HttpHeaders();
@@ -109,14 +123,21 @@ public class RestfulBookController extends BaseController {
 
     /**
      * Edycja ksiazki o podanych uuid. tylko admin
-     * @param uuid id ksiazki
-     * @param book zmieniona ksiazka w postaci jsona
-     * @param token
+     * @param request -"uuid", "title", "token", "authorName", "authorSurname", "authorBornYear", "type", "section"
      * @return zmieniona ksiazka
      */
-    @RequestMapping(value = "/rest/updateBook/{uuid}", method = RequestMethod.PUT)
-    public ResponseEntity<Book> updateBook(@PathVariable("uuid") String uuid, @RequestBody Book book,
-                                           @RequestHeader("token") String token) {
+    @RequestMapping(value = "/rest/updateBook/", method = RequestMethod.PUT)
+    public ResponseEntity<Book> updateBook(HttpServletRequest request) {
+
+        String token = request.getParameter("token");
+        String uuid = request.getParameter("uuid");
+        String title = request.getParameter("title");
+        String authorName = request.getParameter("authorName");
+        String authorSurname = request.getParameter("authorSurname");
+        String authorBornYear = request.getParameter("authorBornYear");
+        String condition = request.getParameter("condition");
+        String type = request.getParameter("type");
+        String section = request.getParameter("section");
 
         Session session = sessionManager.getAndUpdateSession(token);
 
@@ -132,33 +153,29 @@ public class RestfulBookController extends BaseController {
             System.out.println("Book with uuid " + uuid + " not found");
             return new ResponseEntity<Book>(HttpStatus.NOT_FOUND);
         }
+        Author author = new Author(authorName, authorSurname, Integer.parseInt(authorBornYear));
 
-        book.setAuthors(authorDAO.saveIfNotInDB(book.getAuthors()));
-        book.setCondition(conditionDAO.saveIfNotInDB(book.getCondition()));
-        book.setTypeOfBook(typeOfBookDAO.saveIfNotInDB(book.getTypeOfBook()));
-        book.setSection(sectionDAO.saveIfNotInDB(book.getSection()));
-        book.setDates(dateDAO.saveIfNotInDB(book.getDates()));
+        currentBook.setAuthors(Arrays.asList(authorDAO.saveIfNotInDB(author)));
+        currentBook.setCondition(conditionDAO.saveIfNotInDB(new Condition(Conditions.valueOf(condition))));
+        currentBook.setTypeOfBook(typeOfBookDAO.saveIfNotInDB(new TypeOfBook(type)));
+        currentBook.setSection(sectionDAO.saveIfNotInDB(new Section(section)));
+        currentBook.setTitle(title);
 
-        currentBook.setCondition(book.getCondition());
-        currentBook.setAuthors(book.getAuthors());
-        currentBook.setTitle(book.getTitle());
-        currentBook.setYear(book.getYear());
-        currentBook.setTypeOfBook(book.getTypeOfBook());
-        currentBook.setDates(book.getDates());
         bookDAO.update(currentBook);
         return new ResponseEntity<Book>(currentBook, HttpStatus.OK);
     }
 
     /**
      * Usuwa ksiazke o podanym uuid. Tylko admin
-     * @param uuid id ksiazki
-     * @param token
+     * @param request -"uuid", "token"
      * @return status
      */
 
-    @RequestMapping(value = "/rest/deleteBook/{uuid}", method = RequestMethod.DELETE)
-    public ResponseEntity<Void> deleteBook(@PathVariable("uuid") String uuid,
-                                           @RequestHeader("token") String token) {
+    @RequestMapping(value = "/rest/deleteBook/", method = RequestMethod.DELETE)
+    public ResponseEntity<Void> deleteBook(HttpServletRequest request) {
+
+        String token = request.getParameter("token");
+        String uuid= request.getParameter("uuid");
 
         Session session = sessionManager.getAndUpdateSession(token);
 
@@ -175,22 +192,21 @@ public class RestfulBookController extends BaseController {
         }
 
         bookDAO.delete(uuid);
-        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     /**
      * Przenosi ksiazke o podanym uuid do innego dzialu. Tylko admin
-     * @param uuid id ksiazki
-     * @param section dzial, gdzie ma zostac przeniesiona ksiazka
-     * @param token
+     * @param request -"uuid", "token", "section"
      * @return ksiazka w postaci jsona
      */
 
-    @RequestMapping(value = "/rest/moveBook/{uuid}/{section}", method = RequestMethod.PUT)
-    public ResponseEntity<Book> moveBook(@PathVariable("uuid") String uuid,
-                                         @PathVariable("section") String section,
-                                         @RequestHeader("token") String token) {
+    @RequestMapping(value = "/rest/moveBook/", method = RequestMethod.PUT)
+    public ResponseEntity<Book> moveBook(HttpServletRequest request) {
 
+        String uuid = request.getParameter("uuid");
+        String token = request.getParameter("token");
+        String section = request.getParameter("section");
         Session session = sessionManager.getAndUpdateSession(token);
 
         if (session == null)
@@ -201,32 +217,28 @@ public class RestfulBookController extends BaseController {
 
         Book currentBook = bookDAO.get(uuid);
 
-        Section section1 = new Section();
-        section1.setName(section);
         if (currentBook == null) {
             System.out.println("Book with uuid " + uuid + " not found");
             return new ResponseEntity<Book>(HttpStatus.NOT_FOUND);
         }
 
-        section1 = sectionDAO.saveIfNotInDB(section1);
-        currentBook.setSection(section1);
+        currentBook.setSection(sectionDAO.saveIfNotInDB(new Section(section)));
         bookDAO.update(currentBook);
         return new ResponseEntity<Book>(currentBook, HttpStatus.OK);
     }
 
     /**
      * Zmiana stanu ksiazki. Tylko admin
-     * @param uuid id ksiazki
-     * @param condition nowy stan ksiazki
-     * @param token
+     * @param request -"uuid", "token", "condition"
      * @return zminiona ksiazka
      */
 
-    @RequestMapping(value = "/rest/changeCondition/{uuid}/{condition}", method = RequestMethod.PUT)
-    public ResponseEntity<Book> changeCondition(@PathVariable("uuid") String uuid,
-                                                @PathVariable("condition") String condition,
-                                                @RequestHeader("token") String token) {
+    @RequestMapping(value = "/rest/changeCondition/", method = RequestMethod.PUT)
+    public ResponseEntity<Book> changeCondition(HttpServletRequest request) {
 
+        String token = request.getParameter("token");
+        String uuid = request.getParameter("uuid");
+        String condition = request.getParameter("condition");
         Session session = sessionManager.getAndUpdateSession(token);
 
         if (session == null)
@@ -251,15 +263,14 @@ public class RestfulBookController extends BaseController {
 
     /**
      * Rezerwacja ksiazki. Tylko zalogowani uzytkownicy
-     * @param bookUuid ksiazka do rezerwacji
-     * @param userUuid uuid uzytkownika
-     * @param token
-     * @return
+     * @param request -"bookUuid", "token", "userUuid"
+     * @return status
      */
-    @RequestMapping(value = "/rest/reserveBook/{bookUuid}/{userUuid}", method = RequestMethod.PUT)
-    public ResponseEntity<UserModel> reserveBook(@PathVariable("bookUuid") String bookUuid,
-                                                 @PathVariable("userUuid") String userUuid,
-                                                 @RequestHeader("token") String token) {
+    @RequestMapping(value = "/rest/reserveBook/", method = RequestMethod.PUT)
+    public ResponseEntity<UserModel> reserveBook(HttpServletRequest request) {
+        String token = request.getParameter("token");
+        String bookUuid= request.getParameter("bookUuid");
+        String userUuid = request.getParameter("userUuid");
         Session session = sessionManager.getAndUpdateSession(token);
 
         if (session == null)
@@ -294,16 +305,16 @@ public class RestfulBookController extends BaseController {
 
     /**
      * Anuluje rezerwacje ksiazki. wszyscy zalogowani maja dostep
-     * @param bookUuid id ksiazki
-     * @param userUuid id uzytkownika
-     * @param token
-     * @return
+     * @param request -"bookUuid", "token", "userUuid"
+     * @return status
      */
 
-    @RequestMapping(value = "/rest/cancelReservedBook/{bookUuid}/{userUuid}", method = RequestMethod.PUT)
-    public ResponseEntity<Void> cancelReserveBook(@PathVariable("bookUuid") String bookUuid,
-                                                  @PathVariable("userUuid") String userUuid,
-                                                  @RequestHeader("token") String token) {
+    @RequestMapping(value = "/rest/cancelReservedBook/", method = RequestMethod.PUT)
+    public ResponseEntity<Void> cancelReserveBook(HttpServletRequest request) {
+
+        String token = request.getParameter("token");
+        String bookUuid = request.getParameter("bookUuid");
+        String userUuid= request.getParameter("userUuid");
 
         Session session = sessionManager.getAndUpdateSession(token);
 
@@ -338,14 +349,15 @@ public class RestfulBookController extends BaseController {
 
     /**
      * zwraca liste wszystkich wypozyczonych ksiazkek uzytkownika. tylko admin
-     * @param userUuid id uzytkowika
-     * @param token
+     * @param request -"userUuid", "token"
      * @return lista ksiazek
      */
 
-    @RequestMapping(value = "/rest/getUserBooks/{userUuid}", method = RequestMethod.GET)
-    public ResponseEntity<List<Book>> listAllUserBooks(@PathVariable("userUuid") String userUuid,
-                                                       @RequestHeader("token") String token) {
+    @RequestMapping(value = "/rest/getUserBooks/", method = RequestMethod.GET)
+    public ResponseEntity<List<Book>> listAllUserBooks(HttpServletRequest request) {
+
+        String token = request.getParameter("token");
+        String userUuid = request.getParameter("userUuid");
 
         Session session = sessionManager.getAndUpdateSession(token);
 
@@ -365,14 +377,15 @@ public class RestfulBookController extends BaseController {
 
 
     /**
-     *  zwraca liste wszystkich zarezerwowanych ksiazek uzytkownika. tylko admi
-     * @param userUuid id uzytkownika
-     * @param token
+     *  zwraca liste wszystkich zarezerwowanych ksiazek uzytkownika. tylko admin
+     * @param request -"userUuid", "token"
      * @return lista ksiazek
      */
-    @RequestMapping(value = "/rest/getUserReservedBooks/{userUuid}", method = RequestMethod.GET)
-    public ResponseEntity<List<Book>> listAllUserReservedBooks(@PathVariable("userUuid") String userUuid,
-                                                               @RequestHeader("token") String token) {
+    @RequestMapping(value = "/rest/getUserReservedBooks/", method = RequestMethod.GET)
+    public ResponseEntity<List<Book>> listAllUserReservedBooks(HttpServletRequest request) {
+
+        String token = request.getParameter("token");
+        String userUuid = request.getParameter("userUuid");
 
         Session session = sessionManager.getAndUpdateSession(token);
 
@@ -393,16 +406,16 @@ public class RestfulBookController extends BaseController {
 
     /**
      * Wypozyczenie ksiazki o podanych uuid. tylko admin
-     * @param userUuid
-     * @param bookUuid
-     * @param token
-     * @return
+     * @param request -"bookUuid", "token", "userUuid"
+     * @return status
      */
 
-    @RequestMapping(value = "/rest/borrowBook/{userUuid}/{bookUuid}", method = RequestMethod.PUT)
-    public ResponseEntity<Void> borrowBook(@PathVariable("userUuid") String userUuid,
-                                           @PathVariable("bookUuid") String bookUuid,
-                                           @RequestHeader("token") String token) {
+    @RequestMapping(value = "/rest/borrowBook/", method = RequestMethod.PUT)
+    public ResponseEntity<Void> borrowBook(HttpServletRequest request) {
+
+        String token = request.getParameter("token");
+        String bookUuid= request.getParameter("bookUuid");
+        String userUuid = request.getParameter("userUuid");
 
         Session session = sessionManager.getAndUpdateSession(token);
 
@@ -452,16 +465,17 @@ public class RestfulBookController extends BaseController {
 
     /**
      * Zwracanie wypozyczonej ksiazki tylko admin
-     * @param userUuid id uzytkownika
-     * @param bookUuid id ksiazki
-     * @param token
+     * @param request -"userUuid", "token", "bookUuid"
      * @return httpstatus
      */
 
-    @RequestMapping(value = "/rest/returnBook/{userUuid}/{bookUuid}", method = RequestMethod.PUT)
-    public ResponseEntity<Void> returnBorrowBook(@PathVariable("userUuid") String userUuid,
-                                                 @PathVariable("bookUuid") String bookUuid,
-                                                 @RequestHeader("token") String token) {
+    @RequestMapping(value = "/rest/returnBook/", method = RequestMethod.PUT)
+    public ResponseEntity<Void> returnBorrowBook(HttpServletRequest request) {
+
+        String token = request.getParameter("token");
+        String userUuid= request.getParameter("userUuid");
+        String bookUuid = request.getParameter("bookUuid");
+
 
         Session session = sessionManager.getAndUpdateSession(token);
 

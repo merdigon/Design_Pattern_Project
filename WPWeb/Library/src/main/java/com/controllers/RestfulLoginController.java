@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -17,26 +18,32 @@ public class RestfulLoginController extends BaseController {
 
     /**
      * Rejestracja nowego użytkownika. Wszyscy maja dostep
-     *
-     * @param user json reprezentujacy uzytkownika
+     *@param request "login", "password", "mail", "name", "surname"
      * @return "Success" w przypadku powodzenia, w przeciwnym razie komunikat o bledzie
      */
 
-    @RequestMapping(value = "/rest/registration", method = RequestMethod.POST)
-    public ResponseEntity<String> registrationUser(@RequestBody UserModel user) {
-
-        if (userModelDAO.isLogin(user.getLogin()))
+    @RequestMapping(value = "/rest/registration/", method = RequestMethod.POST)
+    public ResponseEntity<String> registrationUser(HttpServletRequest request) {
+        UserModel user = new UserModel();
+        String login = request.getParameter("login");
+        String password = request.getParameter("password");
+        String mail= request.getParameter("mail");
+        String name= request.getParameter("name");
+        String surname = request.getParameter("surname");
+        if (userModelDAO.isLogin(login))
             return new ResponseEntity<String>("Failure: login is used", HttpStatus.IM_USED);
 
-        if (userModelDAO.isMail(user.getMail())) {
+        if (userModelDAO.isMail(mail)) {
             return new ResponseEntity<String>("Failure: mail is used", HttpStatus.IM_USED);
         }
-        if(!user.getUserRole().getType().equals("USER")){
-            return new ResponseEntity<String>("Failure: wrong user role", HttpStatus.IM_USED);
-        }
-        UserRole userRole = new UserRole();
-        userRole.setType(user.getUserRole().getType());
 
+        UserRole userRole = new UserRole();
+        userRole.setType("USER");
+        user.setLogin(login);
+        user.setPassword(password);
+        user.setMail(mail);
+        user.setName(name);
+        user.setSurname(surname);
         userRole = userRoleDAO.saveIfNotInDB(userRole);
         user.setUserRole(userRole);
         userModelDAO.save(user);
@@ -46,37 +53,44 @@ public class RestfulLoginController extends BaseController {
 
     /**
      * Rejestracja nowego admina. Tylko admin ma dostęp
-     * @param user json reprezentujacy admina
-     * @param token token przekazywany w naglowku
+     * @param request "login", "password", "mail", "surname", "token"
      * @return "Success" w  przypadku powodzenia, w przeciwnym razie komunikat o bledzie
      */
 
-    @RequestMapping(value = "/rest/registrationAdmin", method = RequestMethod.POST)
-    public ResponseEntity<String> registrationAdmin(@RequestBody UserModel user, @RequestHeader("token") String token) {
+    @RequestMapping(value = "/rest/registrationAdmin/", method = RequestMethod.POST)
+    public ResponseEntity<String> registrationAdmin(HttpServletRequest request) {
+        UserModel user = new UserModel();
+        String login = request.getParameter("login");
+        String password = request.getParameter("password");
+        String mail= request.getParameter("mail");
+        String name= request.getParameter("name");
+        String surname = request.getParameter("surname");
+        String token = request.getParameter("token");
+
 
         Session session = sessionManager.getAndUpdateSession(token);
 
         if(session==null)
             return new ResponseEntity<String>("No session available with given token", HttpStatus.NOT_FOUND);
 
-        String login = session.getLogin();
+        UserModel admin = userModelDAO.getByLogin(session.getLogin());
 
-        UserModel user1 = userModelDAO.getByLogin(login);
-
-        if (user1.getUserRole().getType().equals("ADMIN")) {
-            if (userModelDAO.isLogin(user.getLogin()))
+        if (admin.getUserRole().getType().equals("ADMIN")) {
+            if (userModelDAO.isLogin(login))
                 return new ResponseEntity<String>("Failure: login is used", HttpStatus.IM_USED);
 
-            if (userModelDAO.isMail(user.getMail())) {
+            if (userModelDAO.isMail(mail)) {
                 return new ResponseEntity<String>("Failure: mail is used", HttpStatus.IM_USED);
             }
-            if(!(user.getUserRole().getType().equals("USER") || user.getUserRole().getType().equals("ADMIN"))){
-                return new ResponseEntity<String>("Failure: wrong user role", HttpStatus.IM_USED);
-            }
             UserRole userRole = new UserRole();
-            userRole.setType(user.getUserRole().getType());
+            userRole.setType("ADMIN");
 
             userRole = userRoleDAO.saveIfNotInDB(userRole);
+            user.setLogin(login);
+            user.setPassword(password);
+            user.setName(name);
+            user.setSurname(surname);
+            user.setMail(mail);
             user.setUserRole(userRole);
             userModelDAO.save(user);
             return new ResponseEntity<String>("Success", HttpStatus.CREATED);
@@ -88,14 +102,15 @@ public class RestfulLoginController extends BaseController {
 
     /**
      * Logowanie. Wszyscy mają dostep
-     * @param login
-     * @param password
+     * @param request "login", "password"
      * @return token, ktory trzeba przekazywac w naglowkach
      */
 
-    @RequestMapping(value = "/rest/login/{user}/{password}", method = RequestMethod.POST)
-    public ResponseEntity<String> logIn(@PathVariable("user") String login,
-                                        @PathVariable("password") String password) {
+    @RequestMapping(value = "/rest/login/", method = RequestMethod.POST)
+    public ResponseEntity<String> logIn(HttpServletRequest request) {
+
+        String login = request.getParameter("login");
+        String password = request.getParameter("password");
 
         if (userModelDAO.isValidUser(login, password)) {
 
@@ -108,12 +123,13 @@ public class RestfulLoginController extends BaseController {
 
     /**
      * Wylogowanie. Wszyscy zalogowani uzytkownicy maja dostep
-     * @param token przekazany w naglowku
+     * @param request "token"
      * @return "Success" or "Failure"
      */
 
     @RequestMapping(value = "/rest/logout", method = RequestMethod.POST)
-    public ResponseEntity<String> logOut(@RequestHeader("token") String token) {
+    public ResponseEntity<String> logOut(HttpServletRequest request) {
+        String token = request.getParameter("token");
         if (sessionManager.closeSession(token))
             return new ResponseEntity<String>("Success", HttpStatus.OK);
         else
@@ -122,23 +138,21 @@ public class RestfulLoginController extends BaseController {
 
     /**
      * Usuwanie uzytkownika. Tylko admin ma dostep;
-     * @param token przekazany w naglowku
-     * @param uuid id uzytkownika
+     * @param request "token", "uuid"
      * @return "Success" w przypadku powodzenia, w przeciwnym razie komunikat o blędzie
      */
 
 
-    @RequestMapping(value = "/rest/deleteUser/{uuid}", method = RequestMethod.DELETE)
-    public ResponseEntity<String> deleteUser(@RequestHeader("token") String token,
-                                             @PathVariable("uuid") String uuid) {
+    @RequestMapping(value = "/rest/deleteUser/", method = RequestMethod.DELETE)
+    public ResponseEntity<String> deleteUser(HttpServletRequest request) {
+        String token = request.getParameter("token");
+        String uuid = request.getParameter("uuid");
         Session session = sessionManager.getAndUpdateSession(token);
 
         if(session==null)
             return new ResponseEntity<String>("No session available with given token", HttpStatus.NOT_FOUND);
 
         String login = session.getLogin();
-
-
 
         UserModel user = userModelDAO.getByLogin(login);
         if(user.getUserRole().getType().equals("ADMIN")){
@@ -150,7 +164,4 @@ public class RestfulLoginController extends BaseController {
         }else
             return new ResponseEntity<String>("Failure: no admin", HttpStatus.OK);
     }
-
-
-
 }

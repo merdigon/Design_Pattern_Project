@@ -53,14 +53,9 @@ public class LoginController extends BaseController {
         if (auth != null){
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
-        return "redirect:/login?logout";
+        return "index";
     }
 
-    @RequestMapping(value = "/Access_Denied", method = RequestMethod.GET)
-    public String accessDeniedPage(ModelMap model) {
-        model.addAttribute("user", getPrincipal());
-        return "accessDenied";
-    }
 
     @RequestMapping(value = "/registration", method = RequestMethod.GET)
     public String searchBook() {
@@ -69,12 +64,14 @@ public class LoginController extends BaseController {
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     @ResponseBody
-    public String addUser(@RequestParam("role") String userRole,
-                          @RequestParam("login") String login,
-                          @RequestParam("password") String password,
-                          @RequestParam("name") String name,
-                          @RequestParam("surname") String surname,
-                          @RequestParam("mail") String mail) {
+    public String addUser(HttpServletRequest request) {
+        String userRole = request.getParameter("role");
+        String login = request.getParameter("login");
+        String password = request.getParameter("role");
+        String name = request.getParameter("name");
+        String surname = request.getParameter("surname");
+        String mail = request.getParameter("mail");
+
         UserModel user = new UserModel();
 
         if(userModelDAO.isLogin(login))
@@ -97,7 +94,7 @@ public class LoginController extends BaseController {
         return "Success";
     }
 
-//    uruchomic tylko raz, dodaje konto admina
+    //    uruchomic tylko raz, dodaje konto admina
     @RequestMapping(value = "/addAdmin", method = RequestMethod.GET)
     @ResponseBody
     public String addAdmin() {

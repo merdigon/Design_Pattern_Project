@@ -1,11 +1,19 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+
+
+
 <div id="form" class="'form-group" style="display: inline">
     <div class="panel-body">
 
 
         <div class="form-inline">
 
-            <input type="text" id="authors" class="form-control" placeholder="author(name surname year)">
+            <input type="text" class="authorName form-control" placeholder="author name">
+            <input type="text" class="authorSurname form-control" placeholder="author surname">
+            <input type="text" class="authorYear form-control" placeholder="author year">
+            <button class="btn btn-default" onclick="addAuthorField()">Add author</button><br>
+            <div id="insertAuthorField"></div>
             <input type="text" id="title" class="form-control" placeholder="title">
             <input type="text" id="year" class="form-control" placeholder="year">
             <select id="condition" class="form-control">
@@ -29,6 +37,8 @@
                     <option value="${section.uuid}">${section.name}</option>
                 </c:forEach>
             </select>
+
+
 
             <button onclick="saveBook()" class="btn btn-default">Save</button>
 

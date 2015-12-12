@@ -44,7 +44,7 @@
 <%@include file="partOfPage/buttons/loginRegistrationButton.jsp"%>
 
 <div class="panel panel-primary">
-  <div class="panel-heading">Show books</div>
+  <div class="panel-heading">Add type</div>
   <button class="btn btn-default" onclick="window.location.href='/'">goToMainPage</button>
   <div id="form" class="'form-group" style="display: inline">
     <div class="panel-body">

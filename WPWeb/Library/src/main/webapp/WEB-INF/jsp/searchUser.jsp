@@ -204,7 +204,7 @@
 <%@include file="partOfPage/buttons/loginRegistrationButton.jsp" %>
 
 <div class="panel panel-primary">
-    <div class="panel-heading">Search book</div>
+    <div class="panel-heading">Search users</div>
     <button class="btn btn-default" onclick="window.location.href='/'">goToMainPage</button>
 
     <div id="form" class="'form-group" style="display: inline">
@@ -213,7 +213,7 @@
 
             <div class="form-inline">
 
-                <input type="text" id="userData" class="form-control" placeholder="uuid">
+                <input type="text" id="userData" class="form-control" placeholder="uuid/login">
                 <button onclick="search('uuid')" class="btn btn-default">Search by uuid</button>
                 <button onclick="search('login')" class="btn btn-default">Search by login</button>
             </div>

@@ -52,7 +52,6 @@
             userDetails += "name: " + json.name + "<br>";
             userDetails += "surname: " + json.surname + "<br>";
             userDetails += "debt: " + json.debt + "<br>";
-
             $('#userDetails').html(userDetails)
         }
 

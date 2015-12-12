@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -34,14 +35,16 @@ public class BookController extends BaseController {
 
     @RequestMapping(value = "/admin/saveBook", method = RequestMethod.POST)
     @ResponseBody
-    public String saveBook(@RequestParam("authors") String authorData,
-                           @RequestParam("title") String title,
-                           @RequestParam("condition") String conditionData,
-                           @RequestParam("uuidSection") String uuidSection,
-                           @RequestParam("uuidType") String uuidType,
-                           @RequestParam("year") int year) {
+    public String saveBook(HttpServletRequest request) {
 
-        String[] authorsString = authorData.split((","));
+        String authorData = request.getParameter("authors");
+        String title = request.getParameter("title");
+        String conditionData = request.getParameter("condition");
+        String uuidSection = request.getParameter("uuidSection");
+        String uuidType = request.getParameter("uuidType");
+        int year = Integer.parseInt(request.getParameter("year"));
+
+        String[] authorsString = authorData.split((";"));
         List<Author> authors = new ArrayList<Author>();
 
 
@@ -52,7 +55,7 @@ public class BookController extends BaseController {
         Condition condition = conditionDAO.saveIfNotInDB(new Condition(Conditions.valueOf(conditionData)));
         Book book = new Book(authors,title,year,condition,typeOfBookDAO.get(uuidType),sectionDAO.get(uuidSection));
         bookDAO.save(book);
-        return "zapisalo";
+        return "Success";
     }
 
     @RequestMapping(value ={"/showBooks"} , method = RequestMethod.GET)
@@ -64,7 +67,7 @@ public class BookController extends BaseController {
     @RequestMapping(value = {"/showBooks", "/user/showBooks", "/admin/showBooks"}, method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
     public List<Book> showBooksAjax() {
-       return bookDAO.getAll();
+        return bookDAO.getAll();
     }
 
     @RequestMapping(value = {"/searchBooks"}, method = RequestMethod.GET)
@@ -75,13 +78,16 @@ public class BookController extends BaseController {
 
     @RequestMapping(value = "/searchBooks", method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
-    public Collection<Book> searchBookAjax(@RequestParam("searchType") String searchType,
-                                     @RequestParam("authorName") String authorName,
-                                     @RequestParam("authorSurname") String authorSurname,
-                                     @RequestParam("authorYear") String authorYear,
-                                     @RequestParam("title") String title,
-                                     @RequestParam("year") String year,
-                                     @RequestParam("condition") String condition){
+    public Collection<Book> searchBookAjax(HttpServletRequest request){
+
+        String searchType = request.getParameter("searchType");
+        String authorName = request.getParameter("authorName");
+        String authorSurname = request.getParameter("authorSurname");
+        String authorYear = request.getParameter("authorYear");
+        String title = request.getParameter("title");
+        String year = request.getParameter("year");
+        String condition = request.getParameter("condition");
+
         if(searchType.equals("author")){
             List<Book> books = new ArrayList<Book>();
             for(Author author : authorDAO.get(authorName, authorSurname, authorYear)){
@@ -90,7 +96,7 @@ public class BookController extends BaseController {
             return new LinkedHashSet<>(books);
 
         }else if(searchType.equals("title")){
-           return bookDAO.findByColumn("title", title);
+            return bookDAO.findByColumn("title", title);
         }else if(searchType.equals("year")){
             return bookDAO.getAllByYear(year);
         }else if(searchType.equals("condition")){
@@ -162,7 +168,7 @@ public class BookController extends BaseController {
         book.setCondition(condition);
         bookDAO.update(book);
         userModelDAO.update(user);
-            return "success";
+        return "success";
     }
 
     @RequestMapping(value = "/admin/editBook/{uuid}", method = RequestMethod.GET)
@@ -207,7 +213,7 @@ public class BookController extends BaseController {
     @RequestMapping(value = "/reserveBook", method = RequestMethod.POST)
     @ResponseBody
     public String reserveBook(@RequestParam("userUuid") String userUuid,
-                             @RequestParam("bookUuid") String bookUuid){
+                              @RequestParam("bookUuid") String bookUuid){
 
         UserModel user;
         Book book = bookDAO.get(bookUuid);
@@ -241,7 +247,7 @@ public class BookController extends BaseController {
     @RequestMapping(value = "/cancelReservedBook", method = RequestMethod.POST)
     @ResponseBody
     public String cancelReserveBook(@RequestParam("userUuid") String userUuid,
-                              @RequestParam("bookUuid") String bookUuid){
+                                    @RequestParam("bookUuid") String bookUuid){
 
         UserModel user;
         if(userUuid==""){

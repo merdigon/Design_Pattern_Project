@@ -8,13 +8,34 @@
     <title>Spring MVC Form Handling</title>
 
     <script type="text/javascript">
+        function getAuthors(){
+            var authors = ""
+            for(i=0; i<$('.authorName').length; i++){
+                authors +=$('.authorName')[i].value + " " + $('.authorSurname')[i].value + " " + $('.authorYear')[i].value + ";";
+            }
+            if(authors.charAt(authors.length-1)==';')
+            authors = authors.substring(0, authors.length-1);
+            console.log(authors);
+            return authors;
+        }
+
+        function addAuthorField(){
+            var fields = "<div><input type='text' class='authorName form-control' placeholder='author name'>"  +
+                    "<input type='text' class='authorSurname form-control' placeholder='author surname'>" +
+                    "<input type='text' class='authorYear form-control' placeholder='author year'>" +
+                    "<button class='btn btn-default' onclick=$(this).parent('div').remove()>remove</button><div>";
+
+            $('#insertAuthorField').append(fields);
+        }
+
+
         function saveBook() {
 
             $.ajax({
                 type: "POST",
                 url: "/admin/saveBook",
                 data: {
-                    "authors": $("#authors").val(),
+                    "authors": getAuthors(),
                     "title": $("#title").val(),
                     "year": $("#year").val(),
                     "condition": $("#condition").val(),

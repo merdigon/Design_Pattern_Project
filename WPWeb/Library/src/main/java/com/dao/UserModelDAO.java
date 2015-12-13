@@ -33,8 +33,8 @@ public class UserModelDAO extends DatabaseDAO<UserModel> {
     }
 
     public boolean isValidUser(String login, String password) {
-        Optional<UserModel> user = Optional.ofNullable(getByLogin(login));
-        return (user.isPresent() && user.get().getPassword().equals(password));
+        UserModel user = getByLogin(login);
+        return (user!=null && user.getPassword().equals(password));
     }
 
 
@@ -43,13 +43,12 @@ public class UserModelDAO extends DatabaseDAO<UserModel> {
         return getSession().get(com.models.UserModel.class, uuid);
     }
 
-    //    public Optional<UserModel> getByLogin(String login){
-//        Query query = getSession().createQuery("from UserModel where login LIKE ?");
-//        query.setString(0, login);
-//        return Optional.ofNullable(query.list()).map(users -> (UserModel)users.get(0)).orElse(Optional.empty());
-//    }
+
     public UserModel getByLogin(String login) {
         Query query = getSession().createQuery("from UserModel where login LIKE ?");
+        query.setString(0, login);
+        if(query.list().isEmpty())
+            return null;
         query.setString(0, login);
         return (UserModel) query.list().get(0);
     }

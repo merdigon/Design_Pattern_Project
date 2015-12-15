@@ -20,14 +20,10 @@ import java.util.Optional;
 public class UserModelDAO extends DatabaseDAO<UserModel> {
 
 
-//    @Autowired
-//    private PasswordEncoder passwordEncoder;
-
     @Autowired
     CryptWithMD5 cryptWithMD5;
 
     public void save(UserModel user) {
-        //user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setPassword(cryptWithMD5.encode(user.getPassword()));
         getSession().save(user);
     }
@@ -108,6 +104,13 @@ public class UserModelDAO extends DatabaseDAO<UserModel> {
     public boolean isMail(String mail){
         Query query = getSession().createQuery("from UserModel where mail='" + mail + "'");
         return !query.list().isEmpty();
+    }
+
+    public UserModel getByIdNumber(int idNumber){
+        Query query = getSession().createQuery("from UserModel where idNumber='" + idNumber + "'");
+        if(query.list().isEmpty())
+            return null;
+        return (UserModel)query.list().get(0);
     }
 
 }

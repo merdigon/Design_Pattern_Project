@@ -43,7 +43,7 @@ public class RestfulLibraryController extends BaseController {
 
         Section section = new Section(request.getParameter("section"));
         if (session == null)
-            return new ResponseEntity<String>("{\"Status\" : \"Failure no session\"}", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure no session\"}", HttpStatus.UNAUTHORIZED);
 
         if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
             return new ResponseEntity<String>("{\"Status\" : \"Failure no permission\"}", HttpStatus.FORBIDDEN);
@@ -79,7 +79,7 @@ public class RestfulLibraryController extends BaseController {
         Session session = sessionManager.getAndUpdateSession(token);
 
         if (session == null)
-            return new ResponseEntity<String>("{\"Status\" : \"Failure bad token\"}",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure bad token\"}",HttpStatus.UNAUTHORIZED);
 
         if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
             return new ResponseEntity<String>("{\"Status\" : \"Failure no permission\"}",HttpStatus.FORBIDDEN);

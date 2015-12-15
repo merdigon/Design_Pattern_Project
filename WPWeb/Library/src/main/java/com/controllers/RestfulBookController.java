@@ -76,94 +76,7 @@ public class RestfulBookController extends BaseController {
         return new ResponseEntity<Book>(book, HttpStatus.OK);
     }
 
-    /**
-     * Dodanie ksiazki. Tylko admin
-     * na razie dziala tylko dla jednego autora.
-     * @param request -"token", "title", "authorName", "authorSurname", "authorBornYear", "condition", "type", "section", "year"
-     * @return ksiazka
-     */
-    @RequestMapping(value = "/rest/addBook/", method = RequestMethod.POST)
-    public ResponseEntity<String> addBook(HttpServletRequest request) {
 
-        String token = request.getParameter("token");
-        String title = request.getParameter("title");
-        String authorName = request.getParameter("authorName");
-        String authorSurname = request.getParameter("authorSurname");
-        String authorBornYear = request.getParameter("authorBornYear");
-        String condition = request.getParameter("condition");
-        String type = request.getParameter("type");
-        String section = request.getParameter("section");
-        String year = request.getParameter("year");
-        Session session = sessionManager.getAndUpdateSession(token);
-
-        if (session == null)
-            return new ResponseEntity<String>("{\"Status\" : \"Failure bad token\"}",HttpStatus.NOT_FOUND);
-
-        if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
-            return new ResponseEntity<String>("{\"Status\" : \"Failure no permission\"}",HttpStatus.FORBIDDEN);
-
-        Author author = new Author();
-        author.setName(authorName);
-        author.setSurname(authorSurname);
-        author.setBornYear(Integer.parseInt(authorBornYear));
-
-        Book book = new Book();
-
-        book.setAuthors(Arrays.asList(authorDAO.saveIfNotInDB(author)));
-        book.setCondition(conditionDAO.saveIfNotInDB(new Condition(Conditions.valueOf(condition))));
-        book.setTypeOfBook(typeOfBookDAO.saveIfNotInDB(new TypeOfBook(type)));
-        book.setSection(sectionDAO.saveIfNotInDB(new Section(section)));
-        book.setTitle(title);
-        book.setYear(Integer.parseInt(year));
-        bookDAO.save(book);
-
-        HttpHeaders headers = new HttpHeaders();
-        return new ResponseEntity<String>("{\"Status\" : \"Success\"}",headers, HttpStatus.CREATED);
-    }
-
-    /**
-     * Edycja ksiazki o podanych uuid. tylko admin
-     * @param request -"uuid", "title", "token", "authorName", "authorSurname", "authorBornYear", "type", "section"
-     * @return zmieniona ksiazka
-     */
-    @RequestMapping(value = "/rest/updateBook/", method = RequestMethod.PUT)
-    public ResponseEntity<Book> updateBook(HttpServletRequest request) {
-
-        String token = request.getParameter("token");
-        String uuid = request.getParameter("uuid");
-        String title = request.getParameter("title");
-        String authorName = request.getParameter("authorName");
-        String authorSurname = request.getParameter("authorSurname");
-        String authorBornYear = request.getParameter("authorBornYear");
-        String condition = request.getParameter("condition");
-        String type = request.getParameter("type");
-        String section = request.getParameter("section");
-
-        Session session = sessionManager.getAndUpdateSession(token);
-
-        if (session == null)
-            return new ResponseEntity<Book>(HttpStatus.NOT_FOUND);
-
-        if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
-            return new ResponseEntity<Book>(HttpStatus.FORBIDDEN);
-
-        Book currentBook = bookDAO.get(uuid);
-
-        if (currentBook == null) {
-            System.out.println("Book with uuid " + uuid + " not found");
-            return new ResponseEntity<Book>(HttpStatus.NOT_FOUND);
-        }
-        Author author = new Author(authorName, authorSurname, Integer.parseInt(authorBornYear));
-
-        currentBook.setAuthors(Arrays.asList(authorDAO.saveIfNotInDB(author)));
-        currentBook.setCondition(conditionDAO.saveIfNotInDB(new Condition(Conditions.valueOf(condition))));
-        currentBook.setTypeOfBook(typeOfBookDAO.saveIfNotInDB(new TypeOfBook(type)));
-        currentBook.setSection(sectionDAO.saveIfNotInDB(new Section(section)));
-        currentBook.setTitle(title);
-
-        bookDAO.update(currentBook);
-        return new ResponseEntity<Book>(currentBook, HttpStatus.OK);
-    }
 
     /**
      * Usuwa ksiazke o podanym uuid. Tylko admin
@@ -180,7 +93,7 @@ public class RestfulBookController extends BaseController {
         Session session = sessionManager.getAndUpdateSession(token);
 
         if (session == null)
-            return new ResponseEntity<String>("{\"Status\" : \"Failure bad token\"}",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure bad token\"}",HttpStatus.UNAUTHORIZED);
 
         if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
             return new ResponseEntity<String>("{\"Status\" : \"Failure no permission\"}",HttpStatus.FORBIDDEN);
@@ -210,7 +123,7 @@ public class RestfulBookController extends BaseController {
         Session session = sessionManager.getAndUpdateSession(token);
 
         if (session == null)
-            return new ResponseEntity<Book>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<Book>(HttpStatus.UNAUTHORIZED);
 
         if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
             return new ResponseEntity<Book>(HttpStatus.FORBIDDEN);
@@ -242,7 +155,7 @@ public class RestfulBookController extends BaseController {
         Session session = sessionManager.getAndUpdateSession(token);
 
         if (session == null)
-            return new ResponseEntity<Book>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<Book>(HttpStatus.UNAUTHORIZED);
 
         if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
             return new ResponseEntity<Book>(HttpStatus.FORBIDDEN);
@@ -263,29 +176,29 @@ public class RestfulBookController extends BaseController {
 
     /**
      * Rezerwacja ksiazki. Tylko zalogowani uzytkownicy
-     * @param request -"bookUuid", "token", "userUuid"
+     * @param request -"bookUuid", "token", "idNumber"
      * @return status
      */
     @RequestMapping(value = "/rest/reserveBook/", method = RequestMethod.PUT)
     public ResponseEntity<UserModel> reserveBook(HttpServletRequest request) {
         String token = request.getParameter("token");
         String bookUuid= request.getParameter("bookUuid");
-        String userUuid = request.getParameter("userUuid");
+        int idNumber = Integer.parseInt(request.getParameter("idNumber"));
         Session session = sessionManager.getAndUpdateSession(token);
 
         if (session == null)
-            return new ResponseEntity<UserModel>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<UserModel>(HttpStatus.UNAUTHORIZED);
 
 
         Book book = bookDAO.get(bookUuid);
-        UserModel user = userModelDAO.get(userUuid);
+        UserModel user = userModelDAO.getByIdNumber(idNumber);
         if (book == null) {
             System.out.println("Book with uuid " + bookUuid + " not found");
             return new ResponseEntity<UserModel>(HttpStatus.NOT_FOUND);
         }
 
         if (user == null) {
-            System.out.println("user with uuid " + userUuid + " not found");
+            System.out.println("user with id " + idNumber + " not found");
             return new ResponseEntity<UserModel>(HttpStatus.NOT_FOUND);
         }
 
@@ -305,7 +218,7 @@ public class RestfulBookController extends BaseController {
 
     /**
      * Anuluje rezerwacje ksiazki. wszyscy zalogowani maja dostep
-     * @param request -"bookUuid", "token", "userUuid"
+     * @param request -"bookUuid", "token", "idNumber"
      * @return status
      */
 
@@ -314,23 +227,23 @@ public class RestfulBookController extends BaseController {
 
         String token = request.getParameter("token");
         String bookUuid = request.getParameter("bookUuid");
-        String userUuid= request.getParameter("userUuid");
+        int idNumber= Integer.parseInt(request.getParameter("idNumber"));
 
         Session session = sessionManager.getAndUpdateSession(token);
 
         if (session == null)
-            return new ResponseEntity<String>("{\"Status\" : \"Failure bad token\"}",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure bad token\"}",HttpStatus.UNAUTHORIZED);
 
 
         Book book = bookDAO.get(bookUuid);
-        UserModel user = userModelDAO.get(userUuid);
+        UserModel user = userModelDAO.getByIdNumber(idNumber);
         if (book == null) {
             System.out.println("Book with uuid " + bookUuid + " not found");
             return new ResponseEntity<String>("{\"Status\" : \"Failure book not found\"}",HttpStatus.NOT_FOUND);
         }
 
         if (user == null) {
-            System.out.println("user with uuid " + userUuid + " not found");
+            System.out.println("user with id " + idNumber + " not found");
             return new ResponseEntity<String>("{\"Status\" : \"Failure user not found\"}",HttpStatus.NOT_FOUND);
         }
 
@@ -349,7 +262,7 @@ public class RestfulBookController extends BaseController {
 
     /**
      * zwraca liste wszystkich wypozyczonych ksiazkek uzytkownika. tylko admin
-     * @param request -"userUuid", "token"
+     * @param request -"idNumber", "token"
      * @return lista ksiazek
      */
 
@@ -357,12 +270,12 @@ public class RestfulBookController extends BaseController {
     public ResponseEntity<List<Book>> listAllUserBooks(HttpServletRequest request) {
 
         String token = request.getParameter("token");
-        String userUuid = request.getParameter("userUuid");
+        String userUuid = request.getParameter("idNumber");
 
         Session session = sessionManager.getAndUpdateSession(token);
 
         if (session == null)
-            return new ResponseEntity<List<Book>>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<List<Book>>(HttpStatus.UNAUTHORIZED);
 
         if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
             return new ResponseEntity<List<Book>>(HttpStatus.FORBIDDEN);
@@ -378,26 +291,26 @@ public class RestfulBookController extends BaseController {
 
     /**
      *  zwraca liste wszystkich zarezerwowanych ksiazek uzytkownika. tylko admin
-     * @param request -"userUuid", "token"
+     * @param request -"idNumber", "token"
      * @return lista ksiazek
      */
     @RequestMapping(value = "/rest/getUserReservedBooks/", method = RequestMethod.GET)
     public ResponseEntity<List<Book>> listAllUserReservedBooks(HttpServletRequest request) {
 
         String token = request.getParameter("token");
-        String userUuid = request.getParameter("userUuid");
+        int idNumber = Integer.parseInt(request.getParameter("idNumber"));
 
         Session session = sessionManager.getAndUpdateSession(token);
 
         if (session == null)
-            return new ResponseEntity<List<Book>>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<List<Book>>(HttpStatus.UNAUTHORIZED);
 
         if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
             return new ResponseEntity<List<Book>>(HttpStatus.FORBIDDEN);
 
-        UserModel user = userModelDAO.get(userUuid);
+        UserModel user = userModelDAO.getByIdNumber(idNumber);
         if (user == null) {
-            System.out.println("user with uuid " + userUuid + " not found");
+            System.out.println("user with uuid " + idNumber + " not found");
             return new ResponseEntity<List<Book>>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<List<Book>>(user.getReservedBooks(), HttpStatus.OK);
@@ -406,7 +319,7 @@ public class RestfulBookController extends BaseController {
 
     /**
      * Wypozyczenie ksiazki o podanych uuid. tylko admin
-     * @param request -"bookUuid", "token", "userUuid"
+     * @param request -"bookUuid", "token", "idNumber"
      * @return status
      */
 
@@ -415,18 +328,18 @@ public class RestfulBookController extends BaseController {
 
         String token = request.getParameter("token");
         String bookUuid= request.getParameter("bookUuid");
-        String userUuid = request.getParameter("userUuid");
+        int idNumber = Integer.parseInt(request.getParameter("idNumber"));
 
         Session session = sessionManager.getAndUpdateSession(token);
 
         if (session == null)
-            return new ResponseEntity<String>("{\"Status\" : \"Failure bad session\"}",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure bad session\"}",HttpStatus.UNAUTHORIZED);
 
         if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
             return new ResponseEntity<String>("{\"Status\" : \"Failure no permission\"}",HttpStatus.FORBIDDEN);
 
         Book book = bookDAO.get(bookUuid);
-        UserModel user = userModelDAO.get(userUuid);
+        UserModel user = userModelDAO.getByIdNumber(idNumber);
 
         if (book == null) {
             System.out.println("Book with uuid " + bookUuid + " not found");
@@ -435,7 +348,7 @@ public class RestfulBookController extends BaseController {
 
 
         if (user == null) {
-            System.out.println("User with uuid " + userUuid + " not found");
+            System.out.println("User with id " + idNumber + " not found");
             return new ResponseEntity<String>("{\"Status\" : \"Failed user not found\"}",HttpStatus.NOT_FOUND);
         }
 
@@ -465,7 +378,7 @@ public class RestfulBookController extends BaseController {
 
     /**
      * Zwracanie wypozyczonej ksiazki tylko admin
-     * @param request -"userUuid", "token", "bookUuid"
+     * @param request -"userUuid", "token", "idNumber"
      * @return httpstatus
      */
 
@@ -473,20 +386,20 @@ public class RestfulBookController extends BaseController {
     public ResponseEntity<String> returnBorrowBook(HttpServletRequest request) {
 
         String token = request.getParameter("token");
-        String userUuid= request.getParameter("userUuid");
+        int idNumber= Integer.parseInt(request.getParameter("idNumber"));
         String bookUuid = request.getParameter("bookUuid");
 
 
         Session session = sessionManager.getAndUpdateSession(token);
 
         if (session == null)
-            return new ResponseEntity<String>("{\"Status\" : \"Failure bad token\"}",HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure bad token\"}",HttpStatus.UNAUTHORIZED);
 
         if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
             return new ResponseEntity<String>("{\"Status\" : \"Failure no permission\"}",HttpStatus.FORBIDDEN);
 
         Book book = bookDAO.get(bookUuid);
-        UserModel user = userModelDAO.get(userUuid);
+        UserModel user = userModelDAO.getByIdNumber(idNumber);
 
         if (book == null) {
             System.out.println("Book with uuid " + bookUuid + " not found");
@@ -495,7 +408,7 @@ public class RestfulBookController extends BaseController {
 
 
         if (user == null) {
-            System.out.println("User with uuid " + userUuid + " not found");
+            System.out.println("User with id " + idNumber + " not found");
             return new ResponseEntity<String>("{\"Status\" : \"Failure user not found\"}",HttpStatus.NOT_FOUND);
         }
 

@@ -37,8 +37,6 @@ public class RestfulLoginController extends BaseController {
             return new ResponseEntity<String>("{\"Status\" : \"Failure mail is used\"}", HttpStatus.IM_USED);
         }
 
-
-
         UserRole userRole = new UserRole();
         userRole.setType("USER");
         user.setLogin(login);
@@ -69,11 +67,10 @@ public class RestfulLoginController extends BaseController {
         String surname = request.getParameter("surname");
         String token = request.getParameter("token");
 
-
         Session session = sessionManager.getAndUpdateSession(token);
 
         if(session==null)
-            return new ResponseEntity<String>("{\"Status\" : \"Failure no session available with given token\"}", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure no session available with given token\"}", HttpStatus.UNAUTHORIZED);
 
         UserModel admin = userModelDAO.getByLogin(session.getLogin());
 
@@ -136,12 +133,12 @@ public class RestfulLoginController extends BaseController {
         if (sessionManager.closeSession(token))
             return new ResponseEntity<String>("{\"Status\" : \"Success\"}", HttpStatus.OK);
         else
-            return new ResponseEntity<String>("{\"Status\" : \"Failure\"}", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure\"}", HttpStatus.UNAUTHORIZED);
     }
 
     /**
      * Usuwanie uzytkownika. Tylko admin ma dostep;
-     * @param request "token", "uuid"
+     * @param request "token", "idNumber"
      * @return "Success" w przypadku powodzenia, w przeciwnym razie komunikat o blędzie
      */
 
@@ -149,20 +146,47 @@ public class RestfulLoginController extends BaseController {
     @RequestMapping(value = "/rest/deleteUser/", method = RequestMethod.DELETE)
     public ResponseEntity<String> deleteUser(HttpServletRequest request) {
         String token = request.getParameter("token");
-        String uuid = request.getParameter("uuid");
+        String idNumber = request.getParameter("idNumber");
         Session session = sessionManager.getAndUpdateSession(token);
 
         if(session==null)
-            return new ResponseEntity<String>("{\"Status\" : \"Failure no session available with given token\"}", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure no session available with given token\"}", HttpStatus.UNAUTHORIZED);
 
         String login = session.getLogin();
-
+        UserModel userToDelete = userModelDAO.getByIdNumber(Integer.parseInt(idNumber));
         UserModel user = userModelDAO.getByLogin(login);
         if(user.getUserRole().getType().equals("ADMIN")){
-            if(userModelDAO.get(uuid) == null){
+            if( userToDelete== null){
+                return new ResponseEntity<String>("{\"Status\" : \"Failure: no user with this idNumber\"}", HttpStatus.NOT_FOUND);
+            }
+            userModelDAO.delete(userToDelete.getUuid());
+            return new ResponseEntity<String>("{\"Status\" : \"Success\"}", HttpStatus.OK);
+        }else
+            return new ResponseEntity<String>("{\"Status\" : \"Failure you are no admin\"}", HttpStatus.UNAUTHORIZED);
+    }
+
+    @RequestMapping(value = "/rest/addIdNumber/", method = RequestMethod.DELETE)
+    public ResponseEntity<String> addIdNumber(HttpServletRequest request) {
+        String token = request.getParameter("token");
+        String uuid = request.getParameter("uuid");
+        int idNumber = Integer.parseInt(request.getParameter("idNumber"));
+        Session session = sessionManager.getAndUpdateSession(token);
+
+        if(session==null)
+            return new ResponseEntity<String>("{\"Status\" : \"Failure no session available with given token\"}", HttpStatus.UNAUTHORIZED);
+
+        String login = session.getLogin();
+        UserModel userToEdit = userModelDAO.get(uuid);
+        UserModel user = userModelDAO.getByLogin(login);
+        if(user.getUserRole().getType().equals("ADMIN")){
+            if( userToEdit== null){
                 return new ResponseEntity<String>("{\"Status\" : \"Failure: no user with this uuid\"}", HttpStatus.NOT_FOUND);
             }
-            userModelDAO.delete(uuid);
+            if(userToEdit.getIdNumber()!=0)
+                return new ResponseEntity<String>("{\"Status\" : \"Failure: user has idNumber\"}", HttpStatus.NOT_FOUND);
+
+            userToEdit.setIdNumber(idNumber);
+            userModelDAO.update(userToEdit);
             return new ResponseEntity<String>("{\"Status\" : \"Success\"}", HttpStatus.OK);
         }else
             return new ResponseEntity<String>("{\"Status\" : \"Failure you are no admin\"}", HttpStatus.UNAUTHORIZED);

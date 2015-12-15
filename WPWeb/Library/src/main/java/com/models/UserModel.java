@@ -25,6 +25,9 @@ public class UserModel extends DatabaseObject
 
         private String uuid;
 
+        private int idNumber;
+
+
         @Column(unique = true, nullable = false)
         private String login;
 
@@ -204,5 +207,13 @@ public class UserModel extends DatabaseObject
         @Override
         public int hashCode() {
                 return login != null ? login.hashCode() : 0;
+        }
+
+        public int getIdNumber() {
+                return idNumber;
+        }
+
+        public void setIdNumber(int idNumber) {
+                this.idNumber = idNumber;
         }
 }

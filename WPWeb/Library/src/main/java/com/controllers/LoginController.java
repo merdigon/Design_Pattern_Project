@@ -67,12 +67,17 @@ public class LoginController extends BaseController {
     public String addUser(HttpServletRequest request) {
         String userRole = request.getParameter("role");
         String login = request.getParameter("login");
-        String password = request.getParameter("role");
+        String password = request.getParameter("password");
         String name = request.getParameter("name");
         String surname = request.getParameter("surname");
         String mail = request.getParameter("mail");
 
         UserModel user = new UserModel();
+
+        if(login.length()<6)
+            return "Failure: login is too short";
+        if(password.length()<6)
+            return "Failure: password is too short";
 
         if(userModelDAO.isLogin(login))
             return "Failure: login is used";

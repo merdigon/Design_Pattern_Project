@@ -106,11 +106,11 @@ public class RestfulUserController extends BaseController {
         UserModel currentUser = userModelDAO.get(uuid);
 
         if (currentUser == null) {
-            System.out.println("UserModel with uuid " + uuid + " not found");
+            System.out.println("{\"Status\" : \"UserModel with uuid " + uuid + " not found\"}");
             return new ResponseEntity<UserModel>(HttpStatus.NOT_FOUND);
         }
         if(userModelDAO.isMail(mail)){
-            System.out.println("UserModel with mail " + mail + " exist");
+            System.out.println("{\"Status\" : \"UserModel with mail " + mail + " exist\"}");
             return new ResponseEntity<UserModel>(HttpStatus.NOT_FOUND);
         }
         currentUser.setName(name);
@@ -141,7 +141,7 @@ public class RestfulUserController extends BaseController {
 
         UserModel user = userModelDAO.get(uuid);
         if (user == null) {
-            System.out.println("Unable to delete. User with uuid " + uuid + " not found");
+            System.out.println("{\"Status\" : \"Unable to delete. User with uuid " + uuid + " not found\"}");
             return new ResponseEntity<UserModel>(HttpStatus.NOT_FOUND);
         }
 
@@ -156,7 +156,7 @@ public class RestfulUserController extends BaseController {
      */
 
     @RequestMapping(value = "/rest/payDept/", method = RequestMethod.PUT)
-    public ResponseEntity<Void> payDept(HttpServletRequest request) {
+    public ResponseEntity<String> payDept(HttpServletRequest request) {
 
         String uuid = request.getParameter("uuid");
         double money = Double.parseDouble(request.getParameter("money"));
@@ -164,19 +164,19 @@ public class RestfulUserController extends BaseController {
         Session session = sessionManager.getAndUpdateSession(token);
 
         if (session == null)
-            return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure bad token\"}",HttpStatus.NOT_FOUND);
 
         if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
-            return new ResponseEntity<Void>(HttpStatus.FORBIDDEN);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure you are not admin\"}",HttpStatus.FORBIDDEN);
 
         UserModel user = userModelDAO.get(uuid);
         if (user == null)
-            return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure bad user uuid\"}",HttpStatus.NOT_FOUND);
 
         user.setDebt(user.getDebt() - money);
         userModelDAO.update(user);
 
-        return new ResponseEntity<Void>(HttpStatus.OK);
+        return new ResponseEntity<String>("{\"Status\" : \"Success\"}",HttpStatus.OK);
     }
 
 

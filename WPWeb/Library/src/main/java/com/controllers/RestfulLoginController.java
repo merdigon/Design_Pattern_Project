@@ -31,11 +31,13 @@ public class RestfulLoginController extends BaseController {
         String name= request.getParameter("name");
         String surname = request.getParameter("surname");
         if (userModelDAO.isLogin(login))
-            return new ResponseEntity<String>("Failure: login is used", HttpStatus.IM_USED);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure login is used\"}", HttpStatus.IM_USED);
 
         if (userModelDAO.isMail(mail)) {
-            return new ResponseEntity<String>("Failure: mail is used", HttpStatus.IM_USED);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure mail is used\"}", HttpStatus.IM_USED);
         }
+
+
 
         UserRole userRole = new UserRole();
         userRole.setType("USER");
@@ -47,7 +49,7 @@ public class RestfulLoginController extends BaseController {
         userRole = userRoleDAO.saveIfNotInDB(userRole);
         user.setUserRole(userRole);
         userModelDAO.save(user);
-        return new ResponseEntity<String>("Success", HttpStatus.CREATED);
+        return new ResponseEntity<String>("{\"Status\" : \"Success\"}", HttpStatus.CREATED);
 
     }
 
@@ -71,16 +73,16 @@ public class RestfulLoginController extends BaseController {
         Session session = sessionManager.getAndUpdateSession(token);
 
         if(session==null)
-            return new ResponseEntity<String>("No session available with given token", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure no session available with given token\"}", HttpStatus.NOT_FOUND);
 
         UserModel admin = userModelDAO.getByLogin(session.getLogin());
 
         if (admin.getUserRole().getType().equals("ADMIN")) {
             if (userModelDAO.isLogin(login))
-                return new ResponseEntity<String>("Failure: login is used", HttpStatus.IM_USED);
+                return new ResponseEntity<String>("{\"Status\" : \"Failure login is used\"}", HttpStatus.IM_USED);
 
             if (userModelDAO.isMail(mail)) {
-                return new ResponseEntity<String>("Failure: mail is used", HttpStatus.IM_USED);
+                return new ResponseEntity<String>("{\"Status\" : \"Failure login is used\"}", HttpStatus.IM_USED);
             }
             UserRole userRole = new UserRole();
             userRole.setType("ADMIN");
@@ -93,9 +95,9 @@ public class RestfulLoginController extends BaseController {
             user.setMail(mail);
             user.setUserRole(userRole);
             userModelDAO.save(user);
-            return new ResponseEntity<String>("Success", HttpStatus.CREATED);
+            return new ResponseEntity<String>("{\"Status\" : \"Success\"}", HttpStatus.CREATED);
         } else {
-            return new ResponseEntity<String>("Failure: no user role", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure: no user role\"}", HttpStatus.FORBIDDEN);
         }
 
     }
@@ -118,7 +120,7 @@ public class RestfulLoginController extends BaseController {
             String response = "{ \"token\" : \"" + token + "\", \"role\" : \"" + userModelDAO.getByLogin(login).getUserRole().getType() + "\"}";
             return new ResponseEntity<String>(response, HttpStatus.OK);
         } else {
-            return new ResponseEntity<String>("Failure: wrong user or password", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure: wrong user or password\"}", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -132,9 +134,9 @@ public class RestfulLoginController extends BaseController {
     public ResponseEntity<String> logOut(HttpServletRequest request) {
         String token = request.getParameter("token");
         if (sessionManager.closeSession(token))
-            return new ResponseEntity<String>("Success", HttpStatus.OK);
+            return new ResponseEntity<String>("{\"Status\" : \"Success\"}", HttpStatus.OK);
         else
-            return new ResponseEntity<String>("Failure", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure\"}", HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -151,18 +153,18 @@ public class RestfulLoginController extends BaseController {
         Session session = sessionManager.getAndUpdateSession(token);
 
         if(session==null)
-            return new ResponseEntity<String>("No session available with given token", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure no session available with given token\"}", HttpStatus.NOT_FOUND);
 
         String login = session.getLogin();
 
         UserModel user = userModelDAO.getByLogin(login);
         if(user.getUserRole().getType().equals("ADMIN")){
             if(userModelDAO.get(uuid) == null){
-                return new ResponseEntity<String>("Failure: no user with this uuid", HttpStatus.OK);
+                return new ResponseEntity<String>("{\"Status\" : \"Failure: no user with this uuid\"}", HttpStatus.NOT_FOUND);
             }
             userModelDAO.delete(uuid);
-            return new ResponseEntity<String>("Success", HttpStatus.OK);
+            return new ResponseEntity<String>("{\"Status\" : \"Success\"}", HttpStatus.OK);
         }else
-            return new ResponseEntity<String>("Failure: no admin", HttpStatus.OK);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure you are no admin\"}", HttpStatus.UNAUTHORIZED);
     }
 }

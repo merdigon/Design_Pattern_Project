@@ -43,20 +43,20 @@ public class RestfulLibraryController extends BaseController {
 
         Section section = new Section(request.getParameter("section"));
         if (session == null)
-            return new ResponseEntity<String>("No session", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure no session\"}", HttpStatus.NOT_FOUND);
 
         if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
-            return new ResponseEntity<String>("No permission", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure no permission\"}", HttpStatus.FORBIDDEN);
 
         if (sectionDAO.isExist(section)) {
-            System.out.println("A section " + section.getName() + " already exist");
+            System.out.println("{\"Status\" : \"A section " + section.getName() + " already exist\"}");
             return new ResponseEntity<String>("Alredy exist",HttpStatus.CONFLICT);
         }
 
         sectionDAO.save(section);
 
         HttpHeaders headers = new HttpHeaders();
-        return new ResponseEntity<String>("Success", HttpStatus.CREATED);
+        return new ResponseEntity<String>("{\"Status\" : \"Success\"}", HttpStatus.CREATED);
     }
 
     /**
@@ -68,7 +68,7 @@ public class RestfulLibraryController extends BaseController {
      */
 
     @RequestMapping(value = "/rest/configureLibrary/", method = RequestMethod.PUT)
-    public ResponseEntity<Void> configureLibrary(HttpServletRequest request) {
+    public ResponseEntity<String> configureLibrary(HttpServletRequest request) {
 
         String token = request.getParameter("token");
         String days= request.getParameter("days");
@@ -79,17 +79,17 @@ public class RestfulLibraryController extends BaseController {
         Session session = sessionManager.getAndUpdateSession(token);
 
         if (session == null)
-            return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure bad token\"}",HttpStatus.NOT_FOUND);
 
         if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
-            return new ResponseEntity<Void>(HttpStatus.FORBIDDEN);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure no permission\"}",HttpStatus.FORBIDDEN);
 
         Conf.setBorrowedDays(Integer.parseInt(days));
         Conf.setInterests(Integer.parseInt(interests));
         Conf.setBorrowedDays(Integer.parseInt(borrowed));
         Conf.setMaxReservedBooks(Integer.parseInt(reserved));
         Conf.setExpirationSessionMinutes(Integer.parseInt(expirationTime));
-        return new ResponseEntity<Void>(HttpStatus.OK);
+        return new ResponseEntity<String>("{\"Status\" : \"Success\"}",HttpStatus.OK);
     }
 
 

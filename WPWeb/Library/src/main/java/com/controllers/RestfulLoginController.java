@@ -165,7 +165,13 @@ public class RestfulLoginController extends BaseController {
             return new ResponseEntity<String>("{\"Status\" : \"Failure you are no admin\"}", HttpStatus.UNAUTHORIZED);
     }
 
-    @RequestMapping(value = "/rest/addIdNumber/", method = RequestMethod.DELETE)
+    /**
+     * dodaje idNumber do uzytkownika o podanym uuid
+     * @param request "token", "uuid"
+     * @return
+     */
+
+    @RequestMapping(value = "/rest/addIdNumber/", method = RequestMethod.PUT)
     public ResponseEntity<String> addIdNumber(HttpServletRequest request) {
         String token = request.getParameter("token");
         String uuid = request.getParameter("uuid");

@@ -21,13 +21,13 @@
         success: function (response) {
           $("#form").hide();
           if(response =="success")
-            $('#alert_placeholder').append('<div class="alert alert-success">' + response +'</div>');
+            $('#alert_placeholder').html('<div class="alert alert-success">' + response +'</div>');
           else
-            $('#alert_placeholder').append('<div class="alert alert-danger">' + response +'</div>');
+            $('#alert_placeholder').html('<div class="alert alert-danger">' + response +'</div>');
         },
 
         error: function (e) {
-          $('#alert_placeholder').append('<div class="alert alert-failure">failure</div>');
+          $('#alert_placeholder').html('<div class="alert alert-failure">failure</div>');
 
         }
       });
@@ -50,7 +50,7 @@
     <div class="panel-body">
 
       <input type="text" id="type" class="form-control" placeholder="type">
-      <button onclick="addType()">add Type</button>
+      <button onclick="addType()" class="btn btn-default">add Type</button>
 
     </div>
 

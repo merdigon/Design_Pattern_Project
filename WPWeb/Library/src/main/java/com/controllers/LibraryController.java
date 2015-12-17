@@ -24,8 +24,11 @@ public class LibraryController extends BaseController {
     @RequestMapping(value = "/admin/addSection", method = RequestMethod.POST)
     @ResponseBody
     public String addSection(@RequestParam("section") String section){
+        if(section.equals(""))
+            return "Failure: empty section";
+
         if(sectionDAO.isContain(new Section(section)).isPresent())
-            return "failure this section is already in database";
+            return "Failure: this section is already in database";
 
         sectionDAO.saveIfNotInDB(new Section(section));
         return "success";
@@ -39,9 +42,11 @@ public class LibraryController extends BaseController {
     @RequestMapping(value = "/admin/addType", method = RequestMethod.POST)
     @ResponseBody
     public String addType(@RequestParam("type") String type){
+        if(type.equals(""))
+            return "Failure: empty type";
         if(typeOfBookDAO.isContain(new TypeOfBook(type)).isPresent())
 
-            return "failure this type is already in database";
+            return "Failure: this type is already in database";
         typeOfBookDAO.saveIfNotInDB(new TypeOfBook(type));
         return "success";
     }
@@ -67,7 +72,7 @@ public class LibraryController extends BaseController {
                                            @RequestParam("maxBorrowedBooks") int borrowed){
         Conf.setBorrowedDays(days);
         Conf.setInterests(interests);
-        Conf.setBorrowedDays(borrowed);
+        Conf.setMaxBorrowedBooks(borrowed);
         Conf.setMaxReservedBooks(reserved);
         Conf.setExpirationSessionMinutes(expirationTime);
         return "success";

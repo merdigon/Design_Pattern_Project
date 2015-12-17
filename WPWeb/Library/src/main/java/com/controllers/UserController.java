@@ -2,8 +2,11 @@ package com.controllers;
 
 import com.models.Book;
 import com.models.BookDate;
+import com.models.Session;
 import com.models.UserModel;
 import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -108,5 +112,25 @@ public class UserController extends  BaseController {
         return "Success: pay debt";
 
     }
+
+    @RequestMapping(value = "/admin/addIdNumber/", method = RequestMethod.POST)
+    @ResponseBody
+    public String addIdNumber(HttpServletRequest request) {
+        String uuid = request.getParameter("userUuid");
+        int idNumber = Integer.parseInt(request.getParameter("idNumber"));
+
+
+        UserModel userToEdit = userModelDAO.get(uuid);
+            if( userToEdit== null){
+                return "Failure: no user with this uuid";
+            }
+            if(userToEdit.getIdNumber()!=0)
+                return "Failure: user has idNumber";
+
+            userToEdit.setIdNumber(idNumber);
+            userModelDAO.update(userToEdit);
+            return "Success";
+    }
+
 
 }

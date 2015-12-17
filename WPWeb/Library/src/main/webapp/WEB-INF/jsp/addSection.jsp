@@ -20,9 +20,9 @@
             success: function (response) {
                 $("#form").hide();
                 if(response =="success")
-                    $('#alert_placeholder').append('<div class="alert alert-success">' + response +'</div>');
+                    $('#alert_placeholder').html('<div class="alert alert-success">' + response +'</div>');
                 else
-                    $('#alert_placeholder').append('<div class="alert alert-danger">' + response +'</div>');
+                    $('#alert_placeholder').html('<div class="alert alert-danger">' + response +'</div>');
 
             },
 
@@ -50,7 +50,7 @@
         <div class="panel-body">
 
             <input type="text" id="section" class="form-control" placeholder="section">
-            <button onclick="addSection()">add Section</button>
+            <button onclick="addSection()" class="btn btn-default">add Section</button>
 
         </div>
 

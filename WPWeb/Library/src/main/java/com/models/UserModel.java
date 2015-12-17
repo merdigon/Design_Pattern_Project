@@ -189,6 +189,7 @@ public class UserModel extends DatabaseObject
                         ", \"name\":\"" + name + '\"' +
                         ", \"surname\":\"" + surname + '\"' +
                         ", \"mail\":\"" + mail + '\"' +
+                        ", \"idNumber\":\"" + idNumber + '\"' +
                         ", \"debt\":\"" + debt + '\"' +
                         ", \"books\":" + books  +
                         ", \"reservedBooks\":" + reservedBooks  +

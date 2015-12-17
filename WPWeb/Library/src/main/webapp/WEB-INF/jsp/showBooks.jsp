@@ -31,6 +31,29 @@
             });
         }
 
+        function generateQr(bookUuid) {
+            $.ajax({
+                type: "GET",
+                url: "/admin/qrGenerate/",
+                data: {
+                    uuid: bookUuid
+                },
+                dataType: "text",
+                success: function (response) {
+                    console.log("<img alt='Embedded Image' src='data:image/png;base64," + response + "'/>");
+
+                    $('#image').html("<img alt='Embedded Image' src='data:image/png;base64," + response + "'/>");
+                },
+
+                error: function (e) {
+
+                    alert('Error: ' + e);
+                    console.log(e)
+
+                }
+            });
+        }
+
 
         function createTable(json) {
             var myTemplate = $.templates("#BookTmpl");
@@ -44,10 +67,12 @@
                     '<th>Section</th>' +
                     <sec:authorize access="hasRole('ADMIN')">
                     '<th>Edit</th>' +
-                    '<th>Uuid</th>' +
                     </sec:authorize>
                     <sec:authorize access="hasAnyRole('ADMIN', 'USER')">
+                    '<th>Uuid</th>' +
                     '<th>Action</th>' +
+                    '<th>Generate QR Code</th>' +
+
                     </sec:authorize>
 
                     '</tr>';
@@ -129,7 +154,8 @@
             </sec:authorize>
             <sec:authorize access="hasRole('ADMIN')">
                 <td>{{:uuid}}</td>
-                <td><a href="<c:url value='/admin/editBook/{{:uuid}}'/>" ><button class="btn btn-primary">edit</button><a><td>
+                <td><a href="<c:url value='/admin/editBook/{{:uuid}}'/>" ><button class="btn btn-primary">edit</button><a></td>
+                <td><button onclick='generateQr("{{:uuid}}")' class="btn btn-default">generate Qr Code </button></td>
             </sec:authorize>
         </tr>
 
@@ -158,6 +184,10 @@
         </div>
 
     </div>
+</div>
+
+<div id="image">
+
 </div>
 </body>
 </html>

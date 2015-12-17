@@ -173,6 +173,8 @@ public class RestfulUserController extends BaseController {
         if (user == null)
             return new ResponseEntity<String>("{\"Status\" : \"Failure bad user idNumber\"}",HttpStatus.NOT_FOUND);
 
+        if(user.getDebt()<=money)
+
         user.setDebt(user.getDebt() - money);
         userModelDAO.update(user);
 
@@ -185,32 +187,6 @@ public class RestfulUserController extends BaseController {
      * @return
      */
 
-    @RequestMapping(value = "/rest/addIdNumber/", method = RequestMethod.PUT)
-    public ResponseEntity<String> addIdNumber(HttpServletRequest request) {
-        String token = request.getParameter("token");
-        String uuid = request.getParameter("uuid");
-        int idNumber = Integer.parseInt(request.getParameter("idNumber"));
-        Session session = sessionManager.getAndUpdateSession(token);
-
-        if(session==null)
-            return new ResponseEntity<String>("{\"Status\" : \"Failure no session available with given token\"}", HttpStatus.UNAUTHORIZED);
-
-        String login = session.getLogin();
-        UserModel userToEdit = userModelDAO.get(uuid);
-        UserModel user = userModelDAO.getByLogin(login);
-        if(user.getUserRole().getType().equals("ADMIN")){
-            if( userToEdit== null){
-                return new ResponseEntity<String>("{\"Status\" : \"Failure: no user with this uuid\"}", HttpStatus.NOT_FOUND);
-            }
-            if(userToEdit.getIdNumber()!=0)
-                return new ResponseEntity<String>("{\"Status\" : \"Failure: user has idNumber\"}", HttpStatus.NOT_FOUND);
-
-            userToEdit.setIdNumber(idNumber);
-            userModelDAO.update(userToEdit);
-            return new ResponseEntity<String>("{\"Status\" : \"Success\"}", HttpStatus.OK);
-        }else
-            return new ResponseEntity<String>("{\"Status\" : \"Failure you are no admin\"}", HttpStatus.UNAUTHORIZED);
-    }
 
 
 }

@@ -36,7 +36,7 @@
                 },
 
                 error: function (e) {
-                    $('#alert_placeholder').append('<div class="alert alert-failure">failure</div>');
+                    $('#alert_placeholder').html('<div class="alert alert-failure">failure</div>');
 
                 }
             });
@@ -159,6 +159,7 @@
             var html = "<table class='table' >"
             html += '<tr>' +
                     '<th>uuid</th>' +
+                    '<th>id number</th>' +
                     '<th>Login</th>' +
                     '<th>Name</th>' +
                     '<th>Surname</th>' +
@@ -173,11 +174,35 @@
             console.log(html);
         }
 
+
+        function addIdNumber() {
+
+            $.ajax({
+                type: "POST",
+                url: "/admin/addIdNumber/",
+                data: {
+                    "idNumber": $('#idNumber').val(),
+                    "userUuid": $('#userUuid').val()
+                },
+                dataType: "text",
+                success: function (response) {
+                    alert(response);
+                    location.reload();
+                },
+
+                error: function (response) {
+                    alert(response);
+                    location.reload();
+                }
+            });
+        }
+
     </script>
     <script id="UserTmpl" type="text/x-jsrender">
         <tr>
 
             <td>{{:uuid}}</td>
+            <td>{{:idNumber}}</td>
             <td>{{:login}}</td>
             <td>{{:name}}</td>
             <td>{{:surname}}</td>
@@ -189,7 +214,7 @@
             <td>{{:debt}}</td>
             </td>
             <sec:authorize access="hasAnyRole('ADMIN')">
-        <td><button onclick="$('#userUuid').val('{{:uid}}')" class="btn btn-default" data-toggle="modal" data-target="#myModal">action</button></td>
+        <td><button onclick="$('#userUuid').val('{{:uuid}}')" class="btn btn-default" data-toggle="modal" data-target="#myModal">action</button></td>
 
     </sec:authorize>
         </tr>
@@ -248,7 +273,9 @@
                 <button onclick="reserveBook()">reserve</button>
                 <button onclick="cancelReserveBook()">cancel reseve</button>
                 <input type="text" id="debtReturn">
-                <button onclick="payDebt()">payDebt</button>
+                <button onclick="payDebt()">payDebt</button><br>
+                <input type="text" id="idNumber">
+                <button onclick="addIdNumber()">add idNumber</button>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

@@ -32,13 +32,13 @@
                 },
                 success: function (response) {
                     $(".form-inline").hide();
-                    $('#alert_placeholder').append('<div class="alert alert-success">Successs</div>')
+                    $('#alert_placeholder').html('<div class="alert alert-success">Successs</div>')
 
                 },
                 error: function (e) {
 
                     $("#form").hide();
-                    $('#alert_placeholder').append('<div class="alert alert-danger">Failure</div>')
+                    $('#alert_placeholder').html('<div class="alert alert-danger">Failure</div>')
 
                 }
             });

@@ -86,7 +86,7 @@ public class RestfulLibraryController extends BaseController {
 
         Conf.setBorrowedDays(Integer.parseInt(days));
         Conf.setInterests(Integer.parseInt(interests));
-        Conf.setBorrowedDays(Integer.parseInt(borrowed));
+        Conf.setMaxBorrowedBooks(Integer.parseInt(borrowed));
         Conf.setMaxReservedBooks(Integer.parseInt(reserved));
         Conf.setExpirationSessionMinutes(Integer.parseInt(expirationTime));
         return new ResponseEntity<String>("{\"Status\" : \"Success\"}",HttpStatus.OK);

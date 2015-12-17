@@ -38,6 +38,28 @@
             });
         }
 
+        function addIdNumber() {
+
+            $.ajax({
+                type: "POST",
+                url: "/admin/addIdNumber/",
+                data: {
+                    "idNumber": $('#idNumber').val(),
+                    "userUuid": $('#userUuid').val()
+                },
+                dataType: "text",
+                success: function (response) {
+                    alert(response);
+                    location.reload();
+                },
+
+                error: function (response) {
+                    alert(response);
+                    location.reload();
+                }
+            });
+        }
+
         function returnBook() {
 
             $.ajax({
@@ -132,13 +154,14 @@
 <h2>Library</h2>
 <%@include file="partOfPage/buttons/loginRegistrationButton.jsp" %>
 <div class="panel panel-primary">
-    <div class="panel-heading">Book operations</div>
+    <div class="panel-heading">Show users</div>
     <div class="panel-body">
         <button class="btn btn-default" onclick="window.location.href='/'">goToMainPage</button>
         <div class="table-responsive">
             <table class="table">
                 <tr>
                     <th>uuid</th>
+                    <th>id number</th>
                     <th>login</th>
                     <th>name</th>
                     <th>surname</th>
@@ -152,6 +175,7 @@
                 <c:forEach items="${users}" var="user">
                     <tr>
                         <td>${user.uuid}</td>
+                        <td>${user.idNumber}</td>
                         <td>${user.login}</td>
                         <td>${user.name}</td>
                         <td>${user.surname}</td>
@@ -197,9 +221,11 @@
                 <button onclick="borrow()">borrow</button>
                 <button onclick="returnBook()">return</button>
                 <button onclick="reserveBook()">reserve</button>
-                <button onclick="cancelReserveBook()">cancel reseve</button>
+                <button onclick="cancelReserveBook()">cancel reservation</button>
                 <input type="text" id="debtReturn">
-                <button onclick="payDebt()">payDebt</button>
+                <button onclick="payDebt()">payDebt</button><br>
+                <input type="text" id="idNumber">
+                <button onclick="addIdNumber()">add idNumber</button>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

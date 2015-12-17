@@ -1,5 +1,6 @@
 package com.controllers;
 
+import com.configuration.IdNumberGenerator;
 import com.models.UserModel;
 import com.models.UserRole;
 import org.springframework.security.core.Authentication;
@@ -71,7 +72,7 @@ public class LoginController extends BaseController {
         String name = request.getParameter("name");
         String surname = request.getParameter("surname");
         String mail = request.getParameter("mail");
-
+        int idNumber = new IdNumberGenerator().getRandomNumberInRange(100000, 999990);
         UserModel user = new UserModel();
 
         if(login.length()<6)
@@ -91,6 +92,7 @@ public class LoginController extends BaseController {
         user.setName(name);
         user.setSurname(surname);
         user.setMail(mail);
+        user.setIdNumber(idNumber);
         UserRole role = new UserRole();
         role.setType("USER");
         role = userRoleDAO.saveIfNotInDB(role);
@@ -109,6 +111,7 @@ public class LoginController extends BaseController {
         user.setName("adminName");
         user.setSurname("adminSurname");
         user.setMail("adminMail");
+        user.setIdNumber(100000);
         UserRole role = new UserRole();
         role.setType("ADMIN");
         userRoleDAO.save(role);

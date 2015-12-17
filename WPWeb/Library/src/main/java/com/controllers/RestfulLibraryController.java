@@ -67,7 +67,7 @@ public class RestfulLibraryController extends BaseController {
      * @return HttpStatus
      */
 
-    @RequestMapping(value = "/rest/configureLibrary/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/rest/configureLibrary/", method = RequestMethod.POST)
     public ResponseEntity<String> configureLibrary(HttpServletRequest request) {
 
         String token = request.getParameter("token");

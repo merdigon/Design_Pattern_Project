@@ -114,7 +114,7 @@ public class RestfulBookController extends BaseController {
      * @return ksiazka w postaci jsona
      */
 
-    @RequestMapping(value = "/rest/moveBook/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/rest/moveBook/", method = RequestMethod.POST)
     public ResponseEntity<Book> moveBook(HttpServletRequest request) {
 
         String uuid = request.getParameter("uuid");
@@ -146,7 +146,7 @@ public class RestfulBookController extends BaseController {
      * @return zminiona ksiazka
      */
 
-    @RequestMapping(value = "/rest/changeCondition/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/rest/changeCondition/", method = RequestMethod.POST)
     public ResponseEntity<Book> changeCondition(HttpServletRequest request) {
 
         String token = request.getParameter("token");
@@ -179,7 +179,7 @@ public class RestfulBookController extends BaseController {
      * @param request -"bookUuid", "token", "idNumber"
      * @return status
      */
-    @RequestMapping(value = "/rest/reserveBook/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/rest/reserveBook/", method = RequestMethod.POST)
     public ResponseEntity<UserModel> reserveBook(HttpServletRequest request) {
         String token = request.getParameter("token");
         String bookUuid= request.getParameter("bookUuid");
@@ -222,7 +222,7 @@ public class RestfulBookController extends BaseController {
      * @return status
      */
 
-    @RequestMapping(value = "/rest/cancelReservedBook/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/rest/cancelReservedBook/", method = RequestMethod.POST)
     public ResponseEntity<String> cancelReserveBook(HttpServletRequest request) {
 
         String token = request.getParameter("token");
@@ -323,7 +323,7 @@ public class RestfulBookController extends BaseController {
      * @return status
      */
 
-    @RequestMapping(value = "/rest/borrowBook/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/rest/borrowBook/", method = RequestMethod.POST)
     public ResponseEntity<String> borrowBook(HttpServletRequest request) {
 
         String token = request.getParameter("token");
@@ -382,11 +382,10 @@ public class RestfulBookController extends BaseController {
      * @return httpstatus
      */
 
-    @RequestMapping(value = "/rest/returnBook/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/rest/returnBook/", method = RequestMethod.POST)
     public ResponseEntity<String> returnBorrowBook(HttpServletRequest request) {
 
         String token = request.getParameter("token");
-        int idNumber= Integer.parseInt(request.getParameter("idNumber"));
         String bookUuid = request.getParameter("bookUuid");
 
 
@@ -399,7 +398,8 @@ public class RestfulBookController extends BaseController {
             return new ResponseEntity<String>("{\"Status\" : \"Failure no permission\"}",HttpStatus.FORBIDDEN);
 
         Book book = bookDAO.get(bookUuid);
-        UserModel user = userModelDAO.getByIdNumber(idNumber);
+        String login = book.getDates().get(book.getDates().size()-1).getLogin();
+        UserModel user = userModelDAO.getByLogin(login);
 
         if (book == null) {
             System.out.println("Book with uuid " + bookUuid + " not found");
@@ -407,14 +407,8 @@ public class RestfulBookController extends BaseController {
         }
 
 
-        if (user == null) {
-            System.out.println("User with id " + idNumber + " not found");
-            return new ResponseEntity<String>("{\"Status\" : \"Failure user not found\"}",HttpStatus.NOT_FOUND);
-        }
-
-
         if (!book.getCondition().equals(Conditions.valueOf("Borrowed")))
-            return new ResponseEntity<String>("{\"Status\" : \"Failure book is borrowed\"}",HttpStatus.IM_USED);
+            return new ResponseEntity<String>("{\"Status\" : \"Failure book is not borrowed\"}",HttpStatus.IM_USED);
 
         BookDate date = bookDAO.getLastDate(book);
 

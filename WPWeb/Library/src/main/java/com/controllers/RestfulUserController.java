@@ -85,7 +85,7 @@ public class RestfulUserController extends BaseController {
      * @param request "token", "idNumber", "password", "name", "surname", "mail"
      * @return httpStatus
      */
-    @RequestMapping(value = "/rest/user/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/rest/user/", method = RequestMethod.POST)
     public ResponseEntity<UserModel> updateUserModel(HttpServletRequest request) {
 
         String token = request.getParameter("token");
@@ -155,7 +155,7 @@ public class RestfulUserController extends BaseController {
      * @return status
      */
 
-    @RequestMapping(value = "/rest/payDept/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/rest/payDept/", method = RequestMethod.POST)
     public ResponseEntity<String> payDept(HttpServletRequest request) {
 
         int idNumber = Integer.parseInt(request.getParameter("idNumber"));
@@ -180,13 +180,6 @@ public class RestfulUserController extends BaseController {
 
         return new ResponseEntity<String>("{\"Status\" : \"Success\"}",HttpStatus.OK);
     }
-
-    /**
-     * dodaje idNumber do uzytkownika o podanym uuid
-     * @param request "token", "uuid"
-     * @return
-     */
-
 
 
 }

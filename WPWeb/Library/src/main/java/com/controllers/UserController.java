@@ -124,8 +124,6 @@ public class UserController extends  BaseController {
             if( userToEdit== null){
                 return "Failure: no user with this uuid";
             }
-            if(userToEdit.getIdNumber()!=0)
-                return "Failure: user has idNumber";
 
             userToEdit.setIdNumber(idNumber);
             userModelDAO.update(userToEdit);

@@ -51,4 +51,15 @@ public class Conf {
     public static void setExpirationSessionMinutes(int expirationSessionMinutes) {
         Conf.expirationSessionMinutes = expirationSessionMinutes;
     }
+
+    public String toString(){
+        return "{" +
+                "\"borrowedDays\":\"" + borrowedDays  + '\"' +
+                ", \"interests\":\"" + interests + '\"' +
+                ", \"maxBorrowedBooks\":\"" + maxBorrowedBooks + '\"' +
+                ", \"maxReservedBooks\":\"" + maxReservedBooks + '\"' +
+                ", \"expirationSessionMinutes\":\"" + expirationSessionMinutes + '\"' +
+                '}';
+    }
+
 }

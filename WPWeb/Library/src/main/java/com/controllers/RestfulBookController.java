@@ -270,7 +270,7 @@ public class RestfulBookController extends BaseController {
     public ResponseEntity<List<Book>> listAllUserBooks(HttpServletRequest request) {
 
         String token = request.getParameter("token");
-        String userUuid = request.getParameter("idNumber");
+        int idNumber = Integer.parseInt(request.getParameter("idNumber"));
 
         Session session = sessionManager.getAndUpdateSession(token);
 
@@ -280,9 +280,9 @@ public class RestfulBookController extends BaseController {
         if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
             return new ResponseEntity<List<Book>>(HttpStatus.FORBIDDEN);
 
-        UserModel user = userModelDAO.get(userUuid);
+        UserModel user = userModelDAO.getByIdNumber(idNumber);
         if (user == null) {
-            System.out.println("user with uuid " + userUuid + " not found");
+            System.out.println("user with idNumber " + idNumber+ " not found");
             return new ResponseEntity<List<Book>>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<List<Book>>(user.getBooks(), HttpStatus.OK);

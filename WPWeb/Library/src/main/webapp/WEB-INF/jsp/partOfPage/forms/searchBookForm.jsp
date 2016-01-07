@@ -1,45 +1,26 @@
-<div id="form" class="'form-group" style="display: inline">
-  <div class="panel-body">
-
 
     <div class="form-inline">
 
       by Author:
       <input type="text" id="authorName" class="form-control" placeholder="name">
       <input type="text" id="authorSurname" class="form-control" placeholder="surname">
-      <input type="text" id="authorYear" class="form-control" placeholder="bornYear">
-      <button onclick="search('author')" class="btn btn-default">Search</button>
+      <input type="number" id="authorYear" class="form-control" placeholder="bornYear">
+      <button onclick="search('author')" class="btn btn-default">by author</button>
     </div>
 
     <div class="form-inline">
 
       by Title:
-      <input type="text" id="title" class="form-control" placeholder="title">
-      <button onclick="search('title')" class="btn btn-default">Search</button>
+      <input type="text" id="bookTitle" class="form-control" placeholder="title">
+      <button onclick="search('title')" class="btn btn-default">by title</button>
     </div>
 
 
     <div class="form-inline">
 
       by Year:
-      <input type="text" id="year" class="form-control" placeholder="year">
-      <button onclick="search('year')" class="btn btn-default">Search</button>
+      <input type="number" id="bookYear" class="form-control" placeholder="year">
+      <button onclick="search('year')" class="btn btn-default">by book year</button>
     </div>
 
-
-    <div class="form-inline">
-
-      by Condition:
-      <select id="condition" class="form-control">
-        <option value="">--condition--</option>
-        <c:forEach items="${conditions}" var="condition">
-          <option value="${condition.condition}">${condition.condition}</option>
-        </c:forEach>
-      </select>
-      <button onclick="search('condition')" class="btn btn-default">Search</button>
-    </div>
-  </div>
-  <div id="displayTable">
-
-  </div>
-</div>
+  <button onclick="search('all')" class="btn btn-default">search</button>

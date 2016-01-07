@@ -14,36 +14,45 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script>
         function signUp(role) {
-            console.log("in sign up");
+
+            if($("#login").val().length<6){
+                $('#alert_placeholder').html('<div class="alert alert-danger">Failure: login is too short</div>')
+                return;
+            }
+
+            if($("#password").val().length<6){
+                $('#alert_placeholder').html('<div class="alert alert-danger">Failure: password is too short</div>')
+                return
+            }
+
+            var userRole={
+                "type": role
+            }
+
+            var user ={
+                "login" : $("#login").val(),
+                "password" : $("#password").val(),
+                "name" : $("#name").val(),
+                "surname" : $("#surname").val(),
+                "mail" : $("#mail").val(),
+                "userRole": userRole
+            };
+
             $.ajax({
                 type: "POST",
+                contentType : 'application/json; charset=utf-8',
                 url: "/registration",
-                data: {
-                    "role": role,
-                    "login": $("#login").val(),
-                    "password": $("#password").val(),
-                    "name": $("#name").val(),
-                    "surname": $("#surname").val(),
-                    "mail": $("#mail").val()
-                },
-                dataType: "text",
+                dataType : 'text',
+                data: JSON.stringify(user),
                 success: function (response) {
-                    if(response =="Success") {
-                        $('#alert_placeholder').html('<div class="alert alert-success">' + response + '</div>');
-                        $('#form').hide();
-                    }
-                    else {
-                        $('#alert_placeholder').html('<div class="alert alert-danger">' + response + '</div>');
-
-                    }
-
+                    $(".form-inline").hide();
+                    $('#alert_placeholder').html('<div class="alert alert-success">' + response + '</div>')
                 },
-
-                error: function (e) {
-                    $('#alert_placeholder').html('<div class="alert alert-failure">failure</div>');
-
+                error: function (response) {
+                    $('#alert_placeholder').html('<div class="alert alert-danger">' + response + '</div>')
                 }
             });
+
         }
     </script>
 
@@ -55,7 +64,7 @@
 
 <div class="panel panel-primary">
     <div class="panel-heading">Registration</div>
-    <button class="btn btn-default" onclick="window.location.href='/'">goToMainPage</button>
+    <button class="btn btn-default" onclick="window.location.href='/'">Go to main page</button>
     <%@include file="partOfPage/forms/registrationForm.jsp"%>
     
     

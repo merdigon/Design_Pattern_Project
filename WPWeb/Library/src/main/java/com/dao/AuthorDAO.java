@@ -68,6 +68,4 @@ public class AuthorDAO extends DatabaseDAO<Author> {
         return getAll().stream().filter(a -> a.equals(author)).findFirst();
     }
 
-
-
 }

@@ -1,45 +1,35 @@
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <html>
 <head>
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" type="text/css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <title>Spring Page Redirection</title>
+    <link href="<c:url value='/static/css/main.css'/>" rel="stylesheet" type="text/css">
+    <title>Library</title>
+
+
+    <script>
+        function showAlert() {
+            <c:if test="${param.error != null}">
+            $('#log_in').collapse();
+            </c:if>
+        }
+    </script>
+
 </head>
 
-<body>
-<h2>Library</h2>
-<%@include file="partOfPage/buttons/loginRegistrationButton.jsp"%>
+<body onload="showAlert()">
 
-<div class="panel panel-primary">
-    <div class="panel-heading">Book operations</div>
-    <div class="panel-body">
-        <sec:authorize access="hasRole('ADMIN')">
-
-        </sec:authorize>
-        <input type="button" class="btn btn-default" onclick="location.href='/showBooks'" value="Show books">
-        <input type="button" class="btn btn-default" onclick="location.href='/searchBooks'" value="Search books">
-
+<div id="header">
+    <div id="menu_bars">
+        <%@include file="partOfPage/buttons/menuButtons.jsp" %>
+    </div>
+    <div id="logo_icon">
+        <div id="welcome_header">Welcome in our library</div>
     </div>
 </div>
-<sec:authorize access="hasRole('ADMIN')">
-<div class="panel panel-primary">
-    <div class="panel-heading">Admin tools</div>
-    <div class="panel-body">
-        <input type="button" class="btn btn-default" onclick="location.href='/admin/addBook'" value="Add book">
-        <input type="button" class="btn btn-default" onclick="location.href='/admin/addSection'" value="Add section">
-        <input type="button" class="btn btn-default" onclick="location.href='/admin/addType'" value="Add type of book">
-        <input type="button" class="btn btn-default" onclick="location.href='/admin/showUsers'" value="Show users">
-        <input type="button" class="btn btn-default" onclick="location.href='/admin/searchUser'" value="Search users">
-        <input type="button" class="btn btn-default" onclick="location.href='/admin/configureLibrary'" value="Configure Library">
-
-    </div>
-</div>
-
-</sec:authorize>
-
-
 </body>
 </html>

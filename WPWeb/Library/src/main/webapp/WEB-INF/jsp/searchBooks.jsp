@@ -6,25 +6,40 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="http://www.jsviews.com/download/jsrender.min.js"></script>
+    <link href="<c:url value='/static/css/main.css'/>" rel="stylesheet" type="text/css">
     <title>Spring MVC Form Handling</title>
 
     <script type="text/javascript">
         var searchType = "";
 
         function search(type) {
-            console.log('in search');
+
+            var author ={
+                "name" : $("#authorName").val(),
+                "surname" : $("#authorSurname").val(),
+                "bornYear" : $("#authorYear").val()
+            }
+
+
+
+            var book ={
+                "title" : $("#bookTitle").val(),
+                "year" : $("#bookYear").val(),
+                "authors" : [author]
+            };
+
+            var searchBook ={
+                "book" : book,
+                "searchType" : type.toString()
+            }
+
+            console.log(searchBook);
+
             $.ajax({
                 type: "POST",
+                contentType : 'application/json; charset=utf-8',
                 url: "/searchBooks",
-                data: {
-                    "searchType": type,
-                    "authorName": $("#authorName").val(),
-                    "authorSurname": $("#authorSurname").val(),
-                    "authorYear": $("#authorYear").val(),
-                    "title": $("#title").val(),
-                    "year": $("#year").val(),
-                    "condition": $("#condition").val()
-                },
+                data: JSON.stringify(searchBook),
                 dataType: "json",
                 success: function (response) {
                     searchType = type;
@@ -40,7 +55,6 @@
                 }
             });
         }
-
 
         function show() {
             console.log("in show");
@@ -75,10 +89,12 @@
                     '<th>Section</th>' +
                     <sec:authorize access="hasRole('ADMIN')">
                     '<th>Edit</th>' +
-                    '<th>Uuid</th>' +
                     </sec:authorize>
                     <sec:authorize access="hasAnyRole('ADMIN', 'USER')">
+                    '<th>Uuid</th>' +
                     '<th>Action</th>' +
+                    '<th>Generate QR Code</th>' +
+
                     </sec:authorize>
 
                     '</tr>';
@@ -134,6 +150,29 @@
                 }
             });
         }
+
+        function generateQr(bookUuid) {
+            $.ajax({
+                type: "GET",
+                url: "/admin/qrGenerate/",
+                data: {
+                    uuid: bookUuid
+                },
+                dataType: "text",
+                success: function (response) {
+                    console.log("<img alt='Embedded Image' src='data:image/png;base64," + response + "'/>");
+
+                    $('#image').html("<img alt='Embedded Image' src='data:image/png;base64," + response + "'/>");
+                },
+
+                error: function (e) {
+
+                    alert('Error: ' + e);
+                    console.log(e)
+
+                }
+            });
+        }
     </script>
 
     <script id="BookTmpl" type="text/x-jsrender">
@@ -158,9 +197,11 @@
     </sec:authorize>
             <sec:authorize access="hasRole('ADMIN')">
         <td>{{:uuid}}</td>
-        <td><a href="<c:url value='/admin/editBook/{{:uuid}}'/>" ><button class="btn btn-primary">edit</button><a><td>
+        <td><a href="<c:url value='/admin/editBook/{{:uuid}}'/>" ><button class="btn btn-primary">edit</button><a></td>
+        <td><button onclick='generateQr("{{:uuid}}")' class="btn btn-default">generate Qr Code </button></td>
     </sec:authorize>
         </tr>
+
 
 
 
@@ -171,18 +212,21 @@
 </head>
 <body>
 
-<h2>Library</h2>
-<%@include file="partOfPage/buttons/loginRegistrationButton.jsp"%>
-
-<div class="panel panel-primary">
-    <div class="panel-heading">Search book</div>
-    <button class="btn btn-default" onclick="window.location.href='/'">goToMainPage</button>
-
+<div id="header">
+    <div id="menu_bars">
+        <%@include file="partOfPage/buttons/menuButtons.jsp" %>
+    </div>
     <%@include file="partOfPage/forms/searchBookForm.jsp" %>
-
+    <div id="show_book_image">
+        <div id="displayTable" style="height: 101%; overflow: scroll;"></div>
+    </div>
 
 </div>
 
+
+<div id="image">
+
+</div>
 
 </body>
 </html>

@@ -6,7 +6,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="http://www.jsviews.com/download/jsrender.min.js"></script>
-    <title>Spring MVC Form Handling</title>
+    <link href="<c:url value='/static/css/main.css'/>" rel="stylesheet" type="text/css">
+    <title>All books</title>
 
     <script type="text/javascript">
 
@@ -57,7 +58,7 @@
 
         function createTable(json) {
             var myTemplate = $.templates("#BookTmpl");
-            var html = "<table class='table' >"
+            var html = "<table class='table'>"
             html += '<tr>' +
                     '<th>Title</th>' +
                     '<th>Year</th>' +
@@ -147,7 +148,7 @@
             <td>{{:section.name}}</td>
             <sec:authorize access="hasAnyRole('ADMIN', 'USER')">
                 {{if condition.condition=='Available'}}
-                    <td><button class="btn btn-default" onclick="reserveBook('{{:uuid}}')">reserveBook</button></td>
+                    <td><button class="btn btn-primary" onclick="reserveBook('{{:uuid}}')">reserve book</button></td>
                 {{else}}
                     <td>not available</td>
                 {{/if}}
@@ -155,7 +156,7 @@
             <sec:authorize access="hasRole('ADMIN')">
                 <td>{{:uuid}}</td>
                 <td><a href="<c:url value='/admin/editBook/{{:uuid}}'/>" ><button class="btn btn-primary">edit</button><a></td>
-                <td><button onclick='generateQr("{{:uuid}}")' class="btn btn-default">generate Qr Code </button></td>
+                <td><button onclick='generateQr("{{:uuid}}")' class="btn btn-primary">generate QrCode </button></td>
             </sec:authorize>
         </tr>
 
@@ -168,26 +169,38 @@
 </head>
 <body onload="show()">
 
-<h2>Library</h2>
-<%@include file="partOfPage/buttons/loginRegistrationButton.jsp" %>
+<div id="header">
+    <div id="menu_bars">
+        <%@include file="partOfPage/buttons/menuButtons.jsp" %>
+    </div>
 
-<div class="panel panel-primary">
-    <div class="panel-heading">Show books</div>
-    <button class="btn btn-default" onclick="window.location.href='/'">goToMainPage</button>
-    <div id="form" class="'form-group" style="display: inline">
-        <div class="panel-body">
-
-            <div class="table-responsive">
-                <div id="displayTable">
-                </div>
-            </div>
-        </div>
-
+    <div id="show_book_image">
+        <div id="displayTable" style="height: 101%; overflow: scroll;"></div>
     </div>
 </div>
 
-<div id="image">
 
-</div>
+
+<%--<h2>Library</h2>--%>
+<%--<%@include file="partOfPage/buttons/loginRegistrationButton.jsp" %>--%>
+
+<%--<div class="panel panel-primary">--%>
+    <%--<div class="panel-heading">Show books</div>--%>
+    <%--<button class="btn btn-default" onclick="window.location.href='/'">Go to main page</button>--%>
+    <%--<div id="form" class="'form-group" style="display: inline">--%>
+        <%--<div class="panel-body">--%>
+
+            <%--<div class="table-responsive">--%>
+                <%--<div id="displayTable">--%>
+                <%--</div>--%>
+            <%--</div>--%>
+        <%--</div>--%>
+
+    <%--</div>--%>
+<%--</div>--%>
+
+<%--<div id="image">--%>
+
+<%--</div>--%>
 </body>
 </html>

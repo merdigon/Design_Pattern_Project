@@ -45,7 +45,7 @@
 
 <div class="panel panel-primary">
     <div class="panel-heading">Add section</div>
-    <button class="btn btn-default" onclick="window.location.href='/'">goToMainPage</button>
+    <button class="btn btn-default" onclick="window.location.href='/'">Go to main page</button>
     <div id="form" class="'form-group" style="display: inline">
         <div class="panel-body">
 

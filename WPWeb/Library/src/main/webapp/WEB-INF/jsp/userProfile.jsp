@@ -1,12 +1,6 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: piotrek
-  Date: 15.11.15
-  Time: 14:28
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 
 <head>
@@ -15,6 +9,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="http://www.jsviews.com/download/jsrender.min.js"></script>
+    <link href="<c:url value='/static/css/main.css'/>" rel="stylesheet" type="text/css">
 
     <script>
         function view(bookmark) {
@@ -52,7 +47,12 @@
             userDetails += "name: " + json.name + "<br>";
             userDetails += "surname: " + json.surname + "<br>";
             userDetails += "debt: " + json.debt + "<br>";
+            userDetails += "<button class='btn btn-primary' data-toggle='modal' data-target='#edit'>edit</button><br>"
             $('#userDetails').html(userDetails)
+            $('#loginEdit').val(json.login);
+            $('#nameEdit').val(json.name);
+            $('#surnameEdit').val(json.surname);
+            $('#mailEdit').val(json.mail);
         }
 
         function createBorrowedBooks(json) {
@@ -100,7 +100,7 @@
                     '<th>condition</th>' +
                     '<th>typeOfBook</th>' +
                     '<th>section</th>' +
-                    '<td>returnDate</td>' +
+                    '<th>returnDate</th>' +
                     '</tr>';
 
             html += myTemplate.render(json);
@@ -146,6 +146,33 @@
                 error: function (e) {
                     alert("Oops! Something has gone wrong");
                     location.reload();
+                }
+            });
+        }
+
+        function editUser(){
+            var user ={
+                "name": $('#name').val(),
+                "surname":$('#surname').val(),
+                "login": $('#login').val(),
+                "password": $('#password').val(),
+                "mail": $('#mail').val()
+            }
+
+            $.ajax({
+                type: "POST",
+                contentType : 'application/json; charset=utf-8',
+                url: "/user/editUser",
+                dataType : 'text',
+                data: JSON.stringify(user),
+                success: function (response) {
+                    console.log(response);
+                    view('userDetails');
+                    $('#alert_placeholder').html('<div class="alert alert-success">' + response + '</div>')
+                },
+                error: function (response) {
+                    console.log(response);
+                    $('#alert_placeholder').html('<div class="alert alert-danger">' + response + '</div>')
                 }
             });
         }
@@ -199,37 +226,29 @@
 
 </head>
 <body onload="view('userDetails')">
-<h2>Library</h2>
-<%@include file="partOfPage/buttons/loginRegistrationButton.jsp" %>
+<div id="header">
+    <div id="menu_bars">
+        <%@include file="partOfPage/buttons/menuButtons.jsp" %>
+    </div>
 
-<div class="panel panel-primary">
-    <div class="panel-heading">User profile</div>
+    <div id="show_book_image">
+        <ul class="nav nav-tabs">
+            <li role="presentation" class="active" id="userDetailsBookmark"><a onclick="view('userDetails')">User
+                Details</a></li>
+            <li role="presentation" class="" id="borrowedBooksBookmark"><a onclick="view('borrowedBooks')">Borrowed
+                Books</a></li>
+            <li role="presentation" class="" id="reservedBooksBookmark"><a onclick="view('reservedBooks')">Reserved
+                Books</a></li>
+        </ul>
 
-    <div id="form" class="'form-group" style="display: inline">
-        <div class="panel-body">
-            <button class="btn btn-default" onclick="window.location.href='/'">goToMainPage</button>
-
-
-            <ul class="nav nav-tabs">
-                <li role="presentation" class="active" id="userDetailsBookmark"><a onclick="view('userDetails')">User
-                    Details</a></li>
-                <li role="presentation" class="" id="borrowedBooksBookmark"><a onclick="view('borrowedBooks')">Borrowed
-                    Books</a></li>
-                <li role="presentation" class="" id="reservedBooksBookmark"><a onclick="view('reservedBooks')">Reserved
-                    Books</a></li>
-            </ul>
-
-            <div id="userDetails">
-
-            </div>
-
-            <div id="myBooks">
-
-            </div>
+        <div id="userDetails">
+        </div>
+        <div id="myBooks">
         </div>
     </div>
 </div>
 
+<%@include file="partOfPage/modals/editUser.jsp" %>
 
 </body>
 </html>

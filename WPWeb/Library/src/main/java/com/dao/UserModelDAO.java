@@ -1,9 +1,11 @@
 package com.dao;
 
+import com.LibraryConfiguration.Conf;
 import com.configuration.CryptWithMD5;
 import com.models.Book;
 import com.models.UserModel;
 import org.hibernate.Query;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,6 +14,7 @@ import sun.invoke.empty.Empty;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by pietrek on 13.11.15.
@@ -41,6 +44,7 @@ public class UserModelDAO extends DatabaseDAO<UserModel> {
 
 
     public UserModel getByLogin(String login) {
+
         Query query = getSession().createQuery("from UserModel where login LIKE ?");
         query.setString(0, login);
         if(query.list().isEmpty())
@@ -111,6 +115,13 @@ public class UserModelDAO extends DatabaseDAO<UserModel> {
         if(query.list().isEmpty())
             return null;
         return (UserModel)query.list().get(0);
+    }
+
+    public List<Book> getUserExpirationBook(String userUuid) {
+        List<Book> books = get(userUuid).getBooks().stream().filter(book -> DateTime.now().isAfter(book.getDates()
+                .get(book.getDates().size() - 1).getPlanningReturnDate().toDateTimeAtCurrentTime())).collect(Collectors.toList());
+        return books;
+
     }
 
 }

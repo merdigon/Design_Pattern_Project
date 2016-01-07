@@ -49,14 +49,27 @@ public class BookDAO extends DatabaseDAO<Book>{
     public List<Book> getAllByAuthor(Author author){
         List<Book> books = new ArrayList<Book>();
         for(Book book: getAll()){
-            if(book.getAuthors().stream().filter(x->x.equals(author)).findAny().isPresent())
+            if(book.getAuthors().stream().filter(x -> x.equals(author)).findAny().isPresent())
                 books.add(book);
         }
 
         return books;
     }
 
+    public List<Book> getAllBySimilarAuthor(Author author){
+        List<Book> books = new ArrayList<Book>();
+        for(Book book: getAll()){
+            if(book.getAuthors().stream().filter(x->x.getName().toLowerCase().contains(author.getName().toLowerCase())).findAny().isPresent() &&
+                    book.getAuthors().stream().filter(x->x.getSurname().toLowerCase().contains(author.getSurname().toLowerCase())).findAny().isPresent() &&
+                    book.getAuthors().stream().filter(x -> Integer.toString(x.getBornYear()).contains(Integer.toString(author.getBornYear())) || author.getBornYear()==0).findAny().isPresent())
+                books.add(book);
+        }
+        return books;
+    }
+
     public List<Book> getAllByYear(String year){
+        if(year.equals("0"))
+            return getAll();
         return getSession().createQuery("from Book where CAST(year as text) Like '%" + year + "%'").list();
     }
 

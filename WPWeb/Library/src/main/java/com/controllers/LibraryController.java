@@ -51,14 +51,15 @@ public class LibraryController extends BaseController {
         return "success";
     }
 
-    @RequestMapping(value ="/admin/configureLibrary", method = RequestMethod.GET)
+    @RequestMapping(value ="/admin/configureLibrary", method = RequestMethod.GET, headers = "Accept=application/json")
+    @ResponseBody
     public String configureLibrary(Model model) {
-        model.addAttribute("borrowedDays", Conf.getBorrowedDays());
-        model.addAttribute("interests", Conf.getInterests());
-        model.addAttribute("maxBorrowedBooks", Conf.getMaxBorrowedBooks());
-        model.addAttribute("maxReservedBooks", Conf.getMaxReservedBooks());
-        model.addAttribute("expirationTime", Conf.getExpirationSessionMinutes());
-        return "configureLibrary";
+//        model.addAttribute("borrowedDays", Conf.getBorrowedDays());
+//        model.addAttribute("interests", Conf.getInterests());
+//        model.addAttribute("maxBorrowedBooks", Conf.getMaxBorrowedBooks());
+//        model.addAttribute("maxReservedBooks", Conf.getMaxReservedBooks());
+//        model.addAttribute("expirationTime", Conf.getExpirationSessionMinutes());
+        return new Conf().toString();
     }
 
 

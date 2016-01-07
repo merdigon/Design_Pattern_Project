@@ -16,7 +16,7 @@
 <div class="panel panel-primary">
     <div class="panel-heading">Log in</div>
     <div class="panel-body">
-        <button class="btn btn-default" onclick="window.location.href='/'">goToMainPage</button>
+        <button class="btn btn-default" onclick="window.location.href='/'">Go to main page</button>
         <c:url var="loginUrl" value="/login"/>
         <form action="${loginUrl}" method="post" class="form-horizontal">
             <c:if test="${param.error != null}">

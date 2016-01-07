@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,28 +39,29 @@ public class SessionManager {
         return UUID.randomUUID().toString();
     }
 
-//    ScheduledExecutorService scheduledExecutorService =
-//            Executors.newScheduledThreadPool(1);
+    ScheduledExecutorService scheduledExecutorService =
+            Executors.newScheduledThreadPool(1);
 
 
-//    private void cleanSession(){
-//
-//        for(Map.Entry<String, Session> entry : sessionMap.entrySet()){
-//            String key = entry.getKey();
-//            Session session = entry.getValue();
-//            if(session.getExpirationTime().isAfterNow()){
-//                sessionMap.remove(key);
-//                LOGGER.info("cleanedSession for: {}, still active: {}", key, sessionMap.size());
-//            }
-//
-//        }
-//    }
-//    @PostConstruct
-//    private void expiredSessionCleaner(){
-//        scheduledExecutorService.scheduleWithFixedDelay(()->cleanSession(),1,1,TimeUnit.MINUTES);
-//        LOGGER.info("Starting expiredSessionCleaner");
-//
-//    }
+    private void cleanSession(){
+
+        for(Map.Entry<String, Session> entry : sessionMap.entrySet()){
+            String key = entry.getKey();
+            Session session = entry.getValue();
+            if(DateTime.now().isAfter(session.getExpirationTime())){
+                sessionMap.remove(key);
+                LOGGER.info("cleanedSession for: {}, still active: {}", key, sessionMap.size());
+            }
+        }
+    }
+
+
+    @PostConstruct
+    private void expiredSessionCleaner(){
+        scheduledExecutorService.scheduleWithFixedDelay(()->cleanSession(),1,1,TimeUnit.MINUTES);
+        LOGGER.info("Starting expiredSessionCleaner");
+
+    }
 
     public Session getAndUpdateSession(String token){
         for(Map.Entry<String, Session> entry : sessionMap.entrySet()){

@@ -9,60 +9,117 @@
     <title>Spring MVC Form Handling</title>
 
     <script type="text/javascript">
+
         $(function() {
 
-            $('#type').val('${book.typeOfBook.uuid}');
+            $('#uuidType').val('${book.typeOfBook.uuid}');
             $('#condition').val('${book.condition.condition}');
-            $('#section').val('${book.section.uuid}');
+            $('#uuidSection').val('${book.section.uuid}');
         });
 
+        function getAuthors() {
+            var authors = ""
+            for (i = 0; i < $('.authorName').length; i++) {
+                authors += $('.authorName')[i].value + " " + $('.authorSurname')[i].value + " " + $('.authorYear')[i].value + ";";
+            }
+            if (authors.charAt(authors.length - 1) == ';')
+                authors = authors.substring(0, authors.length - 1);
+            console.log(authors);
+            return authors;
+        }
+
         function update() {
+            var authors = [];
+            getAuthors().split(';').forEach(function f(data) {
+                authors.push ({
+                    "name" : data.split(' ')[0],
+                    "surname" : data.split(' ')[1],
+                    "bornYear" : data.split(' ')[2]
+                })
+
+            });
+
+            var condition={
+                "condition": $("#condition").val()
+            };
+
+            var typeOfBook={
+                "uuid" : $("#uuidType").val()
+            };
+
+            var section={
+                "uuid" : $("#uuidSection").val()
+            };
+
+            var book ={
+                "uuid" : "${book.uuid}",
+                "title" : $("#title").val(),
+                "year" : $("#year").val(),
+                "condition" : condition,
+                "authors" : authors,
+                "section" : section,
+                "typeOfBook" : typeOfBook
+            };
+
 
             $.ajax({
                 type: "POST",
+                contentType : 'application/json; charset=utf-8',
                 url: "/admin/editBook",
-                data: {
-                    "uuid" : "${uuid}",
-                    "author": $("#authors").val(),
-                    "title": $("#title").val(),
-                    "year": $("#year").val(),
-                    "condition": $("#condition").val(),
-                    "uuidTypeOfBook": $("#type").val(),
-                    "uuidSection": $("#section").val()
-                },
+                dataType : 'text',
+                data: JSON.stringify(book),
                 success: function (response) {
                     $(".form-inline").hide();
-                    $('#alert_placeholder').html('<div class="alert alert-success">Successs</div>')
-
+                    if(response=="Success")
+                        $('#alert_placeholder').html('<div class="alert alert-success">' + response + '</div>')
+                    else
+                        $('#alert_placeholder').html('<div class="alert alert-danger">' + response + '</div>')
                 },
-                error: function (e) {
-
-                    $("#form").hide();
-                    $('#alert_placeholder').html('<div class="alert alert-danger">Failure</div>')
-
+                error: function (response) {
+                    $('#alert_placeholder').html('<div class="alert alert-danger">' + response + '</div>')
                 }
             });
+
+        }
+
+        function addAuthorField() {
+            var fields = "<div><input type='text' class='authorName form-control' placeholder='author name'> " +
+                    "<input type='text' class='authorSurname form-control' placeholder='author surname'> " +
+                    "<input type='number' class='authorYear form-control' placeholder='author year' > " +
+                    "<button class='btn btn-default' onclick=$(this).parent('div').remove()>Remove</button></div>";
+
+            $('#authors').append(fields);
         }
     </script>
 
 
 </head>
 <body>
-
 <h2>Library</h2>
 <%@include file="partOfPage/buttons/loginRegistrationButton.jsp"%>
 
 <div class="panel panel-primary">
-    <div class="panel-heading">Add book</div>
-    <button class="btn btn-default" onclick="window.location.href='/'">goToMainPage</button>
+    <div class="panel-heading">Edit book</div>
+    <button class="btn btn-default" onclick="window.location.href='/'">Go to main page</button>
 
     <div id="form" class="'form-group" style="display: inline">
         <div class="panel-body">
  <div class="form-inline">
+    <div id="authors">
+     <c:forEach items="${book.authors}" var="author" varStatus="outher">
+         <div>
+         <input type="text"  class="form-control authorName" value="${author.name}">
+         <input type="text"  class="form-control authorSurname" value="${author.surname}">
+         <input type="number"  class="form-control authorYear" value="${author.bornYear}">
+         <c:choose>
+             <c:when test="${outher.index eq 0}"><button class="btn btn-default" onclick="addAuthorField()">Add author</button></div></c:when>
+             <c:otherwise><button class='btn btn-default' onclick=$(this).parent('div').remove()>Remove</button></div></c:otherwise>
+         </c:choose>
 
-                <input type="text" id="authors" class="form-control" value="${book.authors[0].name} ${book.authors[0].surname} ${book.authors[0].bornYear}">
+     </c:forEach>
+        </div>
                 <input type="text" id="title" class="form-control" value="${book.title}">
-                <input type="text" id="year" class="form-control" value="${book.year}">
+                <input type="number" id="year" class="form-control" value="${book.year}">
                 <select id="condition" class="form-control">
                     <option value="Available">Available</option>
                     <option value="Reserved">Reserved</option>
@@ -73,14 +130,14 @@
                 </select>
 
 
-                <select id="type" class="form-control" >
+                <select id="uuidType" class="form-control" >
                     <option value="">type</option>
                     <c:forEach items="${types}" var="type">
                         <option value="${type.uuid}">${type.name}</option>
                     </c:forEach>
                 </select>
 
-                <select id="section" class="form-control">
+                <select id="uuidSection" class="form-control">
                     <option value="">--section--</option>
                     <c:forEach items="${sections}" var="section">
                         <option value="${section.uuid}">${section.name}</option>

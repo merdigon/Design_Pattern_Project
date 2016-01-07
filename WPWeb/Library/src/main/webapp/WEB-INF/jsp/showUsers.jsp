@@ -1,4 +1,4 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+ <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: pietrek
@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link href="<c:url value='/static/css/main.css'/>" rel="stylesheet" type="text/css">
     <title>Title</title>
 
     <script>
@@ -151,13 +152,14 @@
 
 </head>
 <body>
-<h2>Library</h2>
-<%@include file="partOfPage/buttons/loginRegistrationButton.jsp" %>
-<div class="panel panel-primary">
-    <div class="panel-heading">Show users</div>
-    <div class="panel-body">
-        <button class="btn btn-default" onclick="window.location.href='/'">goToMainPage</button>
-        <div class="table-responsive">
+
+<div id="header">
+    <div id="menu_bars">
+        <%@include file="partOfPage/buttons/menuButtons.jsp" %>
+    </div>
+
+    <div id="show_book_image">
+        <div id="displayTable" style="height: 101%; overflow: scroll;">
             <table class="table">
                 <tr>
                     <th>uuid</th>
@@ -205,35 +207,7 @@
     </div>
 </div>
 
-<!-- Modal -->
-<div id="myModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
 
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Show users</h4>
-            </div>
-            <div class="modal-body">
-                <input type="text" id="bookUuid">
-                <input type="hidden" id="userUuid">
-                <button onclick="borrow()">borrow</button>
-                <button onclick="returnBook()">return</button>
-                <button onclick="reserveBook()">reserve</button>
-                <button onclick="cancelReserveBook()">cancel reservation</button>
-                <input type="text" id="debtReturn">
-                <button onclick="payDebt()">payDebt</button><br>
-                <input type="text" id="idNumber">
-                <button onclick="addIdNumber()">add idNumber</button>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-
-    </div>
-</div>
-
+<%@include file="partOfPage/modals/operationOnUser.jsp" %>
 </body>
 </html>

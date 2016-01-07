@@ -10,6 +10,9 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Created by piotrek on 28.11.15.
  */
+
+//strategy desing pattern
+    //http://www.tutorialspoint.com/design_pattern/strategy_pattern.htm
 @Component
 public class CryptWithMD5 implements PasswordEncoder{
     private static MessageDigest md;

@@ -1,5 +1,6 @@
 package com.controllers;
 
+
 import com.LibraryConfiguration.Conf;
 import com.dao.BookDAO;
 import com.models.Section;
@@ -11,9 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-/**
- * Created by pietrek on 19.11.15.
- */
+
 @Controller
 public class LibraryController extends BaseController {
     @RequestMapping(value ={"/admin/addSection",} , method = RequestMethod.GET)
@@ -79,4 +78,13 @@ public class LibraryController extends BaseController {
         return "success";
     }
 
+    @RequestMapping(value ="/aboutUs", method = RequestMethod.GET)
+    public String aboutUs() {
+        return "aboutUs";
+    }
+
+    @RequestMapping(value ="/contactUs", method = RequestMethod.GET)
+    public String ContactUs() {
+        return "contactUs";
+    }
 }

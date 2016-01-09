@@ -8,17 +8,23 @@
         <h4 class="modal-title">Show users</h4>
       </div>
       <div class="modal-body">
-        <input type="text" id="bookUuid">
+        <div class="form-inline">
+        <input type="text" class="form-control" id="bookUuid">
         <input type="hidden" id="userUuid">
-        <button onclick="borrow()">borrow</button>
-        <button onclick="returnBook()">return</button>
-        <button onclick="reserveBook()">reserve</button>
-        <button onclick="cancelReserveBook()">cancel reservation</button>
-        <input type="text" id="debtReturn">
-        <button onclick="payDebt()">payDebt</button><br>
-        <input type="text" id="idNumber">
-        <button onclick="addIdNumber()">add idNumber</button>
-      </div>
+        <button class="btn btn-default" onclick="borrow()">Borrow</button>
+        <button class="btn btn-default" onclick="returnBook()">Return</button>
+        <button  class="btn btn-default" onclick="reserveBook()">Reserve</button>
+        <button class="btn btn-default" onclick="cancelReserveBook()">Cancel reservation</button>
+          </div>
+        <div class="form-inline">
+          <input type="text" class="form-control" id="debtReturn">
+        <button  class="btn btn-default" onclick="payDebt()">Pay debt</button><br>
+          </div>
+        <div class="form-inline">
+          <input type="text" class="form-control" id="idNumber">
+        <button class="btn btn-default" onclick="addIdNumber()">Add id number</button>
+        </div>
+        </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>

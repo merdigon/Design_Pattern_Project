@@ -3,13 +3,13 @@
 <script>
   function signUp(role) {
 
-    if ($("#login").val().length < 6) {
-      $('#alert_placeholder').html('<div class="alert alert-danger">Failure: login is too short</div>')
+    if ($("#loginReg").val().length < 6) {
+      $('#alert_placeholderReg').html('<div class="alert alert-danger">Failure: login is too short</div>')
       return;
     }
 
     if ($("#passwordReg").val().length < 6) {
-      $('#alert_placeholder').html('<div class="alert alert-danger">Failure: password is too short</div>')
+      $('#alert_placeholderReg').html('<div class="alert alert-danger">Failure: password is too short</div>')
       return
     }
 
@@ -18,11 +18,11 @@
     }
 
     var user = {
-      "login": $("#login").val(),
+      "login": $("#loginReg").val(),
       "password": $("#passwordReg").val(),
-      "name": $("#name").val(),
-      "surname": $("#surname").val(),
-      "mail": $("#mail").val(),
+      "name": $("#nameReg").val(),
+      "surname": $("#surnameReg").val(),
+      "mail": $("#mailReg").val(),
       "userRole": userRole
     };
 
@@ -35,13 +35,13 @@
       success: function (response) {
         $(".form-inline").hide();
         if (response == 'Success')
-          $('#alert_placeholder').html('<div class="alert alert-success">' + response + '</div>')
+          $('#alert_placeholderReg').html('<div class="alert alert-success">' + response + '</div>')
         else
-          $('#alert_placeholder').html('<div class="alert alert-danger">' + response + '</div>')
+          $('#alert_placeholderReg').html('<div class="alert alert-danger">' + response + '</div>')
 
       },
       error: function (response) {
-        $('#alert_placeholder').html('<div class="alert alert-danger">' + response + '</div>')
+        $('#alert_placeholderReg').html('<div class="alert alert-danger">' + response + '</div>')
       }
     });
 
@@ -58,11 +58,11 @@
       </div>
       <div class="modal-body">
 
-        <input type="text" id="login" class="form-control" placeholder="Login">
+        <input type="text" id="loginReg" class="form-control" placeholder="Login">
         <input type="password" id="passwordReg" class="form-control" placeholder="Password">
-        <input type="text" id="mail" class="form-control" placeholder="e-mail adress">
-        <input type="text" id="name" class="form-control" placeholder="name">
-        <input type="text" id="surname" class="form-control" placeholder="surname">
+        <input type="text" id="mailReg" class="form-control" placeholder="e-mail adress">
+        <input type="text" id="nameReg" class="form-control" placeholder="name">
+        <input type="text" id="surnameReg" class="form-control" placeholder="surname">
 
         <button onclick="signUp('USER')" class="btn btn-default">Sing up</button>
         <sec:authorize access="hasRole('ADMIN')">
@@ -72,7 +72,7 @@
 
 
       <div class="modal-footer">
-        <div id="alert_placeholder"></div>
+        <div id="alert_placeholderReg"></div>
         <button type="buttonModal" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>
     </div>

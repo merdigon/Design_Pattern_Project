@@ -74,6 +74,7 @@ public class LoginController extends BaseController {
         if(userModelDAO.isLogin(user.getLogin())) return "Failure: login is used";
         if(userModelDAO.isMail(user.getMail())) return "Failure: mail is used";
         user.setUserRole(userRoleDAO.saveIfNotInDB(user.getUserRole()));
+        user.setIdNumber(new IdNumberGenerator().getRandomNumberInRange(100000, 999999));
         userModelDAO.save(user);
         return "Success";
     }

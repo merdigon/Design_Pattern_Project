@@ -99,7 +99,7 @@ public class UserController extends BaseController {
 
         UserModel user = userModelDAO.get(uuidUser);
         if (user == null) return "Failure: no user with this uuid";
-        if (user.getDebt() - debt < 0) return "Failure: you pay too much";
+        if (user.countDebt() - debt < 0) return "Failure: you pay too much";
 
         user.setDebt(user.getDebt() - debt);
         userModelDAO.update(user);
@@ -130,7 +130,7 @@ public class UserController extends BaseController {
 
         UserModel currentUser = userModelDAO.getByLogin(user.getLogin());
         if(!user.getPassword().equals("") && user.getPassword().length()<6) return "Failure: password too short";
-        if(!user.getPassword().equals("")) currentUser.setPassword(user.getPassword());
+        if(!user.getPassword().equals("")) user = userModelDAO.setPasswordEncryped(user, user.getPassword());
         if(!user.getMail().equals(currentUser.getMail()) && userModelDAO.isMail(user.getMail()))
             return "Failure: mail is already in use";
 

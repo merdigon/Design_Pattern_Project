@@ -1,33 +1,35 @@
 <script>
     function addType() {
-        $('.clean').empty();
-        $("#form").show();
+
         $.ajax({
             type: "POST",
             url: "/admin/addType",
             data: {
-                "type": $('#type').val()
+                "type": $('#typeAddType').val()
             },
             dataType: "text",
             success: function (response) {
 
                 if (response == "success") {
+                    console.log("success");
                     $("#form").hide();
-                    $('.alert_placeholder').html('<div class="alert alert-success">' + response + '</div>');
-                } else
-                    $('.alert-placeholder').html('<div class="alert alert-danger">' + response + '</div>');
+                    $('#alert_placeholderAddType').html('<div class="alert alert-success">' + response + '</div>');
+                } else {
+                    console.log("failure");
+                    $('#alert_placeholderAddType').html('<div class="alert alert-danger">' + response + '</div>');
+                }
             },
 
             error: function (e) {
-                $('.alert_placeholder').html('<div class="alert alert-failure">failure</div>');
+                $('#alert_placeholderAddType').html('<div class="alert alert-failure">failure</div>');
 
             }
         });
     }
 
 
-    function clean(){
-        $('.alert_placeholder').empty();
+    function clean() {
+        $('.alert_placeholderAddType').empty();
         $("#form").show();
     }
 </script>
@@ -45,7 +47,7 @@
                 <div id="form" class="'form-group" style="display: inline">
                     <div class="panel-body">
 
-                        <input type="text" id="type" class="form-control" placeholder="type">
+                        <input type="text" id="typeAddType" class="form-control" placeholder="type">
                         <button onclick="addType()" class="btn btn-default">Add type</button>
 
                     </div>
@@ -55,7 +57,7 @@
 
 
             <div class="modal-footer">
-                <div class="alert_placeholder"></div>
+                <div id="alert_placeholderAddType"></div>
                 <button type="buttonModal" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>

@@ -31,6 +31,11 @@ public class UserModelDAO extends DatabaseDAO<UserModel> {
         getSession().save(user);
     }
 
+    public UserModel setPasswordEncryped(UserModel user, String password){
+        user.setPassword(cryptWithMD5.encode(password));
+        return user;
+    }
+
     public boolean isValidUser(String login, String password) {
         UserModel user = getByLogin(login);
         return (user!=null && user.getPassword().equals(password));

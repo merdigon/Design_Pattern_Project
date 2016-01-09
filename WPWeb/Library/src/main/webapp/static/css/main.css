@@ -2,7 +2,6 @@
     body {
         background-color: #e6ddcc;
         width: 90%;
-        /*height: 1024px;*/
         text-align: center;
         margin-left: auto;
         margin-right: auto;
@@ -14,7 +13,6 @@
     body {
         background-color: #e6ddcc;
         width: 70%;
-        /*height: 1024px;*/
         text-align: center;
         margin-left: auto;
         margin-right: auto;
@@ -29,33 +27,22 @@
     width: 100%;
     height: 7%;
     margin-top: 1.5%;
-    /*margin-bottomo: 9%;*/
-    /*padding-bottom: 2%;*/
 
 }
 
 #logo_icon {
-    /*padding-top: 2%;*/
-    /*height: 40px;*/
-    /*width: 40px;*/
+
     margin-top: 1.5%;
     width: 100%;
     height: 70%;
-    /*float: left;*/
-    /*background-repeat: repeat-x;*/
     background: url("library.jpg") no-repeat;
 
 }
 
 #book_edition_logo {
-    /*padding-top: 2%;*/
-    /*height: 40px;*/
-    /*width: 40px;*/
     margin-top: 1.5%;
     width: 100%;
     height: 70%;
-    /*float: left;*/
-    /*background-repeat: repeat-x;*/
     background: url("print-book.jpg") no-repeat;
     max-width: 100%;
     max-height: 100%;
@@ -75,10 +62,8 @@
     font-variant: normal;
     font-weight: 500;
     line-height: 26.4px;
-    /*background-color: #05a4ff;*/
     float: left;
     margin-top: 35%;
-    /*background-color: #1b58ff;*/
 }
 
 .btnMenu {
@@ -94,31 +79,37 @@
 }
 
 #show_book_image {
-    /*padding-top: 2%;*/
-    /*height: 40px;*/
-    /*width: 40px;*/
     margin-top: 1.5%;
     width: 100%;
     height: 70%;
-    /*float: left;*/
-    /*background-repeat: repeat-x;*/
     background: url("showBooks.png") no-repeat;
     max-width: 100%;
     max-height: 100%;
 }
 
-/*.panel {*/
-/*margin-left: auto;*/
-/*margin-right: auto;*/
-/*width: 90%;*/
-/*}*/
+.aboutUs {
+    font-size: 20px;
+}
 
-/*.panel > .panel-heading{*/
-/*background-image: none;*/
-/*background-color: #ad0909;*/
-/*}*/
+#searchBookForm {
+    margin-top: 2%;
 
-/*.panel > .panel-heading > .btn{*/
-/*flotat: right;*/
+}
 
-/*}*/
+#map {
+    width: 70%;
+    height: 50%;
+    margin: 0 auto;
+
+}
+
+#displayTable {
+    height: 100%;
+    overflow: scroll;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+#QRCode {
+    margin-top: 2%;
+}

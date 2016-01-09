@@ -159,7 +159,7 @@
     </div>
 
     <div id="show_book_image">
-        <div id="displayTable" style="height: 101%; overflow: scroll;">
+        <div id="displayTable">
             <table class="table">
                 <tr>
                     <th>uuid</th>

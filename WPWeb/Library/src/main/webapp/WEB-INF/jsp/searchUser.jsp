@@ -238,7 +238,7 @@
     </div>
 
     <div id="show_book_image">
-        <div id="tableOfUsers" style="height: 101%; overflow: scroll;"></div>
+        <div id="tableOfUsers"></div>
     </div>
 
 </div>

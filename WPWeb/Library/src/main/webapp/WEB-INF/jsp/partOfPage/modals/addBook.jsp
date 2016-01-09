@@ -19,15 +19,15 @@
                 response.types.forEach(function f(type){
                     types += "<option value=" + type.uuid +">" + type.name + "</option>";
                 })
-                $('#uuidSection').html(sections);
+                $('#uuidSectionAddBook').html(sections);
 
-                $('#uuidType').html(types);
+                $('#uuidTypeAddBook').html(types);
 
 
 
             },
             error: function (response) {
-                $('.alert_placeholder').html('<div class="alert alert-danger">' + response + '</div>')
+                $('.alert_placeholderAddBook').html('<div class="alert alert-danger">' + response + '</div>')
             }
         });
     }
@@ -64,20 +64,20 @@
         });
 
         var condition = {
-            "condition": $("#condition").val()
+            "condition": $("#conditionAddBook").val()
         };
 
         var typeOfBook = {
-            "uuid": $("#uuidType").val()
+            "uuid": $("#uuidTypeAddBook").val()
         };
 
         var section = {
-            "uuid": $("#uuidSection").val()
+            "uuid": $("#uuidSectionAddBook").val()
         };
 
         var book = {
-            "title": $("#title").val(),
-            "year": $("#year").val(),
+            "title": $("#titleAddBook").val(),
+            "year": $("#yearAddBook").val(),
             "condition": condition,
             "authors": authors,
             "section": section,
@@ -93,10 +93,10 @@
             data: JSON.stringify(book),
             success: function (response) {
                 $(".form-inline").hide();
-                $('.alert_placeholder').html('<div class="alert alert-success">' + response + '</div>')
+                $('.alert_placeholderAddBook').html('<div class="alert alert-success">' + response + '</div>')
             },
             error: function (response) {
-                $('.alert_placeholder').html('<div class="alert alert-danger">' + response + '</div>')
+                $('.alert_placeholderAddBook').html('<div class="alert alert-danger">' + response + '</div>')
             }
         });
     }
@@ -106,10 +106,17 @@
         $("#form").show();
         for (i = 0; i < $('.notNull').length; i++) {
             if ($('.notNull')[i].value == '') {
-                $('.alert_placeholder').html('<div class="alert alert-danger">Failure: Fields cannot be empty</div>')
+                $('.alert_placeholderAddBook').html('<div class="alert alert-danger">Failure: Fields cannot be empty</div>')
                 return;
             }
         }
+
+        if($("#conditionAddBook").val()=="Condition" || $("#conditionAddBook").val()=="---Add type---" ||$("#uuidSectionAddBook").val()=="---Add section---"){
+            $('.alert_placeholderAddBook').html('<div class="alert alert-danger">Failure: Fields cannot be empty</div>')
+            return;
+        }
+
+
         saveBook();
     }
 
@@ -139,9 +146,9 @@
                     <br>
 
                     <div id="insertAuthorField"></div>
-                    <input type="text" id="title" class="form-control notNull" placeholder="title">
-                    <input type="number" id="year" maxlength="4" class="form-control notNull" placeholder="year">
-                    <select id="condition" class="form-control notNull" required>
+                    <input type="text" id="titleAddBook" class="form-control notNull" placeholder="title">
+                    <input type="number" id="yearAddBook" maxlength="4" class="form-control notNull" placeholder="year">
+                    <select id="conditionAddBook" class="form-control notNull" required>
                         <option value="Condition">--Condition--</option>
                         <option value="Available">Available</option>
                         <option value="Reserved">Reserved</option>
@@ -150,10 +157,10 @@
                         <option value="Damaged">Damaged</option>
                         <option value="Destroyed">Destroyed</option>
                     </select>
-                    <select id="uuidType" class="form-control notNull" required>
+                    <select id="uuidTypeAddBook" class="form-control notNull" required>
 
                     </select>
-                    <select id="uuidSection" class="form-control notNull" required>
+                    <select id="uuidSectionAddBook" class="form-control notNull" required>
                         <option value="">--section--</option>
 
                     </select>
@@ -166,7 +173,7 @@
 
 
             <div class="modal-footer">
-                <div class="alert_placeholder"></div>
+                <div class="alert_placeholderAddBook"></div>
                 <button type="buttonModal" class="btn btn-default" data-dismiss="modal" onclick="clean()">Close</button>
             </div>
         </div>

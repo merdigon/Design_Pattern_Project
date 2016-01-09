@@ -6,16 +6,16 @@
             type: "POST",
             url: "/admin/addSection",
             data: {
-                "section" : $('#section').val()
+                "section" : $('#sectionAddSection').val()
             },
             dataType: "text",
             success: function (response) {
 
                 if(response =="success") {
                     $("#form").hide();
-                    $('.alert_placeholder').html('<div class="alert alert-success">' + response + '</div>');
+                    $('.alert_placeholderAddSection').html('<div class="alert alert-success">' + response + '</div>');
                 }else
-                    $('.alert_placeholder').html('<div class="alert alert-danger">' + response +'</div>');
+                    $('.alert_placeholderAddSection').html('<div class="alert alert-danger">' + response +'</div>');
 
             },
 
@@ -27,7 +27,7 @@
     }
 
     function clean(){
-        $('.alert_placeholder').empty();
+        $('.alert_placeholderAddSection').empty();
         $("#form").show();
     }
 </script>
@@ -46,14 +46,14 @@
                 <div id="form" class="'form-group" style="display: inline">
                     <div class="panel-body">
 
-                        <input type="text" id="section" class="form-control" placeholder="section">
+                        <input type="text" id="sectionAddSection" class="form-control" placeholder="section">
                         <button onclick="addSection()" class="btn btn-default">Add section</button>
 
                     </div>
 
                 </div>
 
-                <div class="alert_placeholder"></div>
+                <div class="alert_placeholderAddSection"></div>
             </div>
 
             <div class="modal-footer">

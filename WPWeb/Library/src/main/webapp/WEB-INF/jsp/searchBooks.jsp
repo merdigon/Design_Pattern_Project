@@ -13,7 +13,7 @@
         var searchType = "";
 
         function search(type) {
-
+            $('#show_book_image').show();
             var author ={
                 "name" : $("#authorName").val(),
                 "surname" : $("#authorSurname").val(),
@@ -79,7 +79,7 @@
 
         function createTable(json) {
             var myTemplate = $.templates("#BookTmpl");
-            var html = "<table class='table' >"
+            var html = "<table class='table'>"
             html += '<tr>' +
                     '<th>Title</th>' +
                     '<th>Year</th>' +
@@ -87,23 +87,25 @@
                     '<th>Condition</th>' +
                     '<th>Type Of Book</th>' +
                     '<th>Section</th>' +
-                    <sec:authorize access="hasRole('ADMIN')">
-                    '<th>Edit</th>' +
-                    </sec:authorize>
                     <sec:authorize access="hasAnyRole('ADMIN', 'USER')">
+                    '<th>Reserve</th>' +
+                    </sec:authorize>
+
+                    <sec:authorize access="hasRole('ADMIN')">
                     '<th>Uuid</th>' +
                     '<th>Action</th>' +
                     '<th>Generate QR Code</th>' +
 
                     </sec:authorize>
 
+
                     '</tr>';
 
             html += myTemplate.render(json);
             html += "</table>";
-            console.log(html);
             return html;
         }
+
 
 
         function editBook(uuid) {
@@ -162,7 +164,7 @@
                 success: function (response) {
                     console.log("<img alt='Embedded Image' src='data:image/png;base64," + response + "'/>");
 
-                    $('#image').html("<img alt='Embedded Image' src='data:image/png;base64," + response + "'/>");
+                    $('#QRCode').html("<img alt='Embedded Image' src='data:image/png;base64," + response + "'/>");
                 },
 
                 error: function (e) {
@@ -172,6 +174,133 @@
 
                 }
             });
+        }
+
+        function getDataEditBook(bookUuid) {
+            $("#bookUuid").val(bookUuid);
+            $.ajax({
+                type: "GET",
+                url: "/admin/getDataEditBook/",
+                data: {
+                    uuid: bookUuid
+                },
+                dataType: "json",
+                success: function (response) {
+
+                    var authorsField = "";
+                    for (i = 0; i < response[2].authors.length; i++) {
+                        authorsField += "<div><input type='text'  class='form-control authorName' value='" + response[2].authors[i].name + "'>" +
+                                "<input type='text'  class='form-control authorSurname' value='" + response[2].authors[i].surname + "'>" +
+                                "<input type='number'  class='form-control authorYear' value='" + response[2].authors[i].bornYear + "'>";
+
+                        if (i == 0) authorsField += "<button class='btn btn-default' onclick='addAuthorFieldd()'>Add author</button></div>";
+                        else authorsField += "<button class='btn btn-default' onclick=$(this).parent('div').remove()>Remove</button></div>";
+
+                    }
+
+                    var typeFields="";
+                    for(i=0; i<response[1].length; i++){
+                        typeFields+="<option value='" + response[1][i].uuid +"'>"+ response[1][i].name + "</option>";
+                    }
+
+                    var sectionFields="";
+                    for(i=0; i<response[0].length; i++){
+                        sectionFields+="<option value='" + response[0][i].uuid +"'>"+ response[0][i].name + "</option>";
+                    }
+
+
+                    $('#uuidTypeEdit').html(typeFields);
+                    $('#uuidSectionEdit').html(sectionFields);
+                    $('#authors').html(authorsField);
+                    $('#titleEdit').val(response[2].title);
+                    $('#yearEdit').val(response[2].year);
+                    $('#conditionEdit').val(response[2].condition.Condition);
+                    $('#uuidTypeEdit').val(response[2].typeOfBook.uuid);
+                    $('#uuidSectionEdit').val(response[2].section.uuid);
+
+
+                },
+
+                error: function (e) {
+                    alert("Oops! Something has gone wrong")
+                }
+            })
+        }
+
+        function addAuthorFieldd() {
+            var fields = "<div><input type='text' class='authorName form-control' placeholder='author name'> " +
+                    "<input type='text' class='authorSurname form-control' placeholder='author surname'> " +
+                    "<input type='text' class='authorYear form-control' placeholder='author year'> " +
+                    "<button class='btn btn-default' onclick=$(this).parent('div').remove()>remove</button><div>";
+
+            $('#authors').append(fields);
+        }
+
+
+        function getAuthorsEdit() {
+            var authors = ""
+            for (i = 1; i < $('.authorName').length; i++) {
+                authors += $('.authorName')[i].value + " " + $('.authorSurname')[i].value + " " + $('.authorYear')[i].value + ";";
+            }
+            if (authors.charAt(authors.length - 1) == ';')
+                authors = authors.substring(0, authors.length - 1);
+            return authors;
+        }
+
+        function update() {
+            var authors = [];
+            getAuthorsEdit().split(';').forEach(function f(data) {
+                authors.push ({
+                    "name" : data.split(' ')[0],
+                    "surname" : data.split(' ')[1],
+                    "bornYear" : data.split(' ')[2]
+                })
+
+            });
+
+            var condition={
+                "condition": $("#conditionEdit").val()
+            };
+
+            var typeOfBook={
+                "uuid" : $("#uuidTypeEdit").val()
+            };
+
+            var section={
+                "uuid" : $("#uuidSectionEdit").val()
+            };
+
+            var book ={
+                "uuid" : $("#bookUuid").val(),
+                "title" : $("#titleEdit").val(),
+                "year" : $("#yearEdit").val(),
+                "condition" : condition,
+                "authors" : authors,
+                "section" : section,
+                "typeOfBook" : typeOfBook
+            };
+
+
+            $.ajax({
+                type: "POST",
+                contentType : 'application/json; charset=utf-8',
+                url: "/admin/editBook",
+                dataType : 'text',
+                data: JSON.stringify(book),
+                success: function (response) {
+                    $(".form-inline").hide();
+                    if(response=="success") {
+                        $('#alert_placeholder').html('<div class="alert alert-success">' + response + '</div>')
+                        show()
+                    }
+                    else
+                        $('#alert_placeholder').html('<div class="alert alert-danger">' + response + '</div>')
+                },
+                error: function (response) {
+                    $('#alert_placeholder').html('<div class="alert alert-danger">' + response + '</div>')
+                }
+            });
+
         }
     </script>
 
@@ -197,7 +326,8 @@
     </sec:authorize>
             <sec:authorize access="hasRole('ADMIN')">
         <td>{{:uuid}}</td>
-        <td><a href="<c:url value='/admin/editBook/{{:uuid}}'/>" ><button class="btn btn-primary">edit</button><a></td>
+
+        <td><button class='btn btnMenu btn-primary' data-toggle='modal' data-target='#editBook' onclick='getDataEditBook("{{:uuid}}")'>edit</button></td>
         <td><button onclick='generateQr("{{:uuid}}")' class="btn btn-default">generate Qr Code </button></td>
     </sec:authorize>
         </tr>
@@ -210,23 +340,73 @@
 
 
 </head>
-<body>
+<body onload="$('#show_book_image').hide()">
 
 <div id="header">
     <div id="menu_bars">
         <%@include file="partOfPage/buttons/menuButtons.jsp" %>
     </div>
-    <%@include file="partOfPage/forms/searchBookForm.jsp" %>
+
+    <div id="searchBookForm">
+        <%@include file="partOfPage/forms/searchBookForm.jsp" %>
+    </div>
     <div id="show_book_image">
-        <div id="displayTable" style="height: 101%; overflow: scroll;"></div>
+        <div id="displayTable">
+
+        </div>
     </div>
 
+    <div id="QRCode">
+
+    </div>
+
+
+    <div id="editBook" class="modal fade" role="dialog">
+        <input type="hidden" id="bookUuid" value="">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Edit book</h4>
+                </div>
+                <div class="modal-body">
+
+
+                    <div class="form-inline">
+                        <div id="authors">
+                        </div>
+                    </div>
+                    <input type="text" id="titleEdit" class="form-control">
+                    <input type="number" id="yearEdit" class="form-control">
+                    <select id="conditionEdit" class="form-control">
+                        <option value="Available">Available</option>
+                        <option value="Reserved">Reserved</option>
+                        <option value="Borrowed">Borrowed</option>
+                        <option value="Missing">Missing</option>
+                        <option value="Damaged">Damaged</option>
+                        <option value="Destroyed">Destroyed</option>
+                    </select>
+
+
+                    <select id="uuidTypeEdit" class="form-control">
+                    </select>
+
+                    <select id="uuidSectionEdit" class="form-control">
+                    </select>
+                    <button onclick="update()" class="btn btn-default">Update</button>
+                </div>
+                <div class="modal-footer">
+                    <div id="alert_placeholder"></div>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div id="authorsShow"></div>
 </div>
-
-
-<div id="image">
-
-</div>
-
 </body>
 </html>

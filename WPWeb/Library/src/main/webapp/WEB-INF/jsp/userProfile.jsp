@@ -49,10 +49,10 @@
             userDetails += "debt: " + json.debt + "<br>";
             userDetails += "<button class='btn btn-primary' data-toggle='modal' data-target='#edit'>edit</button><br>"
             $('#userDetails').html(userDetails)
-            $('#loginEdit').val(json.login);
-            $('#nameEdit').val(json.name);
-            $('#surnameEdit').val(json.surname);
-            $('#mailEdit').val(json.mail);
+            $('#loginEditUser').val(json.login);
+            $('#nameEditUser').val(json.name);
+            $('#surnameEditUser').val(json.surname);
+            $('#mailEditUser').val(json.mail);
         }
 
         function createBorrowedBooks(json) {
@@ -140,7 +140,7 @@
                 dataType: "text",
                 success: function (response) {
                     alert(response);
-                    location.reload();
+                    view('reservedBooks')
                 },
 
                 error: function (e) {
@@ -151,12 +151,13 @@
         }
 
         function editUser(){
+
             var user ={
-                "name": $('#name').val(),
-                "surname":$('#surname').val(),
-                "login": $('#login').val(),
-                "password": $('#password').val(),
-                "mail": $('#mail').val()
+                "name": $('#nameEditUser').val(),
+                "surname":$('#surnameEditUser').val(),
+                "login": $('#loginEditUser').val(),
+                "password": $('#passwordEditUser').val(),
+                "mail": $('#mailEditUser').val()
             }
 
             $.ajax({
@@ -168,11 +169,11 @@
                 success: function (response) {
                     console.log(response);
                     view('userDetails');
-                    $('#alert_placeholder').html('<div class="alert alert-success">' + response + '</div>')
+                    $('#alert_placeholderEditUser').html('<div class="alert alert-success">' + response + '</div>')
                 },
                 error: function (response) {
                     console.log(response);
-                    $('#alert_placeholder').html('<div class="alert alert-danger">' + response + '</div>')
+                    $('#alert_placeholderEditUser').html('<div class="alert alert-danger">' + response + '</div>')
                 }
             });
         }

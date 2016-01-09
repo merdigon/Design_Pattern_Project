@@ -21,8 +21,14 @@ public class IdNumberGenerator {
             throw new IllegalArgumentException("max must be greater than min");
         }
 
+
         Random r = new Random();
         idNumber =  r.nextInt((max - min) + 1) + min;
+
+        while(userModelDAO.getByIdNumber(idNumber)!=null){
+            r = new Random();
+            idNumber =  r.nextInt((max - min) + 1) + min;
+        }
         return idNumber;
     }
 }

@@ -173,7 +173,7 @@ public class RestfulUserController extends BaseController {
         if (user == null)
             return new ResponseEntity<String>("{\"Status\" : \"Failure bad user idNumber\"}",HttpStatus.NOT_FOUND);
 
-        if(user.getDebt()<=money)
+        if(user.countDebt()<=money)
 
         user.setDebt(user.getDebt() - money);
         userModelDAO.update(user);

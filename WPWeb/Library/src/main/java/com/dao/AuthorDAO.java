@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class AuthorDAO extends DatabaseDAO<Author> {
 
     public void save(Author author) {
-            getSession().save(author);
+        getSession().save(author);
     }
 
     public Author saveIfNotInDB(Author author) {
@@ -67,5 +67,4 @@ public class AuthorDAO extends DatabaseDAO<Author> {
 
         return getAll().stream().filter(a -> a.equals(author)).findFirst();
     }
-
 }

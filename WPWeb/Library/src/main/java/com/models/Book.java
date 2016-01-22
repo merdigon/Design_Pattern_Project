@@ -35,6 +35,8 @@ public class Book extends DatabaseObject{
 
     private int year;
 
+    private boolean isInventoried;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinTable(name="BOOK_CONDITION", joinColumns = @JoinColumn(name="BOOK_ID"),
                 inverseJoinColumns = @JoinColumn(name="CONDITION_ID"))
@@ -120,6 +122,17 @@ public class Book extends DatabaseObject{
         this.section = section;
     }
 
+    public boolean getIsInventoried() {
+        return isInventoried;
+    }
+
+    public boolean isInventoried() {
+        return isInventoried;
+    }
+
+    public void setIsInventoried(boolean isInventoried) {
+        this.isInventoried = isInventoried;
+    }
 
     public Book(List<Author> authors, String title, int year, Condition condition, TypeOfBook typeOfBook, Section section) {
         this.authors = authors;
@@ -159,6 +172,7 @@ public class Book extends DatabaseObject{
                 "\"uuid\":\"" + uuid  + '\"' +
                 ", \"authors\":" + authors +
                 ", \"title\":\"" + title + '\"' +
+                ", \"isInventoried\":\"" + isInventoried + '\"' +
                 ", \"year\":\"" + year + '\"' +
                 ", \"condition\":" + condition  +
                 ", \"typeOfBook\":" + typeOfBook  +

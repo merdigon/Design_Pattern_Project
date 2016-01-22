@@ -1,8 +1,7 @@
 package com.controllers;
 
 
-import com.LibraryConfiguration.Conf;
-import com.dao.BookDAO;
+import com.LibraryConfiguration.LibraryConfiguration;
 import com.models.Section;
 import com.models.TypeOfBook;
 import org.springframework.stereotype.Controller;
@@ -53,12 +52,12 @@ public class LibraryController extends BaseController {
     @RequestMapping(value ="/admin/configureLibrary", method = RequestMethod.GET, headers = "Accept=application/json")
     @ResponseBody
     public String configureLibrary(Model model) {
-//        model.addAttribute("borrowedDays", Conf.getBorrowedDays());
-//        model.addAttribute("interests", Conf.getInterests());
-//        model.addAttribute("maxBorrowedBooks", Conf.getMaxBorrowedBooks());
-//        model.addAttribute("maxReservedBooks", Conf.getMaxReservedBooks());
-//        model.addAttribute("expirationTime", Conf.getExpirationSessionMinutes());
-        return new Conf().toString();
+//        model.addAttribute("borrowedDays", LibraryConfiguration.getBorrowedDays());
+//        model.addAttribute("interests", LibraryConfiguration.getInterests());
+//        model.addAttribute("maxBorrowedBooks", LibraryConfiguration.getMaxBorrowedBooks());
+//        model.addAttribute("maxReservedBooks", LibraryConfiguration.getMaxReservedBooks());
+//        model.addAttribute("expirationTime", LibraryConfiguration.getExpirationSessionMinutes());
+        return LibraryConfiguration.INSTANCE.toString();
     }
 
 
@@ -70,11 +69,11 @@ public class LibraryController extends BaseController {
                                            @RequestParam("maxReservedBooks") int reserved,
                                            @RequestParam("expirationTime") int expirationTime,
                                            @RequestParam("maxBorrowedBooks") int borrowed){
-        Conf.setBorrowedDays(days);
-        Conf.setInterests(interests);
-        Conf.setMaxBorrowedBooks(borrowed);
-        Conf.setMaxReservedBooks(reserved);
-        Conf.setExpirationSessionMinutes(expirationTime);
+        LibraryConfiguration.getInstance().setBorrowedDays(days);
+        LibraryConfiguration.getInstance().setInterests(interests);
+        LibraryConfiguration.getInstance().setMaxBorrowedBooks(borrowed);
+        LibraryConfiguration.getInstance().setMaxReservedBooks(reserved);
+        LibraryConfiguration.getInstance().setExpirationSessionMinutes(expirationTime);
         return "success";
     }
 

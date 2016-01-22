@@ -1,9 +1,6 @@
 package com.dao;
 
-import com.models.Author;
-import com.models.Book;
-import com.models.BookDate;
-import com.models.Condition;
+import com.models.*;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
@@ -32,6 +29,21 @@ public class BookDAO extends DatabaseDAO<Book>{
         Query query = getSession().createQuery("from Book");
         List<Book> list = query.list();
         return list;
+
+    }
+
+    public List<Book> getAllBySection(String section){
+        List<Book> books = getAll();
+        Section section1 = new Section(section);
+
+        List<Book> booksFromSection = new ArrayList<>();
+        for(Book book: books){
+            if(book.getSection().equals(section1)){
+                booksFromSection.add(book);
+
+            }
+        }
+        return booksFromSection;
 
     }
 

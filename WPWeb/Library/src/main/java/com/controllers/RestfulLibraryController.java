@@ -1,21 +1,12 @@
 package com.controllers;
 
-import com.LibraryConfiguration.Conf;
-import com.models.Book;
+import com.LibraryConfiguration.LibraryConfiguration;
 import com.models.Section;
 import com.models.Session;
-import com.models.UserModel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
-
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -84,11 +75,11 @@ public class RestfulLibraryController extends BaseController {
         if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
             return new ResponseEntity<String>("{\"Status\" : \"Failure no permission\"}",HttpStatus.FORBIDDEN);
 
-        Conf.setBorrowedDays(Integer.parseInt(days));
-        Conf.setInterests(Integer.parseInt(interests));
-        Conf.setMaxBorrowedBooks(Integer.parseInt(borrowed));
-        Conf.setMaxReservedBooks(Integer.parseInt(reserved));
-        Conf.setExpirationSessionMinutes(Integer.parseInt(expirationTime));
+        LibraryConfiguration.getInstance().setBorrowedDays(Integer.parseInt(days));
+        LibraryConfiguration.getInstance().setInterests(Integer.parseInt(interests));
+        LibraryConfiguration.getInstance().setMaxBorrowedBooks(Integer.parseInt(borrowed));
+        LibraryConfiguration.getInstance().setMaxReservedBooks(Integer.parseInt(reserved));
+        LibraryConfiguration.getInstance().setExpirationSessionMinutes(Integer.parseInt(expirationTime));
         return new ResponseEntity<String>("{\"Status\" : \"Success\"}",HttpStatus.OK);
     }
 

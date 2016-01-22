@@ -1,19 +1,14 @@
 package com.dao;
 
-import com.LibraryConfiguration.Conf;
 import com.configuration.CryptWithMD5;
 import com.models.Book;
 import com.models.UserModel;
 import org.hibernate.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
-import sun.invoke.empty.Empty;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**

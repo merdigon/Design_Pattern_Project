@@ -15,3 +15,4 @@ public abstract class DatabaseObject
         return uuid;
     }
 }
+

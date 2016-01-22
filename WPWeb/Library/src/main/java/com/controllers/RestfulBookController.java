@@ -1,25 +1,17 @@
 package com.controllers;
 
 
-import com.LibraryConfiguration.Conf;
-import com.dao.SectionDAO;
+import com.LibraryConfiguration.LibraryConfiguration;
 import com.models.*;
-import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by piotrek on 21.11.15.
@@ -202,7 +194,7 @@ public class RestfulBookController extends BaseController {
             return new ResponseEntity<UserModel>(HttpStatus.NOT_FOUND);
         }
 
-        if(user.getReservedBooks().size()+1>=Conf.getMaxReservedBooks())
+        if(user.getReservedBooks().size()+1>= LibraryConfiguration.getInstance().getMaxReservedBooks())
             return new ResponseEntity<UserModel>(HttpStatus.IM_USED);
 
         if (!book.getCondition().equals(Conditions.valueOf("Available")))
@@ -261,7 +253,7 @@ public class RestfulBookController extends BaseController {
     }
 
     /**
-     * zwraca liste wszystkich wypozyczonych ksiazkek uzytkownika. tylko admin
+     * zwraca liste wszystkich wypozyczonych ksiazkek uzytkownika. wszyscy zalogowani
      * @param request -"idNumber", "token"
      * @return lista ksiazek
      */
@@ -277,8 +269,8 @@ public class RestfulBookController extends BaseController {
         if (session == null)
             return new ResponseEntity<List<Book>>(HttpStatus.UNAUTHORIZED);
 
-        if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
-            return new ResponseEntity<List<Book>>(HttpStatus.FORBIDDEN);
+        //if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
+         //   return new ResponseEntity<List<Book>>(HttpStatus.FORBIDDEN);
 
         UserModel user = userModelDAO.getByIdNumber(idNumber);
         if (user == null) {
@@ -288,6 +280,29 @@ public class RestfulBookController extends BaseController {
         return new ResponseEntity<List<Book>>(user.getBooks(), HttpStatus.OK);
     }
 
+    /**
+     * zwraca liste wszystkich wypozyczonych ksiazkek uzytkownika. wszyscy zalogowani
+     * @param request -"idNumber", "token"
+     * @return lista ksiazek
+     */
+
+    @RequestMapping(value = "/rest/getUserBooksToken/", method = RequestMethod.GET)
+    public ResponseEntity<List<Book>> listAllUserBooksByToken(HttpServletRequest request) {
+
+        String token = request.getParameter("token");
+
+        Session session = sessionManager.getAndUpdateSession(token);
+
+        if (session == null)
+            return new ResponseEntity<List<Book>>(HttpStatus.UNAUTHORIZED);
+
+
+        UserModel user = userModelDAO.getByLogin(session.getLogin());
+        if (user == null) {
+            return new ResponseEntity<List<Book>>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<List<Book>>(user.getBooks(), HttpStatus.OK);
+    }
 
     /**
      *  zwraca liste wszystkich zarezerwowanych ksiazek uzytkownika. tylko admin
@@ -352,14 +367,14 @@ public class RestfulBookController extends BaseController {
             return new ResponseEntity<String>("{\"Status\" : \"Failed user not found\"}",HttpStatus.NOT_FOUND);
         }
 
-        if(user.getBooks().size()+1>=Conf.getMaxBorrowedBooks())
+        if(user.getBooks().size()+1>= LibraryConfiguration.getInstance().getMaxBorrowedBooks())
             return new ResponseEntity<String>("{\"Status\" : \"Failure you exceed the limit of borrowed books\"}",HttpStatus.IM_USED);
 
         if (!book.getCondition().equals(Conditions.valueOf("Available")))
             return new ResponseEntity<String>("{\"Status\" : \"Failure book not available\"}",HttpStatus.IM_USED);
 
 
-        LocalDate planningReturnDate = new LocalDate().plusDays(Conf.getBorrowedDays());
+        LocalDate planningReturnDate = new LocalDate().plusDays(LibraryConfiguration.getInstance().getBorrowedDays());
 
 
         BookDate date = new BookDate();
@@ -414,7 +429,7 @@ public class RestfulBookController extends BaseController {
 
         double debt = 0;
         if (date.getPlanningReturnDate().isBefore(new LocalDate())) {
-            debt = Days.daysBetween(date.getPlanningReturnDate(), new LocalDate()).getDays() * Conf.getInterests();
+            debt = Days.daysBetween(date.getPlanningReturnDate(), new LocalDate()).getDays() * LibraryConfiguration.getInstance().getInterests();
         }
 
         user.addDebt(debt);
@@ -431,5 +446,131 @@ public class RestfulBookController extends BaseController {
         return new ResponseEntity<String>("{\"Status\" : \"Success\"}",HttpStatus.OK);
     }
 
+    /**
+     * Pobieranie wszystkich ksiazek z danej sekcji. Dostep wszyscy
+     * @return lista ksiazek
+     */
+
+    @RequestMapping(value = "/rest/getBooksFromSection/", method = RequestMethod.GET)
+    public ResponseEntity<List<Book>> listAllbooksSection(HttpServletRequest request) {
+        List<Book> books = bookDAO.getAllBySection(request.getParameter("section"));
+        if (books.isEmpty()) {
+            return new ResponseEntity<List<Book>>(HttpStatus.NO_CONTENT);
+        }
+
+        List<Book>booksNoInvetoried = new ArrayList<>();
+
+        for(Book book : books){
+            if(book.getIsInventoried()==false)
+                booksNoInvetoried.add(book);
+        }
+        return new ResponseEntity<List<Book>>(books, HttpStatus.OK);
+    }
+
+    /**
+     * Pobieranie wszystkich sekcji. Dostep wszyscy
+     * @return lista ksiazek
+     */
+
+    @RequestMapping(value = "/rest/getAllSection/", method = RequestMethod.GET)
+    public ResponseEntity<List<Section>> listAllSection() {
+
+        return new ResponseEntity<List<Section>>(sectionDAO.getAll(), HttpStatus.OK);
+    }
+
+    /**
+     * Pobieranie wszystkich sekcji. Dostep wszyscy
+     * @return lista ksiazek
+     */
+
+    @RequestMapping(value = "/rest/inventory/", method = RequestMethod.GET)
+    public ResponseEntity<String> listAllSection(HttpServletRequest request) {
+
+        Book book = bookDAO.get(request.getParameter("bookId"));
+        String state = request.getParameter("state");
+        String token = request.getParameter("token");
+        Session session = sessionManager.getAndUpdateSession(token);
+
+        if (session == null)
+            return new ResponseEntity<String>("{\"Status\" : \"Failure bad token\"}",HttpStatus.UNAUTHORIZED);
+
+        if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
+            return new ResponseEntity<String>("{\"Status\" : \"Failure no permission\"}",HttpStatus.FORBIDDEN);
+
+        if (book == null)
+            return new ResponseEntity<String>("{\"Status\" : \"Failure no book with this uuid\"}",HttpStatus.NO_CONTENT);
+
+        if(!state.equals("null")){
+            if(state.equals("ok")){
+            book.setIsInventoried(true);
+                bookDAO.update(book);
+            return new ResponseEntity<String>("{\"Status\" : \"Success\"}", HttpStatus.OK);
+            } else{
+                Condition condition;
+
+                for(Condition condition1 : conditionDAO.getAll()){
+                    if(condition1.getCondition().name().equals(state)){
+                        book.setCondition(condition1);
+                        book.setIsInventoried(true);
+                        bookDAO.update(book);
+                        return new ResponseEntity<String>("{\"Status\" : \"Success\"}", HttpStatus.OK);
+                    }
+                }
+
+                return new ResponseEntity<String>("{\"Status\" : \"Failure bad condition\"}", HttpStatus.OK);
+            }
+        }
+
+        return new ResponseEntity<String>("{\"Status\" : \"Failure no condition\"}", HttpStatus.OK);
+    }
+
+
+
+
+//    /**
+//     * Zwracanie liste ksiazek z danej sekcji. wszyscy uzytkownicy
+//     * @param request -"sekcja"
+//     * @return httpstatus
+//     */
+//
+//    @RequestMapping(value = "/rest/returnBookFromSection/", method = RequestMethod.POST)
+//    public ResponseEntity<String> returnBorrowBook(HttpServletRequest request) {
+//
+//        String section = request.getParameter("section");
+//
+//        List<Book> books = bookDAO.getB
+//        Book book = bookDAO.get(bookUuid);
+//        String login = book.getDates().get(book.getDates().size()-1).getLogin();
+//        UserModel user = userModelDAO.getByLogin(login);
+//
+//        if (book == null) {
+//            System.out.println("Book with uuid " + bookUuid + " not found");
+//            return new ResponseEntity<String>("{\"Status\" : \"Failure book not found\"}",HttpStatus.NOT_FOUND);
+//        }
+//
+//
+//        if (!book.getCondition().equals(Conditions.valueOf("Borrowed")))
+//            return new ResponseEntity<String>("{\"Status\" : \"Failure book is not borrowed\"}",HttpStatus.IM_USED);
+//
+//        BookDate date = bookDAO.getLastDate(book);
+//
+//        double debt = 0;
+//        if (date.getPlanningReturnDate().isBefore(new LocalDate())) {
+//            debt = Days.daysBetween(date.getPlanningReturnDate(), new LocalDate()).getDays() * LibraryConfiguration.getInstance().getInterests();
+//        }
+//
+//        user.addDebt(debt);
+//        user.removeBook(book);
+//
+//        date.setReturnDate(new LocalDate());
+//        dateDAO.updateDate(date);
+//
+//        Condition condition = new Condition(Conditions.valueOf("Available"));
+//        condition = conditionDAO.saveIfNotInDB(condition);
+//        book.setCondition(condition);
+//        bookDAO.update(book);
+//        userModelDAO.update(user);
+//        return new ResponseEntity<String>("{\"Status\" : \"Success\"}",HttpStatus.OK);
+//    }
 
 }

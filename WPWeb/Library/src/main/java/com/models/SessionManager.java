@@ -1,15 +1,13 @@
 package com.models;
 
-import com.LibraryConfiguration.Conf;
+import com.LibraryConfiguration.LibraryConfiguration;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.*;
 
@@ -31,7 +29,7 @@ public class SessionManager {
 
         return new Session()
                 .withLogin(login)
-                .withExpirationTime(DateTime.now().plusMinutes(Conf.getExpirationSessionMinutes()))
+                .withExpirationTime(DateTime.now().plusMinutes(LibraryConfiguration.getInstance().getExpirationSessionMinutes()))
                 .withToken(generateUniqueId());
     }
 
@@ -66,7 +64,7 @@ public class SessionManager {
     public Session getAndUpdateSession(String token){
         for(Map.Entry<String, Session> entry : sessionMap.entrySet()){
             if(entry.getValue().getToken().equals(token)){
-                entry.getValue().setExpirationTime(DateTime.now().plusMinutes(Conf.getExpirationSessionMinutes()));
+                entry.getValue().setExpirationTime(DateTime.now().plusMinutes(LibraryConfiguration.getInstance().getExpirationSessionMinutes()));
                 return entry.getValue();
             }
         }

@@ -11,14 +11,38 @@
 
     <script type="text/javascript">
 
+        var currentPageGlobal;
+        var numberOfBooksGlobal = ${allBooksSize};
 
-        function show() {
+        function addPageButton(){
+
+        }
+
+
+        function show(currentPage) {
+
+            console.log(currentPage);
+            console.log(numberOfBooksGlobal);
+            var lastPage = Math.ceil(numberOfBooksGlobal/$('#numberOfBookOnPage').val());
+
+            if(currentPage=="last")
+                currentPage = lastPage;
+            else if (currentPage>lastPage)
+                currentPage=lastPage;
+            else if (currentPage<1)
+                currentPage=1;
+
             $.ajax({
                 type: "POST",
                 url: "/showBooks",
-                data: {},
+                data: {
+                    currentPage : currentPage,
+                    numberOfBookOnPage : $('#numberOfBookOnPage').val()
+                },
                 dataType: "json",
                 success: function (response) {
+                    $('#currentPage').val(currentPage);
+                    currentPageGlobal=currentPage;
                     $("#displayTable").html(createTable(response));
                 },
 
@@ -276,7 +300,7 @@
         <td><button class="btn btn-primary" onclick="reserveBook('{{:uuid}}')">reserve book</button></td>
         {{else}}
         <td>not available</td>
-        {{/if}}
+        {{/if}}bookDAO.getOnPage(currentPage,numberOfBookOnPage)
     </sec:authorize>
             <sec:authorize access="hasRole('ADMIN')">
         <td>{{:uuid}}</td>
@@ -294,12 +318,33 @@
 
 
 </head>
-<body onload="show()">
+<body onload="show(1)">
 
 <div id="header">
     <div id="menu_bars">
         <%@include file="partOfPage/buttons/menuButtons.jsp" %>
     </div>
+
+<nav>
+    <ul class="pagination">
+        <li><a href="#" onclick="show(1)">first</a></li>
+        <li>
+            <a href="#" aria-label="Previous" onclick='show(currentPageGlobal-1)'>
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        <li><span><input type="number" id="currentPage" onchange="show($(this).val())" style="width: 3em;"></span></li>
+        <li>
+            <a href="#" aria-label="Next" onclick="show(currentPageGlobal+1)">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        <li><a href="#" onclick="show('last')" >last</a></li>
+    </ul>
+</nav>
+
+    <input type="text" id="numberOfBookOnPage" value="20" onchange="show(1)">
+
 
     <div id="show_book_image">
         <div id="displayTable"></div>

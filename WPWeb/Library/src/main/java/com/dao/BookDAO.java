@@ -32,6 +32,14 @@ public class BookDAO extends DatabaseDAO<Book>{
 
     }
 
+    public List<Book> getOnPage(int currentPage, int numberOfBookOnPage) {
+
+        Query query = getSession().createQuery("from Book").setFirstResult((currentPage-1)*numberOfBookOnPage).setMaxResults(numberOfBookOnPage);
+        List<Book> list = query.list();
+        return list;
+
+    }
+
     public List<Book> getAllBySection(String section){
         List<Book> books = getAll();
         Section section1 = new Section(section);

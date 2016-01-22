@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,14 +58,18 @@ public class BookController extends BaseController {
 
     @RequestMapping(value = {"/showBooks"}, method = RequestMethod.GET)
     public String showBook(Model model) {
+
         model.addAttribute("books", bookDAO.getAll());
+        model.addAttribute("allBooksSize", bookDAO.getAll().size());
         return "showBooks";
     }
 
     @RequestMapping(value = {"/showBooks", "/user/showBooks", "/admin/showBooks"}, method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
-    public List<Book> showBooks() {
-        return bookDAO.getAll();
+    public List<Book> showBooks(HttpServletRequest request,Model model) {
+        int currentPage = Integer.parseInt(request.getParameter("currentPage"));
+        int numberOfBookOnPage = Integer.parseInt(request.getParameter("numberOfBookOnPage"));
+        return bookDAO.getOnPage(currentPage,numberOfBookOnPage);
     }
 
     @RequestMapping(value = {"/searchBooks"}, method = RequestMethod.GET)

@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -15,7 +16,7 @@ import java.security.NoSuchAlgorithmException;
 //strategy desing pattern
     //http://www.tutorialspoint.com/design_pattern/strategy_pattern.htm
 
-
+@Repository
 public class CryptWithMD5 implements PasswordEncoder{
     private static MessageDigest md;
 

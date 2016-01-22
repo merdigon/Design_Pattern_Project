@@ -269,8 +269,8 @@ public class RestfulBookController extends BaseController {
         if (session == null)
             return new ResponseEntity<List<Book>>(HttpStatus.UNAUTHORIZED);
 
-        //if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
-         //   return new ResponseEntity<List<Book>>(HttpStatus.FORBIDDEN);
+        if(!userModelDAO.getByLogin(session.getLogin()).getUserRole().getType().equals("ADMIN"))
+            return new ResponseEntity<List<Book>>(HttpStatus.FORBIDDEN);
 
         UserModel user = userModelDAO.getByIdNumber(idNumber);
         if (user == null) {
@@ -479,7 +479,7 @@ public class RestfulBookController extends BaseController {
     }
 
     /**
-     * Pobieranie wszystkich sekcji. Dostep wszyscy
+     * inwentaryzacja ksiazek
      * @return lista ksiazek
      */
 

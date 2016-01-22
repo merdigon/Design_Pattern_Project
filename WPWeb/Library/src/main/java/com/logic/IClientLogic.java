@@ -6,9 +6,13 @@
 // */
 //public interface IClientLogic
 //{
-//    CopyStatus ReturnCopy(String copyCode) throws Exception;
+//    boolean returnBook(String copyCode) throws Exception;
 //
-//    CopyStatus RentCopy(String copyCode, String userCode) throws Exception;
+//    boolean rentBook(String copyCode, String userCode) throws Exception;
 //
-//    boolean RegisterUser(UserModel user);
+//    boolean reserveBook(String userUuid, String bookUuid);
+//
+//    boolean cancelReservation(String userUuid, String bookUuid);
+//
+//    boolean registerUser(UserModel user);
 //}

@@ -1,36 +1,32 @@
 package com.controllers;
 
-import com.LibraryConfiguration.Conf;
-import com.dao.DateDAO;
-import com.dao.SectionDAO;
-import com.dao.UserModelDAO;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.LibraryConfiguration.LibraryConfiguration;
+import com.configuration.Mail;
 import com.models.*;
-
 import net.glxn.qrgen.QRCode;
 import net.glxn.qrgen.image.ImageType;
-import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.codec.binary.Base64;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import org.apache.commons.codec.binary.Base64;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 
 @Controller
 public class BookController extends BaseController {
 
+    @Autowired
+    Mail mail;
 
     @RequestMapping(value = {"/admin/addBook"}, method = RequestMethod.GET)
     public String addBook(Model model) {
@@ -39,37 +35,22 @@ public class BookController extends BaseController {
         return "addBook";
     }
 
+    @RequestMapping(value = {"/admin/getBookProperties"}, method = RequestMethod.GET, headers = "Accept=application/json" )
+    @ResponseBody
+    public String getBookProperties() {
+        return "{" +
+                "\"sections\":" +sectionDAO.getAll() +
+                ", \"types\":" + typeOfBookDAO.getAll() +
+                '}';
+    }
+
     @RequestMapping(value = "/admin/saveBook", method = RequestMethod.POST)
     @ResponseBody
-    public String saveBook(HttpServletRequest request) {
+    public String saveBook(@RequestBody Book book) {
 
-        String authorData = request.getParameter("authors");
-        String title = request.getParameter("title");
-        String conditionData = request.getParameter("condition");
-        String uuidSection = request.getParameter("uuidSection");
-        String uuidType = request.getParameter("uuidType");
-        int year;
-        try {
-            year = Integer.parseInt(request.getParameter("year"));
-        }catch(NumberFormatException nfe){
-            return "Failure: year of book is not a numeric type";
-        }
-        String[] authorsString = authorData.split((";"));
-        List<Author> authors = new ArrayList<Author>();
-
-
-        for (String authorString : authorsString) {
-            if (authorString.split(" ").length != 3)
-                return "Failure: bad author";
-            try {
-                Author author = new Author(authorString.split(" ")[0], authorString.split(" ")[1], Integer.parseInt(authorString.split(" ")[2]));
-                authors.add(authorDAO.saveIfNotInDB(author));
-            } catch (NumberFormatException nfe) {
-                return "Failure: year of author in not a numeric type";
-            }
-        }
-        Condition condition = conditionDAO.saveIfNotInDB(new Condition(Conditions.valueOf(conditionData)));
-        Book book = new Book(authors, title, year, condition, typeOfBookDAO.get(uuidType), sectionDAO.get(uuidSection));
+        book.setAuthors(authorDAO.saveIfNotInDB(book.getAuthors()));
+        book.setCondition(conditionDAO.saveIfNotInDB(book.getCondition()));
+        book.setIsInventoried(false);
         bookDAO.save(book);
         return "Success";
     }
@@ -82,7 +63,7 @@ public class BookController extends BaseController {
 
     @RequestMapping(value = {"/showBooks", "/user/showBooks", "/admin/showBooks"}, method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
-    public List<Book> showBooksAjax() {
+    public List<Book> showBooks() {
         return bookDAO.getAll();
     }
 
@@ -94,32 +75,22 @@ public class BookController extends BaseController {
 
     @RequestMapping(value = "/searchBooks", method = RequestMethod.POST, headers = "Accept=application/json")
     @ResponseBody
-    public Collection<Book> searchBookAjax(HttpServletRequest request) {
+    public Collection<Book> searchBookAjax(@RequestBody SearchBook searchBook) {
 
-        String searchType = request.getParameter("searchType");
-        String authorName = request.getParameter("authorName");
-        String authorSurname = request.getParameter("authorSurname");
-        String authorYear = request.getParameter("authorYear");
-        String title = request.getParameter("title");
-        String year = request.getParameter("year");
-        String condition = request.getParameter("condition");
-
-        if (searchType.equals("author")) {
-            List<Book> books = new ArrayList<Book>();
-            for (Author author : authorDAO.get(authorName, authorSurname, authorYear)) {
-                books.addAll(bookDAO.getAllByAuthor(author));
-            }
-            return new LinkedHashSet<>(books);
-
-        } else if (searchType.equals("title")) {
-            return bookDAO.findByColumn("title", title);
-        } else if (searchType.equals("year")) {
-            return bookDAO.getAllByYear(year);
-        } else if (searchType.equals("condition")) {
-            return bookDAO.getAllByCondition(new Condition(Conditions.valueOf(condition)));
+        if (searchBook.getSearchType().equals("author")) {
+            return new LinkedHashSet<>(bookDAO.getAllBySimilarAuthor(searchBook.getBook().getAuthors().get(0)));
+        } else if (searchBook.getSearchType().equals("title")) {
+            return bookDAO.findByColumn("title", searchBook.getBook().getTitle());
+        } else if (searchBook.getSearchType().equals("year")) {
+            return bookDAO.getAllByYear(Integer.toString(searchBook.getBook().getYear()));
         }
-        return null;
+        List<Book> books = bookDAO.getAllBySimilarAuthor(searchBook.getBook().getAuthors().get(0));
+        books.retainAll(bookDAO.findByColumn("title", searchBook.getBook().getTitle()));
+        books.retainAll(bookDAO.getAllByYear(Integer.toString(searchBook.getBook().getYear())));
+        return new LinkedHashSet<>(books);
     }
+
+
 
 
     @RequestMapping(value = "/admin/borrowBook", method = RequestMethod.POST)
@@ -130,23 +101,15 @@ public class BookController extends BaseController {
         UserModel user = userModelDAO.get(userUuid);
         Book book = bookDAO.get(bookUuid);
 
-        if (user.getBooks().size() + 1 >= Conf.getMaxBorrowedBooks())
-            return "Failure: you borrowed too many books";
+        if (user.getBooks().size() >= LibraryConfiguration.getInstance().getMaxBorrowedBooks()) return "Failure: you borrowed too many books";
+        if (!book.getCondition().equals(Conditions.valueOf("Available"))) return "Failure: book is not available";
 
-        if (!book.getCondition().equals(Conditions.valueOf("Available")))
-            return "Failure: book is not available";
-
-
-        LocalDate planningReturnDate = new LocalDate().plusDays(Conf.getBorrowedDays());
-
-
+        LocalDate planningReturnDate = new LocalDate().plusDays(LibraryConfiguration.getInstance().getBorrowedDays());
         BookDate date = new BookDate();
         date.setBorrowedDate(new LocalDate());
         date.setPlanningReturnDate(planningReturnDate);
         date.setLogin(user.getLogin());
-
         Condition condition = new Condition(Conditions.valueOf("Borrowed"));
-
         book.setCondition(conditionDAO.saveIfNotInDB(condition));
         book.addDate(dateDAO.saveIfNotInDB(date));
         bookDAO.update(book);
@@ -156,28 +119,24 @@ public class BookController extends BaseController {
 
     @RequestMapping(value = "/admin/returnBook", method = RequestMethod.POST)
     @ResponseBody
-    public String returnBook(@RequestParam("uuidUser") String uuidUser,
-                             @RequestParam("uuidBook") String uuidBook) {
+    public String returnBook(@RequestParam("uuidUser") String userUuid,
+                             @RequestParam("uuidBook") String bookUuid) {
 
-        Book book = bookDAO.get(uuidBook);
-        UserModel user = userModelDAO.get(uuidUser);
+        Book book = bookDAO.get(bookUuid);
+        UserModel user = userModelDAO.get(userUuid);
 
-        if (!user.getBooks().contains(book))
-            return "Failure: user doesn't borrowed this book";
+        if (!user.getBooks().contains(book)) return "Failure: user doesn't borrowed this book";
 
         BookDate date = bookDAO.getLastDate(book);
-
         double debt = 0;
         if (date.getPlanningReturnDate().isBefore(new LocalDate())) {
-            debt = Days.daysBetween(date.getPlanningReturnDate(), new LocalDate()).getDays() * Conf.getInterests();
+            debt = Days.daysBetween(date.getPlanningReturnDate(), new LocalDate()).getDays() * LibraryConfiguration.getInstance().getInterests();
         }
 
         user.addDebt(debt);
         user.removeBook(book);
-
         date.setReturnDate(new LocalDate());
         dateDAO.updateDate(date);
-
         Condition condition = new Condition(Conditions.valueOf("Available"));
         condition = conditionDAO.saveIfNotInDB(condition);
         book.setCondition(condition);
@@ -188,6 +147,7 @@ public class BookController extends BaseController {
 
     @RequestMapping(value = "/admin/editBook/{uuid}", method = RequestMethod.GET)
     public String editBook(@PathVariable("uuid") String uuid, Model model) {
+
         model.addAttribute("book", bookDAO.get(uuid));
         model.addAttribute("conditions", conditionDAO.getAll());
         model.addAttribute("types", typeOfBookDAO.getAll());
@@ -198,31 +158,15 @@ public class BookController extends BaseController {
 
     @RequestMapping(value = "/admin/editBook", method = RequestMethod.POST)
     @ResponseBody
-    public String editBook(@RequestParam("author") String authorData,
-                           @RequestParam("uuid") String uuid,
-                           @RequestParam("title") String title,
-                           @RequestParam("condition") String conditionData,
-                           @RequestParam("uuidSection") String uuidSection,
-                           @RequestParam("uuidTypeOfBook") String uuidType,
-                           @RequestParam("year") int year) {
+    public String editBook(@RequestBody Book book) {
 
-        Book book = bookDAO.get(uuid);
-
-        String[] authorsString = authorData.split((","));
-        List<Author> authors = new ArrayList<Author>();
-        for (String authorString : authorsString) {
-            Author author = new Author(authorString.split(" ")[0], authorString.split(" ")[1], Integer.parseInt(authorString.split(" ")[2]));
-            authors.add(authorDAO.saveIfNotInDB(author));
-        }
-        book.setAuthors(authors);
-        Condition condition = conditionDAO.saveIfNotInDB(new Condition(Conditions.valueOf(conditionData)));
-        book.setCondition(condition);
-        book.setTitle(title);
-        book.setSection(sectionDAO.get(uuidSection));
-        book.setTypeOfBook(typeOfBookDAO.get(uuidType));
-        book.setYear(year);
+        book.setAuthors(authorDAO.saveIfNotInDB(book.getAuthors()));
+        book.setCondition(conditionDAO.saveIfNotInDB(book.getCondition()));
+        book.setTypeOfBook(typeOfBookDAO.saveIfNotInDB(typeOfBookDAO.get(book.getTypeOfBook().getUuid())));
+        book.setSection(sectionDAO.saveIfNotInDB(sectionDAO.get(book.getSection().getUuid())));
+        book.setDates(bookDAO.get(book.getUuid()).getDates());
         bookDAO.update(book);
-        return "zapisalo";
+        return "success";
     }
 
     @RequestMapping(value = "/reserveBook", method = RequestMethod.POST)
@@ -239,19 +183,12 @@ public class BookController extends BaseController {
         } else
             user = userModelDAO.get(userUuid);
 
-        if (book == null)
-            return "Failure: there is no such book";
-        if (user == null)
-            return "Failure: there is no such user";
+        if (book == null) return "Failure: there is no such book";
+        if (user == null) return "Failure: there is no such user";
+        if (user.getReservedBooks().size()> LibraryConfiguration.getInstance().getMaxReservedBooks()) return "Failure: you reserved too many books";
+        if (!book.getCondition().equals(Conditions.valueOf("Available"))) return "Failure: book is not available";
 
-        if (user.getReservedBooks().size() + 1 >= Conf.getMaxReservedBooks())
-            return "Failure: you reserved too many books";
-
-        if (!book.getCondition().equals(Conditions.valueOf("Available")))
-            return "Failure: book is not available";
-
-        Condition condition = new Condition(Conditions.valueOf("Reserved"));
-        book.setCondition(conditionDAO.saveIfNotInDB(condition));
+        book.setCondition(conditionDAO.saveIfNotInDB(new Condition(Conditions.valueOf("Reserved"))));
         bookDAO.update(book);
         userModelDAO.addReservedBook(user, book);
         return "success";
@@ -270,19 +207,14 @@ public class BookController extends BaseController {
             user = userModelDAO.get(userUuid);
 
         Book book = bookDAO.get(bookUuid);
-        if (book == null)
-            return "Failure: there is no such book";
-        if (user == null)
-            return "Failure: there is no such user";
-
-        if (!book.getCondition().equals(Conditions.valueOf("Reserved")))
-            return "Failure: book is not reserved";
+        if (book == null) return "Failure: there is no such book";
+        if (user == null) return "Failure: there is no such user";
+        if (!book.getCondition().equals(Conditions.valueOf("Reserved"))) return "Failure: book is not reserved";
 
         Condition condition = new Condition(Conditions.valueOf("Available"));
         book.setCondition(conditionDAO.saveIfNotInDB(condition));
         bookDAO.update(book);
         userModelDAO.removeReservedBook(user, book);
-
         return "success";
     }
 
@@ -290,11 +222,20 @@ public class BookController extends BaseController {
     @ResponseBody
     public String getQRImage(@RequestParam("uuid") String uuid) {
 
-
-        ByteArrayOutputStream out = QRCode.from(uuid).to(
-                ImageType.PNG).stream();
-
+        ByteArrayOutputStream out = QRCode.from(uuid).to(ImageType.PNG).stream();
         return new String(Base64.encodeBase64(out.toByteArray()));
     }
+
+    @RequestMapping(value = "/admin/getDataEditBook/", method = RequestMethod.GET, headers = "Accept=application/json")
+    @ResponseBody
+    public String getDataEditBook(@RequestParam("uuid") String uuid) {
+        List<String> data = new ArrayList<>();
+        data.add(sectionDAO.getAll().toString());
+        data.add(typeOfBookDAO.getAll().toString());
+        data.add(bookDAO.get(uuid).toString());
+        return data.toString();
+    }
+
+
 
 }

@@ -17,19 +17,39 @@
 //                logicFactory = new LogicFactory();
 //        }
 //
-//        public CopyStatus RentCopy(String copyCode, String userCode) throws Exception
-//        {
-//                return logicFactory.GetBookIOLogic().rentCopy(copyCode, userCode);
+////        public boolean rentBook(String userUuid, String bookUuid) throws Exception
+////        {
+////                return logicFactory.getBookIOLogic().rentBook(userUuid, bookUuid);
+////        }
+//
+////        public boolean returnBook(String copyCode) throws Exception
+////        {
+////                return logicFactory.getBookIOLogic().returnBook(copyCode);
+////        }
+//
+//        @Override
+//        public boolean returnBook(String copyCode) throws Exception {
+//                return false;
 //        }
 //
-//        public CopyStatus ReturnCopy(String copyCode) throws Exception
-//        {
-//                return logicFactory.GetBookIOLogic().Return(copyCode);
+//        @Override
+//        public boolean rentBook(String copyCode, String userCode) throws Exception {
+//                return false;
 //        }
 //
-//        public boolean RegisterUser(UserModel user)
+//        @Override
+//        public boolean reserveBook(String userUuid, String bookUuid) {
+//                return false;
+//        }
+//
+//        @Override
+//        public boolean cancelReservation(String userUuid, String bookUuid) {
+//                return false;
+//        }
+//
+//        public boolean registerUser(UserModel user)
 //        {
-//                return logicFactory.GetUsersLogic().RegisterUser(user);
+//                return logicFactory.getUsersLogic().registerUser(user);
 //        }
 //
 //

@@ -1,7 +1,7 @@
 package com.models;
 
 
-import com.LibraryConfiguration.Conf;
+import com.LibraryConfiguration.LibraryConfiguration;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
@@ -27,7 +27,6 @@ public class UserModel extends DatabaseObject
 
         private int idNumber;
 
-
         @Column(unique = true, nullable = false)
         private String login;
 
@@ -37,10 +36,8 @@ public class UserModel extends DatabaseObject
         @Column(nullable = false)
         private String name;
 
-
         @Column(nullable = false)
         private String surname;
-
 
         @Column(unique = true, nullable = false)
         private String mail;
@@ -169,7 +166,7 @@ public class UserModel extends DatabaseObject
                 for(Book book: books){
                          planningReturnDay = book.getDates().get(book.getDates().size()-1).getPlanningReturnDate();
                         if(planningReturnDay.isBefore(new LocalDate())){
-                                debt += Days.daysBetween(planningReturnDay, new LocalDate()).getDays() * Conf.getInterests();
+                                debt += Days.daysBetween(planningReturnDay, new LocalDate()).getDays() * LibraryConfiguration.getInstance().getInterests();
                         }
 
                 }

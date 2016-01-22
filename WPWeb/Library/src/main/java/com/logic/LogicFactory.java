@@ -18,17 +18,17 @@
 //        userLogic = new UserSubLogic(this);
 //    }
 //
-//    public BookIOSubLogic GetBookIOLogic()
+//    public BookIOSubLogic getBookIOLogic()
 //    {
 //        return bookIOLogic;
 //    }
 //
-//    public DataPullSubLogic GetDataPull()
+//    public DataPullSubLogic getDataPull()
 //    {
 //        return dataPullSubLogic;
 //    }
 //
-//    public UserSubLogic GetUsersLogic()
+//    public UserSubLogic getUsersLogic()
 //    {
 //        return userLogic;
 //    }

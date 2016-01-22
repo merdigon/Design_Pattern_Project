@@ -14,27 +14,28 @@
 //        super(lgF);
 //    }
 //
-//    public boolean ChangeUserPenalty(UserModel user, long penaltyToAdd)
+//    public boolean addUserPenalty(UserModel user, double penaltyToAdd)
 //    {
-//        user.debt += penaltyToAdd;
-//        return SaveUser(user);
+//        user.setDebt(user.getDebt()+penaltyToAdd);
+//        return saveUser(user);
 //    }
 //
-//    public boolean ChangeUserPenalty(String userCode, double penaltyToAdd) throws Exception {
-//        UserModel user = GetUser(userCode);
+//    public boolean addUserPenalty(String userCode, double penaltyToAdd) throws Exception {
+//        UserModel user = getUser(userCode);
 //        if (user == null)
 //            throw new Exception("Brak uzytkownika o danym kodzie!");
 //
-//        user.debt += penaltyToAdd;
-//        return SaveUser(user);
+//        user.setDebt(user.getDebt()+penaltyToAdd);
+//        return saveUser(user);
 //    }
 //
-//    public boolean SaveUser(UserModel user)
+//    public boolean saveUser(UserModel user)
 //    {
+//
 //        return true;
 //    }
 //
-//    public boolean RegisterUser(UserModel user)
+//    public boolean registerUser(UserModel user)
 //    {
 //        return true;
 //    }

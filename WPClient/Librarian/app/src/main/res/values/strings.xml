@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Librarian</string>
+    <string name="title_activity_main_menu_activity_librarian">MainMenuActivityLibrarian</string>
+
+    <string name="server_error">Server error</string>
+    <string name="timeout_error">Cannot connect to server (timeout)</string>
+    <string name="action_settings">Settings</string>
+
+</resources>

@@ -1,0 +1,5 @@
+<resources>
+    <string name="title_borrowed">Title</string>
+    <string name="author_borrowed">Author</string>
+    <string name="date_to">Return date</string>
+</resources>

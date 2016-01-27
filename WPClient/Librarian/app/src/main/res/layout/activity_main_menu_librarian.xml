@@ -1,0 +1,91 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="pl.edu.agh.librarian.MainMenuActivityLibrarian"
+    android:background="@color/login_bg">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/borrow_button"
+                android:id="@+id/borrowLibrarianButton"
+                android:background="@drawable/border_button"
+                android:layout_weight="1"
+                android:layout_margin="10dp" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/return_button"
+                android:id="@+id/returnLibrarianButton"
+                android:background="@drawable/border_button"
+                android:layout_weight="1"
+                android:layout_margin="10dp"
+                android:drawableRight="@android:drawable/ic_menu_revert"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/stocktake_button"
+                android:id="@+id/stocktakeLibrarianButton"
+                android:background="@drawable/border_button"
+                android:layout_weight="1"
+                android:layout_margin="10dp" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/change_status_button"
+                android:id="@+id/changeStatusLibrarianButton"
+                android:background="@drawable/border_button"
+                android:layout_weight="1"
+                android:layout_margin="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/options_button"
+                android:id="@+id/optionsLibrarianButton"
+                android:background="@drawable/border_button"
+                android:layout_weight="1"
+                android:layout_margin="10dp" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/logout_button"
+                android:id="@+id/logoutLibrarianButton"
+                android:background="@drawable/border_button"
+                android:layout_weight="1"
+                android:layout_margin="10dp" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

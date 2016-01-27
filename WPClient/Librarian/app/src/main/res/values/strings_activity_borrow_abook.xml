@@ -1,0 +1,7 @@
+<resources>
+
+    <string name="button_cancel">Cancel</string>
+    <string name="button_borrow">Borrow</string>
+    <string name="scan_button">Scan</string>
+
+</resources>

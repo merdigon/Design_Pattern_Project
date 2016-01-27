@@ -1,0 +1,5 @@
+<resources>
+    <string name="title_browse">Title</string>
+    <string name="author_browse">Author</string>
+    <string name="year_browse">Year</string>
+</resources>

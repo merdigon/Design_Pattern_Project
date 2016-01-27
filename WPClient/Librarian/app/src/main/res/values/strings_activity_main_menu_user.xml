@@ -1,0 +1,4 @@
+<resources>
+    <string name="browse_button">Browse books</string>
+    <string name="borrowed_books">Borrowed books</string>
+</resources>

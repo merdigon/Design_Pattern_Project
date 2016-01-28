@@ -16,17 +16,19 @@ import org.springframework.core.env.Environment;
 import javax.sql.DataSource;
 import java.util.Properties;
 
-/**
- * Created by piotrek on 07.11.15.
- */
-@Configuration
-@EnableTransactionManagement
 
+
+//indicates that this class contains one or more bean methods annotated with @Bean producing beans manageable by spring container
+@Configuration
+//enabling Spring’s annotation-driven transaction management capability.
+@EnableTransactionManagement
+//used to declare a set of properties(defined in a properties file in application classpath) in Spring run-time Environment
 @PropertySource(value = { "classpath:application.properties" })
 public class HibernateConfiguration {
         @Autowired
         private Environment environment;
 
+        //creating a LocalSessionFactoryBean, which exactly mirrors the XML based configuration
         @Bean
         public LocalSessionFactoryBean sessionFactory() {
                 LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();

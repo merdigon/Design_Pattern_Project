@@ -7,9 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Created by piotrek on 07.11.15.
- */
+
 @Repository
 public class SectionDAO extends DatabaseDAO<Section>{
 

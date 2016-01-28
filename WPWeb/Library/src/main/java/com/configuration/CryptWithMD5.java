@@ -9,12 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-/**
- * Created by piotrek on 28.11.15.
- */
-
-//strategy desing pattern
-    //http://www.tutorialspoint.com/design_pattern/strategy_pattern.htm
 
 @Repository
 public class CryptWithMD5 implements PasswordEncoder{

@@ -1,8 +1,6 @@
 package com.configuration;
 
-/**
- * Created by piotrek on 07.11.15.
- */
+
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 public class AppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {

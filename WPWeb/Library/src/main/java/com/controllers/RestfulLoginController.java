@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-/**
- * Created by piotrek on 28.11.15.
- */
+
 @RestController
 public class RestfulLoginController extends BaseController {
 

@@ -8,9 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Created by piotrek on 21.11.15.
- */
+
 @Repository
 public class TestDAO extends DatabaseDAO<Test> {
 

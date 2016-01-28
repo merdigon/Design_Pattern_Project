@@ -11,9 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * Created by piotrek on 07.11.15.
- */
+
 @Repository
 public class AuthorDAOImpl extends DatabaseDAO<Author> implements AuthorDAO{
 

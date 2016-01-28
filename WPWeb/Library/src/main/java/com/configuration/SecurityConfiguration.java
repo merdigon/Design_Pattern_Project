@@ -1,8 +1,6 @@
 package com.configuration;
 
-/**
- * Created by piotrek on 08.11.15.
- */
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -20,15 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-//    @Autowired
-//    CustomSuccessHandler customSuccessHandler;
-//
-//    @Autowired
-//    public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.inMemoryAuthentication().withUser("bill").password("abc123").roles("USER");
-//        auth.inMemoryAuthentication().withUser("admin").password("root123").roles("ADMIN");
-//        auth.inMemoryAuthentication().withUser("dba").password("root123").roles("ADMIN","DBA");//dba have two roles.
-//    }
 
     @Autowired
     @Qualifier("customUserDetailsService")

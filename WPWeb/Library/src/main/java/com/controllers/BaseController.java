@@ -4,9 +4,7 @@ import com.dao.*;
 import com.models.SessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Created by pietrek on 10.11.15.
- */
+
 public abstract class BaseController {
     @Autowired
     BookDAO bookDAO;

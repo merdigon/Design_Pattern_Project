@@ -11,9 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.*;
 
-/**
- * Created by piotrek on 28.11.15.
- */
+
 @Component
 public class SessionManager {
     private static Map<String, Session> sessionMap = new ConcurrentHashMap<>();

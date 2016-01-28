@@ -20,7 +20,7 @@
         function getAuthors() {
             var authors = ""
             for (i = 0; i < $('.authorName').length; i++) {
-                authors += $('.authorName')[i].value + " " + $('.authorSurname')[i].value + " " + $('.authorYear')[i].value + ";";
+                authors += $('.authorName')[i].value + "&" + $('.authorSurname')[i].value + "&" + $('.authorYear')[i].value + ";";
             }
             if (authors.charAt(authors.length - 1) == ';')
                 authors = authors.substring(0, authors.length - 1);
@@ -29,12 +29,13 @@
         }
 
         function update() {
+            console.log('in update');
             var authors = [];
             getAuthors().split(';').forEach(function f(data) {
                 authors.push ({
-                    "name" : data.split(' ')[0],
-                    "surname" : data.split(' ')[1],
-                    "bornYear" : data.split(' ')[2]
+                    "name" : data.split('&')[0],
+                    "surname" : data.split('&')[1],
+                    "bornYear" : data.split('&')[2]
                 })
 
             });
@@ -61,6 +62,7 @@
                 "typeOfBook" : typeOfBook
             };
 
+            console.log(book);
 
             $.ajax({
                 type: "POST",
@@ -70,12 +72,14 @@
                 data: JSON.stringify(book),
                 success: function (response) {
                     $(".form-inline").hide();
+                    console.log(book);
                     if(response=="Success")
                         $('#alert_placeholder').html('<div class="alert alert-success">' + response + '</div>')
                     else
                         $('#alert_placeholder').html('<div class="alert alert-danger">' + response + '</div>')
                 },
                 error: function (response) {
+                    console.log(book);
                     $('#alert_placeholder').html('<div class="alert alert-danger">' + response + '</div>')
                 }
             });

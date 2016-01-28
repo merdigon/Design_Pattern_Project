@@ -4,9 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
-/**
- * Created by pietrek on 10.11.15.
- */
+
 @Entity
 @Table
 public class UserRole {

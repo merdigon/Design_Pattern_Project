@@ -12,12 +12,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
-/**
- * Created by piotrek on 07.11.15.
- */
-@Configuration
-@EnableWebMvc
-@ComponentScan({"com"})
+@Configuration  //indicates that this class conatins one or more bean methods annotated with @Bean
+@EnableWebMvc //enables support for @Controller-annotated classes that use @RequestMapping to map incoming requests to specific method
+@ComponentScan({"com"}) //providing with where to look for spring managed beans/classes.
 public class SpringConfiguration extends WebMvcConfigurerAdapter{
     @Bean
     public ViewResolver viewResolver() {

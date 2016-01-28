@@ -21,9 +21,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by piotrek on 15.11.15.
- */
 
 @Controller
 public class UserController extends BaseController {

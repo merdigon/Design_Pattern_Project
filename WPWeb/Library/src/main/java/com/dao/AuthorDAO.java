@@ -5,9 +5,7 @@ import com.models.Author;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Created by piotrek on 16.01.16.
- */
+
 public interface AuthorDAO {
     public void save(Author author);
     public Author saveIfNotInDB(Author author);

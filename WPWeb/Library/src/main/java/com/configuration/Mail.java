@@ -60,7 +60,7 @@ public class Mail {
 
         String messageText = "Dear user\nYou don't return this books: \n";
         for(Book book : books){
-            messageText += book.getTitle() + " " + book.getAuthors() + " " + book.getDates().get(book.getDates().size()-1).getPlanningReturnDate();
+            messageText += book.getTitle() + " " + book.getAuthors().get(0).getName() + " " + book.getAuthors().get(0).getSurname() + " " + book.getDates().get(book.getDates().size()-1).getPlanningReturnDate();
         }
 
         Session session = Session.getInstance(props,

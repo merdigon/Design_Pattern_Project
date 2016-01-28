@@ -11,9 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Created by pietrek on 18.11.15.
- */
+
 @Repository
 public class DateDAO extends DatabaseDAO<BookDate>{
 

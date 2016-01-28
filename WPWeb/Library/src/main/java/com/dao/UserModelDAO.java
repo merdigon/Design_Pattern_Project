@@ -11,9 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Created by pietrek on 13.11.15.
- */
+
 @Repository
 public class UserModelDAO extends DatabaseDAO<UserModel> {
 

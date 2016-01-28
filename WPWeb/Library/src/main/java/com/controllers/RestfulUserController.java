@@ -13,9 +13,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-/**
- * Created by piotrek on 21.11.15.
- */
+
 @RestController
 public class RestfulUserController extends BaseController {
 

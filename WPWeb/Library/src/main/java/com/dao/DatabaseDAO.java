@@ -8,9 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-/**
- * Created by piotrek on 07.11.15.
- */
+
 @Transactional
 @Repository
 abstract class DatabaseDAO<T> {

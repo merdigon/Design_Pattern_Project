@@ -1,8 +1,6 @@
 package com.models;
 
-/**
- * Created by piotrek on 26.12.15.
- */
+
 public class SearchBook {
     private Book book;
     private String searchType;

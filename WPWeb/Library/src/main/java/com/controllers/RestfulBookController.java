@@ -13,9 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by piotrek on 21.11.15.
- */
+
 @RestController
 public class RestfulBookController extends BaseController {
 
@@ -551,53 +549,5 @@ public class RestfulBookController extends BaseController {
         return new ResponseEntity<String>("{\"Status\" : \"Failure no condition\"}", HttpStatus.OK);
     }
 
-
-
-
-//    /**
-//     * Zwracanie liste ksiazek z danej sekcji. wszyscy uzytkownicy
-//     * @param request -"sekcja"
-//     * @return httpstatus
-//     */
-//
-//    @RequestMapping(value = "/rest/returnBookFromSection/", method = RequestMethod.POST)
-//    public ResponseEntity<String> returnBorrowBook(HttpServletRequest request) {
-//
-//        String section = request.getParameter("section");
-//
-//        List<Book> books = bookDAO.getB
-//        Book book = bookDAO.get(bookUuid);
-//        String login = book.getDates().get(book.getDates().size()-1).getLogin();
-//        UserModel user = userModelDAO.getByLogin(login);
-//
-//        if (book == null) {
-//            System.out.println("Book with uuid " + bookUuid + " not found");
-//            return new ResponseEntity<String>("{\"Status\" : \"Failure book not found\"}",HttpStatus.NOT_FOUND);
-//        }
-//
-//
-//        if (!book.getCondition().equals(Conditions.valueOf("Borrowed")))
-//            return new ResponseEntity<String>("{\"Status\" : \"Failure book is not borrowed\"}",HttpStatus.IM_USED);
-//
-//        BookDate date = bookDAO.getLastDate(book);
-//
-//        double debt = 0;
-//        if (date.getPlanningReturnDate().isBefore(new LocalDate())) {
-//            debt = Days.daysBetween(date.getPlanningReturnDate(), new LocalDate()).getDays() * LibraryConfiguration.getInstance().getInterests();
-//        }
-//
-//        user.addDebt(debt);
-//        user.removeBook(book);
-//
-//        date.setReturnDate(new LocalDate());
-//        dateDAO.updateDate(date);
-//
-//        Condition condition = new Condition(Conditions.valueOf("Available"));
-//        condition = conditionDAO.saveIfNotInDB(condition);
-//        book.setCondition(condition);
-//        bookDAO.update(book);
-//        userModelDAO.update(user);
-//        return new ResponseEntity<String>("{\"Status\" : \"Success\"}",HttpStatus.OK);
-//    }
 
 }

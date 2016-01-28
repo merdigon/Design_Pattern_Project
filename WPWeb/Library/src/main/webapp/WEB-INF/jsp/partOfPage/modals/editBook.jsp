@@ -12,7 +12,7 @@
   function getAuthors() {
     var authors = ""
     for (i = 0; i < $('.authorName').length; i++) {
-      authors += $('.authorName')[i].value + " " + $('.authorSurname')[i].value + " " + $('.authorYear')[i].value + ";";
+      authors += $('.authorName')[i].value + "&" + $('.authorSurname')[i].value + "&" + $('.authorYear')[i].value + ";";
     }
     if (authors.charAt(authors.length - 1) == ';')
       authors = authors.substring(0, authors.length - 1);
@@ -24,9 +24,9 @@
     var authors = [];
     getAuthors().split(';').forEach(function f(data) {
       authors.push ({
-        "name" : data.split(' ')[0],
-        "surname" : data.split(' ')[1],
-        "bornYear" : data.split(' ')[2]
+        "name" : data.split('&')[0],
+        "surname" : data.split('&')[1],
+        "bornYear" : data.split('&')[2]
       })
 
     });
@@ -53,6 +53,7 @@
       "typeOfBook" : typeOfBook
     };
 
+    console.log(book);
 
     $.ajax({
       type: "POST",
@@ -63,11 +64,17 @@
       success: function (response) {
         $(".form-inline").hide();
         if(response=="Success")
+
           $('#alert_placeholder').html('<div class="alert alert-success">' + response + '</div>')
-        else
+        else {
+          console.log('error');
+          console.log(book);
           $('#alert_placeholder').html('<div class="alert alert-danger">' + response + '</div>')
+        }
       },
       error: function (response) {
+        console.log(error);
+        console.log(book);
         $('#alert_placeholder').html('<div class="alert alert-danger">' + response + '</div>')
       }
     });

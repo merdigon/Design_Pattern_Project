@@ -7,9 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-/**
- * Created by piotrek on 21.11.15.
- */
+
 @Entity
 public class Test extends DatabaseObject {
     @Id

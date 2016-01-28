@@ -7,9 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
-/**
- * Created by pietrek on 13.11.15.
- */
+
 
 @Repository
 public class UserRoleDAO extends DatabaseDAO<UserRole> {
@@ -48,11 +46,6 @@ public class UserRoleDAO extends DatabaseDAO<UserRole> {
         }
     }
 
-
-//    public void addInterests(UserModel user, double interest){
-//        user.setDebt(user.getDebt() + interest);
-//        getSession().update(user);
-//    }
 
 
 }

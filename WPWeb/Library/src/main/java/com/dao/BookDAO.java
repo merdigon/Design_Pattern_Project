@@ -7,9 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by piotrek on 07.11.15.
- */
+
 @Repository
 public class BookDAO extends DatabaseDAO<Book>{
 
@@ -34,7 +32,7 @@ public class BookDAO extends DatabaseDAO<Book>{
 
     public List<Book> getOnPage(int currentPage, int numberOfBookOnPage) {
 
-        Query query = getSession().createQuery("from Book").setFirstResult((currentPage-1)*numberOfBookOnPage).setMaxResults(numberOfBookOnPage);
+        Query query = getSession().createQuery("from Book order by title").setFirstResult((currentPage-1)*numberOfBookOnPage).setMaxResults(numberOfBookOnPage);
         List<Book> list = query.list();
         return list;
 

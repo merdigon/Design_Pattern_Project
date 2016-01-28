@@ -6,9 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.*;
 
-/**
- * Created by Szymon on 2015-10-13.
- */
+
 @Entity
 public class Author extends DatabaseObject {
         @Id

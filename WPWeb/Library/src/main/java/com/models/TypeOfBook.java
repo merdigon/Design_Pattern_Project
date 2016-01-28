@@ -8,9 +8,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Szymon on 2015-10-13.
- */
+
 @Entity
 public class TypeOfBook extends DatabaseObject
 {

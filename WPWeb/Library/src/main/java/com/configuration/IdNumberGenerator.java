@@ -8,9 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/**
- * Created by piotrek on 17.12.15.
- */
+
 public class IdNumberGenerator {
 
 

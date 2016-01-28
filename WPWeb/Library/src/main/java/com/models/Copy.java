@@ -2,9 +2,7 @@ package com.models;
 
 
 
-/**
- * Created by Szymon on 2015-10-13.
- */
+
 
 public class Copy extends DatabaseObject
 {

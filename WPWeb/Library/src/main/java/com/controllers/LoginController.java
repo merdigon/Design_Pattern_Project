@@ -17,9 +17,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 
 
-/**
- * Created by piotrek on 08.11.15.
- */
 
 
 @Controller
@@ -43,11 +40,7 @@ public class LoginController extends BaseController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-//    public String loginPage(HttpSession session) {
     public String loginPage() {
-//            System.out.println("asd");
-//        session.invalidate();
-//        return "redirect:/";
         return "index";
     }
 

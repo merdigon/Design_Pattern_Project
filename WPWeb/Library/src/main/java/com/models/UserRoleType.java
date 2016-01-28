@@ -1,8 +1,6 @@
 package com.models;
 
-/**
- * Created by pietrek on 10.11.15.
- */
+
 public enum UserRoleType {
     USER("USER"),
     ADMIN("ADMIN");

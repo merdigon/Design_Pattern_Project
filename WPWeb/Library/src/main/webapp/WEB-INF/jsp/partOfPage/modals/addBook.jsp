@@ -35,7 +35,7 @@
     function getAuthors() {
         var authors = ""
         for (i = 0; i < $('.authorName').length; i++) {
-            authors += $('.authorName')[i].value + " " + $('.authorSurname')[i].value + " " + $('.authorYear')[i].value + ";";
+            authors += $('.authorName')[i].value + "&" + $('.authorSurname')[i].value + "&" + $('.authorYear')[i].value + ";";
         }
         if (authors.charAt(authors.length - 1) == ';')
             authors = authors.substring(0, authors.length - 1);
@@ -56,9 +56,9 @@
         var authors = [];
         getAuthors().split(';').forEach(function f(data) {
             authors.push({
-                "name": data.split(' ')[0],
-                "surname": data.split(' ')[1],
-                "bornYear": data.split(' ')[2]
+                "name": data.split('&')[0],
+                "surname": data.split('&')[1],
+                "bornYear": data.split('&')[2]
             })
 
         });

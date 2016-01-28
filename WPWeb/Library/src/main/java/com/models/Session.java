@@ -2,9 +2,7 @@ package com.models;
 
 import org.joda.time.DateTime;
 
-/**
- * Created by piotrek on 28.11.15.
- */
+
 
 
 //build

@@ -14,9 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 
-/**
- * Created by piotrek on 21.11.15.
- */
 @RestController
 public class RestfulLibraryController extends BaseController {
 

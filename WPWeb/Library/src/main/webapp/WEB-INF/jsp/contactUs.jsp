@@ -10,7 +10,7 @@
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js"></script>
   <link href="<c:url value='/static/css/main.css'/>" rel="stylesheet" type="text/css">
-  <title>Library</title>
+  <title>Contact us</title>
 
 
   <script>
@@ -68,6 +68,8 @@
   </table>
 </div>
 </div>
+<br>
+<br>
 </body>
 </html>
 

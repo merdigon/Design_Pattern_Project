@@ -75,6 +75,7 @@ public class BookController extends BaseController {
     @RequestMapping(value = {"/searchBooks"}, method = RequestMethod.GET)
     public String searchBook(Model model) {
         model.addAttribute("conditions", conditionDAO.getAll());
+        model.addAttribute("allBooksSize", bookDAO.getAll().size());
         return "searchBooks";
     }
 

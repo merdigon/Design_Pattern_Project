@@ -114,7 +114,7 @@ public class RestfulLoginController extends BaseController {
         if (userModelDAO.isValidUser(login, password)) {
 
             String token = sessionManager.createUserSession(login);
-            String response = "{ \"token\" : \"" + token + "\", \"role\" : \"" + userModelDAO.getByLogin(login).getUserRole().getType() + "\"}";
+            String response = "{ \"token\" : \"" + token + "\", \"role\" : \"" + userModelDAO.getByLogin(login).getUserRole().getType() + "\"," + "\"userID\" : \"" + userModelDAO.getByLogin(login).getUuid() +  "\"}";
             return new ResponseEntity<String>(response, HttpStatus.OK);
         } else {
             return new ResponseEntity<String>("{\"Status\" : \"Failure: wrong user or password\"}", HttpStatus.NOT_FOUND);

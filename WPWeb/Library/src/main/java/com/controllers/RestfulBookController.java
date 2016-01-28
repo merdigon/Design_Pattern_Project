@@ -282,6 +282,26 @@ public class RestfulBookController extends BaseController {
 
     /**
      * zwraca liste wszystkich wypozyczonych ksiazkek uzytkownika. wszyscy zalogowani
+     * @param request -"userId"
+     * @return lista ksiazek
+     */
+
+    @RequestMapping(value = "/rest/getUserBooksById/", method = RequestMethod.GET)
+    public ResponseEntity<List<Book>> listAllUserBooksById(HttpServletRequest request) {
+
+        String uuid = request.getParameter("userID");
+
+
+        UserModel user = userModelDAO.get(uuid);
+        if (user == null) {
+            System.out.println("user with idNumber " + uuid+ " not found");
+            return new ResponseEntity<List<Book>>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<List<Book>>(user.getBooks(), HttpStatus.OK);
+    }
+
+    /**
+     * zwraca liste wszystkich wypozyczonych ksiazkek uzytkownika. wszyscy zalogowani
      * @param request -"idNumber", "token"
      * @return lista ksiazek
      */
@@ -464,7 +484,7 @@ public class RestfulBookController extends BaseController {
             if(book.getIsInventoried()==false)
                 booksNoInvetoried.add(book);
         }
-        return new ResponseEntity<List<Book>>(books, HttpStatus.OK);
+        return new ResponseEntity<List<Book>>(booksNoInvetoried, HttpStatus.OK);
     }
 
     /**
@@ -475,7 +495,14 @@ public class RestfulBookController extends BaseController {
     @RequestMapping(value = "/rest/getAllSection/", method = RequestMethod.GET)
     public ResponseEntity<List<Section>> listAllSection() {
 
-        return new ResponseEntity<List<Section>>(sectionDAO.getAll(), HttpStatus.OK);
+        List<Section> sections = sectionDAO.getAll();
+        List<Section> sectionsWithBooks = new ArrayList<>();
+        for(Section section : sections){
+            if(!bookDAO.getAllBySection(section.getName()).isEmpty())
+                sectionsWithBooks.add(section);
+        }
+
+        return new ResponseEntity<List<Section>>(sectionsWithBooks, HttpStatus.OK);
     }
 
     /**

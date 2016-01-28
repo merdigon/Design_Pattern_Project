@@ -64,9 +64,9 @@
         <input type="text" id="nameReg" class="form-control" placeholder="name">
         <input type="text" id="surnameReg" class="form-control" placeholder="surname">
 
-        <button onclick="signUp('USER')" class="btn btn-default">Sing up</button>
+        <button onclick="signUp('USER')" class="btn btn-default">Sign up</button>
         <sec:authorize access="hasRole('ADMIN')">
-          <button onclick="signUp('ADMIN')" class="btn btn-default">Sing up as admin</button>
+          <button onclick="signUp('ADMIN')" class="btn btn-default">Sign up as admin</button>
         </sec:authorize>
       </div>
 

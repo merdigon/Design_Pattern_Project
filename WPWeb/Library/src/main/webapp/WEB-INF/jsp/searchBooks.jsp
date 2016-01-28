@@ -7,13 +7,18 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="http://www.jsviews.com/download/jsrender.min.js"></script>
     <link href="<c:url value='/static/css/main.css'/>" rel="stylesheet" type="text/css">
-    <title>Spring MVC Form Handling</title>
+    <title>Search books</title>
 
     <script type="text/javascript">
-        var searchType = "";
+
+        var currentPageGlobal=1;
+        var numberOfBooksGlobal = ${allBooksSize};
 
         function search(type) {
             $('#show_book_image').show();
+            $('#currentPage').val(1);
+            $('.pagination').show();
+
             var author ={
                 "name" : $("#authorName").val(),
                 "surname" : $("#authorSurname").val(),
@@ -56,14 +61,28 @@
             });
         }
 
-        function show() {
-            console.log("in show");
+        function show(currentPage) {
+            var lastPage = Math.ceil(numberOfBooksGlobal/$('#numberOfBookOnPage').val());
+
+            if(currentPage=="last")
+                currentPage = lastPage;
+            else if (currentPage>lastPage)
+                currentPage=lastPage;
+            else if (currentPage<1)
+                currentPage=1;
+
+
             $.ajax({
                 type: "POST",
                 url: "/showBooks",
-                data: {},
+                data: {
+                    currentPage : currentPage,
+                    numberOfBookOnPage : $('#numberOfBookOnPage').val()
+                },
                 dataType: "json",
                 success: function (response) {
+                    $('#currentPage').val(currentPage);
+                    currentPageGlobal=currentPage;
                     $("#displayTable").html(createTable(response));
                 },
 
@@ -109,7 +128,7 @@
 
 
         function editBook(uuid) {
-
+            $("#alert_placeholder").html("");
             $.ajax({
                 type: "POST",
                 url: "/admin/editBook",
@@ -119,19 +138,19 @@
                 dataType: "text",
                 success: function (response) {
                     alert(response);
-                    show();
+                    show(currentPageGlobal);
 
                 },
 
                 error: function (e) {
                     alert("Oops! Something has gone wrong")
-                    show();
+                    show(currentPageGlobal);
                 }
             });
         }
 
         function reserveBook(uuid) {
-            console.log("inreserveBook");
+            $("#alert_placeholder").html("");
             $.ajax({
                 type: "POST",
                 url: "/reserveBook",
@@ -142,13 +161,13 @@
                 dataType: "text",
                 success: function (response) {
                     alert(response);
-                    show();
+                    show(currentPageGlobal);
 
                 },
 
                 error: function (e) {
                     alert("Oops! Something has gone wrong")
-                    show();
+                    show(currentPageGlobal);
                 }
             });
         }
@@ -177,6 +196,7 @@
         }
 
         function getDataEditBook(bookUuid) {
+            $("#alert_placeholder").html("");
             $("#bookUuid").val(bookUuid);
             $.ajax({
                 type: "GET",
@@ -248,6 +268,7 @@
         }
 
         function update() {
+            $("#alert_placeholder").html("");
             var authors = [];
             getAuthorsEdit().split(';').forEach(function f(data) {
                 authors.push ({
@@ -288,10 +309,9 @@
                 dataType : 'text',
                 data: JSON.stringify(book),
                 success: function (response) {
-                    $(".form-inline").hide();
                     if(response=="success") {
                         $('#alert_placeholder').html('<div class="alert alert-success">' + response + '</div>')
-                        show()
+                        show(currentPageGlobal)
                     }
                     else
                         $('#alert_placeholder').html('<div class="alert alert-danger">' + response + '</div>')
@@ -340,7 +360,7 @@
 
 
 </head>
-<body onload="$('#show_book_image').hide()">
+<body onload="$('#show_book_image').hide();$('.pagination').hide();">
 
 <div id="header">
     <div id="menu_bars">
@@ -348,13 +368,64 @@
     </div>
 
     <div id="searchBookForm">
-        <%@include file="partOfPage/forms/searchBookForm.jsp" %>
+        <div class="form-inline">
+
+            by Author:
+            <input type="text" id="authorName" class="form-control" placeholder="name">
+            <input type="text" id="authorSurname" class="form-control" placeholder="surname">
+            <input type="number" id="authorYear" class="form-control" placeholder="bornYear">
+            <button onclick="search('author')" class="btn btn-default">by author</button>
+        </div>
+
+        <div class="form-inline">
+
+            by Title:
+            <input type="text" id="bookTitle" class="form-control" placeholder="title">
+            <button onclick="search('title')" class="btn btn-default">by title</button>
+        </div>
+
+
+        <div class="form-inline">
+
+            by Year:
+            <input type="number" id="bookYear" class="form-control" placeholder="year">
+            <button onclick="search('year')" class="btn btn-default">by book year</button>
+        </div>
+
+        <button onclick="search('all')" class="btn btn-default">search</button>
     </div>
     <div id="show_book_image">
         <div id="displayTable">
 
         </div>
     </div>
+    <nav>
+        <ul class="pagination">
+            <li><a>
+                <select id="numberOfBookOnPage" class="selectpicker noBorder" value="20" onchange="show(1);">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="40">40</option>
+                </select>
+            </a>
+            </li>
+            <li><a href="#" onclick="show(1)">first</a></li>
+            <li>
+                <a href="#" aria-label="Previous" onclick='show(currentPageGlobal-1)'>
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li><span><input type="number" id="currentPage" class="noBorder small" onchange="show($(this).val())" style="width: 3em;"></span></li>
+            <li>
+                <a href="#" aria-label="Next" onclick="show(currentPageGlobal+1)">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            <li><a href="#" onclick="show('last')" >last</a></li>
+        </ul>
+    </nav>
+
 
     <div id="QRCode">
 

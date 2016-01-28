@@ -52,12 +52,8 @@ public class LibraryController extends BaseController {
     @RequestMapping(value ="/admin/configureLibrary", method = RequestMethod.GET, headers = "Accept=application/json")
     @ResponseBody
     public String configureLibrary(Model model) {
-//        model.addAttribute("borrowedDays", LibraryConfiguration.getBorrowedDays());
-//        model.addAttribute("interests", LibraryConfiguration.getInterests());
-//        model.addAttribute("maxBorrowedBooks", LibraryConfiguration.getMaxBorrowedBooks());
-//        model.addAttribute("maxReservedBooks", LibraryConfiguration.getMaxReservedBooks());
-//        model.addAttribute("expirationTime", LibraryConfiguration.getExpirationSessionMinutes());
-        return LibraryConfiguration.INSTANCE.toString();
+
+        return LibraryConfiguration.getInstance().toString();
     }
 
 
